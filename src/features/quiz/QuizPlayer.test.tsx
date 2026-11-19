@@ -135,7 +135,7 @@ describe('Quiz player: submitting', () => {
     await user.click(within(dialog).getByRole('button', { name: 'Submit anyway' }))
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Results' })).toBeInTheDocument()
-    expect(screen.getByText('7/10')).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Score' })).toHaveTextContent('7/ 1070%')
 
     const saved = readSaved(storage)
     expect(saved.activeSession).toBeNull()

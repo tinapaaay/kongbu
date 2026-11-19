@@ -6,7 +6,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 ## Status
 
-**Phase 1, Milestone 7 (Quiz Player): complete.**
+**Phase 1, Milestone 8 (Results): complete.**
 
 | Milestone | Status |
 |---|---|
@@ -17,7 +17,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 | 5. Local persistence and backup | Done |
 | 6. Dashboard → Chapter 11 | Done |
 | 7. Quiz Player | Done |
-| 8. Results | Pending |
+| 8. Results | Done |
 | 9. Mistake Review | Pending |
 | 10. Final verification | Pending |
 
@@ -143,4 +143,4 @@ Screens use progress only through `useLearnerData()`. Storage details stay in `s
 | `/quiz/:sessionId/results` | Results |
 | `/settings` | Settings |
 
-Results currently shows the score only, and Mistakes shows a short note. Both are completed in Milestones 8 and 9.
+The Mistakes screen shows a short note until Milestone 9.
