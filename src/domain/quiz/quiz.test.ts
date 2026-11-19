@@ -5,7 +5,7 @@ import type { ActiveSession } from '../learnerData'
 import { seededRandom, sequentialIds } from '../random'
 import { makeAttempt, minutes } from '../testFixtures'
 import { buildChapterSession, QUIZ_SIZE, type BuildSessionInput } from './buildSession'
-import { toPlayableQuestion } from './playableQuestion'
+import { keepBlanksTogether, toPlayableQuestion } from './playableQuestion'
 import { quizReducer, unansweredQuestionIds } from './quizReducer'
 import { scoreSession } from './scoreSession'
 
@@ -163,6 +163,11 @@ describe('toPlayableQuestion', () => {
     const playable = toPlayableQuestion(question, ['d', 'c', 'b', 'a'])
     expect(playable.choices.map((c) => c.id)).toEqual(['d', 'c', 'b', 'a'])
     expect(playable.choices[0].text).toBe('밥솥')
+  })
+
+  it('keeps fill-in blanks whole so they never split across lines', () => {
+    expect(keepBlanksTogether('빨래를 (   ).')).toBe('빨래를 (\u00a0\u00a0\u00a0).')
+    expect(keepBlanksTogether('가: 안녕하세요.\n나: 네.')).toBe('가: 안녕하세요.\n나: 네.')
   })
 
   it('flags draft questions', () => {

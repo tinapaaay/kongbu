@@ -35,3 +35,11 @@ export function toPlayableQuestion(question: Question, order: ChoiceId[]): Playa
     isDraft: question.reviewStatus === 'draft',
   }
 }
+
+/**
+ * Fill-in blanks are written as "(          )". Non-breaking spaces keep the blank
+ * the same width and stop it from splitting across two lines on small screens.
+ */
+export function keepBlanksTogether(text: string): string {
+  return text.replace(/\((\s+)\)/g, (_, spaces: string) => `(${'\u00a0'.repeat(spaces.length)})`)
+}

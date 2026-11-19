@@ -1,0 +1,275 @@
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-height: 64px;
+  padding: 0 var(--spacing-margin);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.exit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: var(--spacing-touch-target);
+  padding: 0 var(--spacing-sm);
+  border: 0;
+  border-radius: var(--rounded-md);
+  background: transparent;
+  color: var(--color-secondary);
+  font: 700 16px/1.5 var(--font-ko);
+  cursor: pointer;
+}
+
+.exit:hover {
+  background: var(--color-neutral);
+  color: var(--color-on-surface);
+}
+
+.barTitle {
+  font-weight: 700;
+}
+
+.barSub {
+  color: var(--color-secondary);
+  font-weight: 400;
+}
+
+.main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-margin) var(--spacing-xxl);
+}
+
+.num {
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.meta {
+  color: var(--color-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.progressRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.navigator {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dot {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--rounded-sm);
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  font: 700 14px/1 var(--font-label);
+  cursor: pointer;
+}
+
+.dotAnswered {
+  background: var(--color-primary-subtle);
+  border-color: var(--color-primary-strong);
+  color: var(--color-primary-strong);
+}
+
+.dot[aria-current='step'] {
+  outline: 3px solid var(--color-primary-strong);
+  outline-offset: 1px;
+}
+
+.question {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.question:focus {
+  outline: none;
+}
+
+.question:focus-visible .prompt {
+  outline: 3px solid var(--color-primary-strong);
+  outline-offset: 4px;
+}
+
+.prompt {
+  padding: 0;
+  margin-bottom: var(--spacing-sm);
+  font-size: 18px;
+  line-height: 1.6;
+  font-weight: 700;
+}
+
+.draft {
+  display: inline-block;
+  margin-bottom: var(--spacing-md);
+  padding: 2px 10px;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--rounded-full);
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.context {
+  /* pre-wrap keeps line breaks in dialogues and the width of fill-in blanks. */
+  white-space: pre-wrap;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--rounded-md);
+  background: var(--color-surface);
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.choices {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-height: 56px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--rounded-md);
+  background: var(--color-surface);
+  font-size: 18px;
+  line-height: 1.6;
+  cursor: pointer;
+  transition: background-color 120ms;
+}
+
+/* Only on devices with a real pointer: on touch screens, hover sticks after a tap
+   and would look like a selected answer. */
+@media (hover: hover) {
+  .choice:hover {
+    background: var(--color-primary-subtle);
+  }
+}
+
+/* The radio stays in the page for keyboards and screen readers; the row shows its state. */
+.radio {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.choice:has(.radio:focus-visible) {
+  outline: 3px solid var(--color-primary-strong);
+  outline-offset: 2px;
+}
+
+.choiceSelected {
+  border: 2px solid var(--color-primary-strong);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-strong);
+}
+
+.marker {
+  flex: none;
+  font-size: 20px;
+}
+
+.choiceText {
+  flex: 1;
+}
+
+.tag {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.problem {
+  padding: var(--spacing-md);
+  border-radius: var(--rounded-md);
+  background: var(--color-error-subtle);
+  color: var(--color-error);
+}
+
+.hint {
+  margin: var(--spacing-md) 0;
+  color: var(--color-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submit {
+  margin-left: auto;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .bar {
+    padding: 0 var(--spacing-margin-mobile);
+  }
+
+  .barSub {
+    display: none;
+  }
+
+  .main {
+    padding: var(--spacing-md) var(--spacing-margin-mobile) var(--spacing-xl);
+  }
+
+  .hint {
+    display: none;
+  }
+
+  .controls > button:not(.submit) {
+    flex: 1;
+  }
+
+  .submit {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}

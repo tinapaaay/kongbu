@@ -114,6 +114,24 @@ describe('localStorage repository: saving', () => {
     expect(data.activeSession).toBeNull()
   })
 
+  it('never brings back a submitted quiz as unfinished', async () => {
+    const repository = await ready()
+    const session = makeSession({ id: 'quiz-1', correctCount: 0, totalCount: 1 })
+    await repository.submitSession(session, [])
+    const data = await repository.saveActiveSession({
+      id: 'quiz-1',
+      type: 'chapter-practice',
+      chapterId: 'ch11',
+      startedAt: session.startedAt,
+      questionIds: ['ch11-q001'],
+      choiceOrder: { 'ch11-q001': ['a', 'b', 'c', 'd'] },
+      answers: {},
+      durationsMs: {},
+      currentIndex: 0,
+    })
+    expect(data.activeSession).toBeNull()
+  })
+
   it('records a quiz only once, even if submitted twice', async () => {
     const repository = await ready()
     const session = makeSession({ id: 'quiz-1', correctCount: 1, totalCount: 1 })

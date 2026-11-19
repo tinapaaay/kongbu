@@ -79,6 +79,8 @@ export function createLocalStorageRepository(storage: StorageLike | null): Learn
     },
 
     async saveActiveSession(session) {
+      // A late save must never bring back a quiz that was already submitted.
+      if (session && current.sessions.some((s) => s.id === session.id)) return current
       return write({ ...current, activeSession: session })
     },
 

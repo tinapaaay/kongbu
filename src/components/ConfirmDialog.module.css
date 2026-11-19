@@ -1,0 +1,40 @@
+.dialog {
+  width: min(440px, calc(100vw - 2 * var(--spacing-margin-mobile)));
+  padding: 0;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--rounded-md);
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+}
+
+/* DESIGN.md: a Book Black overlay at 40% opacity, no shadow. */
+.dialog::backdrop {
+  background: color-mix(in srgb, var(--color-on-surface) 40%, transparent);
+}
+
+.body {
+  display: grid;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
+.title {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.content {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.actions > * {
+  flex: 1;
+}

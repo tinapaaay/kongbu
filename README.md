@@ -6,7 +6,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 ## Status
 
-**Phase 1, Milestone 6 (Dashboard and Chapter 11): complete.**
+**Phase 1, Milestone 7 (Quiz Player): complete.**
 
 | Milestone | Status |
 |---|---|
@@ -16,7 +16,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 | 4. Scoring and quiz rules | Done |
 | 5. Local persistence and backup | Done |
 | 6. Dashboard → Chapter 11 | Done |
-| 7. Quiz Player | Pending |
+| 7. Quiz Player | Done |
 | 8. Results | Pending |
 | 9. Mistake Review | Pending |
 | 10. Final verification | Pending |
@@ -73,7 +73,7 @@ Visual references:
 src/
   main.tsx        Starts React, the router, fonts, and global styles
   app/            Routes, layouts, and navigation
-  components/     Shared UI pieces (PageHeader, SectionHeader, StatusBadge, buttons)
+  components/     Shared UI pieces (PageHeader, SectionHeader, StatusBadge, ConfirmDialog, buttons)
   content/        Chapters, lessons, concepts, questions, and their validation
   data/           Saving progress in the browser, backups, and the data provider
   domain/         Pure rules with no UI: learner data, quiz building, scoring, progress
@@ -121,6 +121,15 @@ Progress is saved in the browser's localStorage under one key, `hangul-lab:learn
 
 Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, so Phase 2 can switch to a database by adding a new `LearnerRepository`.
 
+## Taking a quiz
+
+- Start from a chapter page. A quiz in progress is resumed rather than replaced.
+- Choose with the mouse, by tapping, or with keys 1–4. Move with Previous and Next, the question numbers, or ← and →.
+- Every answer and move is saved immediately, so a refresh returns to the same question.
+- Submit at any time. The confirmation lists unanswered questions, which count as incorrect.
+- Exit asks first and keeps the quiz to resume later.
+- Answers and explanations are never sent to the quiz screen before submission.
+
 ## Screens and URLs
 
 | URL | Screen |
@@ -134,4 +143,4 @@ Screens use progress only through `useLearnerData()`. Storage details stay in `s
 | `/quiz/:sessionId/results` | Results |
 | `/settings` | Settings |
 
-The Quiz, Results, and Mistakes screens still show short notes saying which milestone builds them.
+Results currently shows the score only, and Mistakes shows a short note. Both are completed in Milestones 8 and 9.

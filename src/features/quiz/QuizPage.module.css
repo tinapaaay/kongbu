@@ -1,0 +1,18 @@
+.missing {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-margin);
+}
+
+.missingTitle {
+  font-size: 32px;
+  line-height: 1.25;
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+}
+
+@media (max-width: 767px) {
+  .missing {
+    padding: var(--spacing-lg) var(--spacing-margin-mobile);
+  }
+}

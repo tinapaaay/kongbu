@@ -19,7 +19,7 @@ describe('routes', () => {
     ['/learn', 'Chapters'],
     ['/learn/11', '집안일'],
     ['/practice/mistakes', 'Mistakes'],
-    ['/quiz/test-session/results', 'Results'],
+    ['/quiz/test-session/results', 'Results not found'],
     ['/settings', 'Settings'],
   ])('shows the right page at %s', async (path, name) => {
     renderApp(path)
@@ -80,10 +80,10 @@ describe('navigation', () => {
     expect(screen.getByRole('link', { name: 'Skip to content' })).toHaveAttribute('href', '#main')
   })
 
-  it('hides main navigation during a quiz', async () => {
+  it('shows a quiz address without main navigation, and explains when the quiz does not exist', async () => {
     renderApp('/quiz/test-session')
-    expect(await heading('Practice exam')).toBeInTheDocument()
+    expect(await heading('Quiz not found')).toBeInTheDocument()
     expect(screen.queryByRole('navigation', { name: 'Main' })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Exit quiz/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Go to the dashboard' })).toHaveAttribute('href', '/')
   })
 })
