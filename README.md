@@ -6,7 +6,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 ## Status
 
-**Phase 1, Milestone 9 (Mistake Review): complete.** The full core workflow works: Dashboard → Chapter 11 → Quiz → Results → Mistake Review.
+**Phase 1 (Functional MVP): complete and verified.** The full core workflow works in Chrome and Safari, on desktop and iPhone: Dashboard → Chapter 11 → Quiz → Results → Mistake Review.
 
 | Milestone | Status |
 |---|---|
@@ -19,7 +19,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 | 7. Quiz Player | Done |
 | 8. Results | Done |
 | 9. Mistake Review | Done |
-| 10. Final verification | Pending |
+| 10. Final verification | Done |
 
 The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md).
 
@@ -37,6 +37,12 @@ npm run dev
 
 Then open http://localhost:5173.
 
+To run the browser tests, download Playwright's test browsers once:
+
+```bash
+npx playwright install chromium webkit
+```
+
 ## Commands
 
 | Command | What it does |
@@ -49,6 +55,63 @@ Then open http://localhost:5173.
 | `npm run build` | Builds the production site into `dist/` |
 | `npm run tokens` | Regenerates `src/styles/tokens.css` from `DESIGN.md` |
 | `npm run design:lint` | Checks `DESIGN.md` against the design.md format |
+| `npm run test:e2e` | Runs browser tests against the production build in Chrome, Safari, and iPhone Safari |
+| `npm run check:secrets` | Fails if anything that looks like a key or token is in `dist/` |
+| `npm run verify` | Runs everything above in order. Use it before every push |
+
+## Testing
+
+There are two kinds of tests.
+
+- **Unit and component tests** (Vitest, 178 tests in `src/**/*.test.ts(x)`): rules, content validation, storage, and every screen, run in a simulated browser. They run in React StrictMode, like the dev server.
+- **Browser tests** (Playwright, `tests/e2e/`): the real production build in three setups, Chrome on desktop, Safari on desktop, and Safari on iPhone. WebKit, Safari's engine, stands in for Safari.
+
+| Browser test file | What it proves |
+|---|---|
+| `definition-of-done.spec.ts` | The PRD's Definition of Done end to end, including a refresh mid-quiz and returning later. Also proves chapter filtering and double-submit safety |
+| `offline-and-privacy.spec.ts` | Quizzes work with the network switched off, and the app never contacts another website |
+| `backup.spec.ts` | A backup made in one browser profile restores in a completely separate one, and wrong files are rejected |
+| `accessibility.spec.ts` | Every screen passes automated WCAG 2.1 AA checks (axe), a quiz can be taken by keyboard alone, and focus is visible |
+
+Keyboard note for Safari: Safari on a Mac moves Tab only between text fields by default. Press Option+Tab to reach links and buttons, or turn on **Settings → Advanced → Press Tab to highlight each item**.
+
+## PRD acceptance criteria
+
+| PRD check | Status | How it is verified |
+|---|---|---|
+| A fresh user has no false progress or resume state | ✅ Verified | Dashboard and library component tests; Definition of Done browser test |
+| Questions show exactly four valid answer options | ✅ Verified | Content validation rejects anything else; quiz browser test counts four radios |
+| Correct answers remain hidden until submission | ✅ Verified | The quiz screen receives questions without the key (`PlayableQuestion`); tests check no answer or explanation text appears |
+| Submitted answers receive accurate scores | ✅ Verified | Scoring unit tests (all right, all wrong, mixed, skipped); quiz tests score 7/10 exactly |
+| Explanations match the stored answer key | ✅ Verified | The correct answer shown comes from the key saved at submission; edited questions are flagged |
+| Wrong answers appear in the mistake tracker | ✅ Verified | Mistake Review tests; Definition of Done browser test |
+| Progress remains available after refresh | ✅ Verified | Storage tests; browser test refreshes mid-quiz and after submitting |
+| Chapter filters prevent unrelated questions from appearing | ✅ Verified | Session-building unit test; browser test checks every question id is Chapter 11 |
+| The interface works on mobile and desktop | ✅ Verified | Browser tests on desktop Chrome, desktop Safari, and iPhone Safari |
+| Core quizzes function without AI connectivity | ✅ Verified | Offline browser test; the app has no AI code and makes no outside requests |
+| Flashcard imports reject malformed records without silently losing data | ⏳ Pending, Phase 3 | Flashcards are not built yet. Backup restore already follows this rule |
+| AI secrets never appear in client-side code | ✅ Verified for Phase 1 | No AI code exists; `npm run check:secrets` scans every build. Recheck in Phase 4 |
+
+### Definition of Done
+
+All eight steps pass in the browser tests: open the dashboard, select Chapter 11, start a practice exam, answer ten original EPS-TOPIK-style questions, submit, review the score and explanations, see mistakes saved, and return later to continue.
+
+### Completed and pending
+
+**Completed in Phase 1:** dashboard, 60-chapter library, Chapter 11 lesson, 22 original questions, quiz player, automatic scoring, explanations, mistake tracking, local saving with backup and restore, responsive layout, and accessibility checks.
+
+**Known limits:**
+
+- The 22 Chapter 11 questions are drafts. They should be reviewed by a person against the textbook and marked `approved`.
+- Progress is stored per browser. Use Settings → Backup to move it between Chrome and Safari until Phase 2 adds a database.
+- Only Chapter 11 has content. Other chapters show their real titles with "Content coming later."
+
+**Pending by phase:**
+
+- **Phase 2:** Supabase database, multi-device progress, question management, import and export.
+- **Phase 3:** flashcards with spaced repetition, Smart Review recommendations, Targeted Review mode, timed exam mode.
+- **Phase 4:** secure backend and AI tutor.
+- **Phase 5:** listening questions with the textbook audio, richer analytics.
 
 ## Design system
 
@@ -80,6 +143,8 @@ src/
   features/       One folder per screen (dashboard, chapters, quiz, ...)
   styles/         tokens.css (generated) and global.css
   test/           Shared test setup
+tests/e2e/        Playwright browser tests
+scripts/          Build checks (secrets scan)
 docs/             Plan, decisions, and design references
 ```
 
@@ -142,5 +207,3 @@ Screens use progress only through `useLearnerData()`. Storage details stay in `s
 | `/quiz/:sessionId` | Quiz (no main navigation) |
 | `/quiz/:sessionId/results` | Results |
 | `/settings` | Settings |
-
-

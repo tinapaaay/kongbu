@@ -35,3 +35,7 @@ hangul-lab-backup*.json
 
 # Local tool settings
 .claude/settings.local.json
+
+# Playwright output
+test-results/
+playwright-report/

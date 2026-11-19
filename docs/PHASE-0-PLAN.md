@@ -1,6 +1,6 @@
 # Hangul Lab: Phase 0 Plan
 
-**Status:** Decisions, design system, and wireframes are done. Final approval to start Phase 1 is pending.
+**Status:** Phase 0 complete. Phase 1 was approved and is now complete; see the README for verified acceptance criteria.
 **Date:** 2026-11-19
 **Source of truth:** Hangul Lab PRD v1.0
 **Scope of this document:** architecture, folder structure, data models, user flows, and checklist. No application code has been written.
@@ -55,7 +55,7 @@ Phase 1 is a **single-page application (SPA)**: one website that runs entirely i
 
 # ADR-001: Store learner history as a local attempt log, behind a repository
 
-**Status:** Proposed
+**Status:** Accepted (implemented in Milestones 4–5)
 **Deciders:** Product owner
 
 ### Context
@@ -453,7 +453,7 @@ Question selection puts questions with open mistakes first, then the least recen
 - [x] Agree on the visual direction (Field Guide, light theme) and write `DESIGN.md`
 - [x] Lint `DESIGN.md`: 0 errors, 0 warnings
 - [x] Create wireframes for the seven Phase 1 screens (`wireframes.html`)
-- [ ] Final approval to begin Phase 1
+- [x] Final approval to begin Phase 1
 
 ### Phase 1: Functional MVP
 
