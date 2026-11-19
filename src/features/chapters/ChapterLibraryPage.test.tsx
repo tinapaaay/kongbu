@@ -34,8 +34,9 @@ describe('Chapter Library', () => {
     expect(screen.getByText('대중교통')).toBeInTheDocument()
   })
 
-  it('shows no learner progress, because none exists yet', async () => {
+  it('shows every chapter as not started for a new learner', async () => {
     await renderAt('/learn')
+    expect(screen.getAllByText('Not started')).toHaveLength(30)
     expect(screen.queryByText(/Practiced|Mastered|Visited/)).not.toBeInTheDocument()
   })
 })

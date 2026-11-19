@@ -6,7 +6,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 ## Status
 
-**Phase 1, Milestone 5 (local saving and backup): complete.**
+**Phase 1, Milestone 6 (Dashboard and Chapter 11): complete.**
 
 | Milestone | Status |
 |---|---|
@@ -15,7 +15,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 | 3. Content foundation | Done |
 | 4. Scoring and quiz rules | Done |
 | 5. Local persistence and backup | Done |
-| 6. Dashboard → Chapter 11 | Pending |
+| 6. Dashboard → Chapter 11 | Done |
 | 7. Quiz Player | Pending |
 | 8. Results | Pending |
 | 9. Mistake Review | Pending |
@@ -73,7 +73,7 @@ Visual references:
 src/
   main.tsx        Starts React, the router, fonts, and global styles
   app/            Routes, layouts, and navigation
-  components/     Shared UI pieces (PageHeader, Notice)
+  components/     Shared UI pieces (PageHeader, SectionHeader, StatusBadge, buttons)
   content/        Chapters, lessons, concepts, questions, and their validation
   data/           Saving progress in the browser, backups, and the data provider
   domain/         Pure rules with no UI: learner data, quiz building, scoring, progress
@@ -107,6 +107,7 @@ The rules in `src/domain/` are plain TypeScript functions with no screens or sto
 | A mistake is fixed only when the same concept is answered correctly in a later quiz | `progress/mistakes.ts` |
 | Mastered means the latest quiz had at least 10 questions, at least 80% correct, and no open mistakes | `progress/chapterProgress.ts` |
 | Weekly activity counts questions per local day, Monday to Sunday | `progress/activity.ts` |
+| The Dashboard's next step: unfinished quiz, then open mistakes, then the current chapter | `progress/nextStep.ts` |
 
 ## Saved progress
 
@@ -133,4 +134,4 @@ Screens use progress only through `useLearnerData()`. Storage details stay in `s
 | `/quiz/:sessionId/results` | Results |
 | `/settings` | Settings |
 
-Screens still show short placeholder notes saying which milestone builds them.
+The Quiz, Results, and Mistakes screens still show short notes saying which milestone builds them.

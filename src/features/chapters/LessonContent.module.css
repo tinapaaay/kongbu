@@ -1,0 +1,225 @@
+.jump {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  gap: var(--spacing-sm);
+  overflow-x: auto;
+  padding: var(--spacing-sm) 0;
+  margin-bottom: var(--spacing-lg);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.jumpLink {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--rounded-full);
+  color: var(--color-primary-strong);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.jumpLink:hover {
+  background: var(--color-primary-subtle);
+}
+
+.section {
+  padding: var(--spacing-lg) 0 var(--spacing-xl);
+}
+
+.section h2 {
+  scroll-margin-top: 72px;
+}
+
+.gloss {
+  display: block;
+  color: var(--color-gloss);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.source {
+  margin-top: var(--spacing-md);
+  font: 700 13px/1.3 var(--font-label);
+  letter-spacing: 0.04em;
+  color: var(--color-secondary);
+}
+
+/* Vocabulary */
+.vocabGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.vocabCard {
+  border: 1px dashed var(--color-outline);
+  border-radius: var(--rounded-md);
+  overflow: hidden;
+}
+
+.vocabCard .source {
+  margin: 0;
+  padding: 0 var(--spacing-md) var(--spacing-md);
+}
+
+.vocabTitle {
+  display: grid;
+  text-align: center;
+  padding: var(--spacing-sm);
+  background: var(--color-vocabulary);
+  color: var(--color-on-surface);
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.vocabTitleEn {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.vocabList {
+  margin: 0;
+  padding: var(--spacing-md);
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.vocabItem dt {
+  font-weight: 700;
+}
+
+.vocabItem dd {
+  margin: 0;
+}
+
+/* Grammar */
+.grammarGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: var(--spacing-lg);
+  align-items: start;
+}
+
+.pattern {
+  font-size: 26px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.meaning {
+  color: var(--color-gloss);
+  margin-bottom: var(--spacing-sm);
+}
+
+.explanation {
+  max-width: 68ch;
+}
+
+.rules {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--spacing-md) 0;
+}
+
+.rules th {
+  text-align: left;
+  font: 700 13px/1.2 var(--font-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-outline);
+}
+
+.rules td {
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.form {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.examples {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--spacing-sm);
+}
+
+.examples ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.exampleMark {
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.highlight {
+  color: var(--color-example);
+}
+
+.tip {
+  background: var(--color-neutral);
+  border-radius: var(--rounded-lg);
+  padding: var(--spacing-lg);
+  display: grid;
+  gap: var(--spacing-sm);
+  justify-items: start;
+}
+
+.tipBadge {
+  background: var(--color-grammar);
+  color: var(--color-on-surface);
+  font: 700 13px/1 var(--font-label);
+  letter-spacing: 0.08em;
+  padding: 5px 9px;
+  border-radius: var(--rounded-full);
+}
+
+/* Culture */
+.cultureTitle {
+  font-size: 22px;
+  line-height: 1.4;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+}
+
+.prose {
+  max-width: 68ch;
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .grammarGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .rules th:first-child,
+  .rules td:first-child {
+    display: none;
+  }
+}

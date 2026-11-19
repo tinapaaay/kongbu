@@ -122,7 +122,7 @@ describe('chapter visits', () => {
   it('records a visit when a chapter page opens, and it survives a reload', async () => {
     const storage = new MemoryStorage()
     const first = renderApp('/learn/11', { storage })
-    await screen.findByRole('heading', { level: 1, name: 'Chapter 11' })
+    await screen.findByRole('heading', { level: 1, name: '집안일' })
     await vi.waitFor(() => expect(savedData(storage)?.chapterVisits?.ch11).toBeDefined())
     first.unmount()
 

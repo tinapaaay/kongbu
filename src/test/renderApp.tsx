@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import type { ReactNode } from 'react'
+import { StrictMode, type ReactNode } from 'react'
 import { MemoryRouter } from 'react-router'
 import { AppRoutes } from '../app/AppRoutes'
 import { LearnerDataProvider } from '../data/LearnerDataProvider'
@@ -19,12 +19,15 @@ interface RenderOptions {
  */
 export function renderApp(path: string, { storage = new MemoryStorage(), now, children }: RenderOptions = {}) {
   const repository = createLocalStorageRepository(storage)
+  // StrictMode runs effects twice, like the development server, so tests catch the same bugs.
   const result = render(
-    <MemoryRouter initialEntries={[path]}>
-      <LearnerDataProvider repository={repository} now={now}>
-        {children ?? <AppRoutes />}
-      </LearnerDataProvider>
-    </MemoryRouter>,
+    <StrictMode>
+      <MemoryRouter initialEntries={[path]}>
+        <LearnerDataProvider repository={repository} now={now}>
+          {children ?? <AppRoutes />}
+        </LearnerDataProvider>
+      </MemoryRouter>
+    </StrictMode>,
   )
   return { ...result, storage, repository }
 }

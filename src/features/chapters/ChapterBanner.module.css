@@ -1,0 +1,176 @@
+.opener {
+  margin: calc(-1 * var(--spacing-xl)) calc(-1 * var(--spacing-margin)) var(--spacing-xl);
+  background: var(--color-primary-subtle);
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-margin);
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.number {
+  font: 900 72px/1 var(--font-label);
+  letter-spacing: -0.02em;
+}
+
+.titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.kicker {
+  display: inline-block;
+  font: 700 14px/1 var(--font-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-strong);
+  padding: 4px 10px;
+  border-radius: var(--rounded-full);
+  margin-bottom: var(--spacing-sm);
+}
+
+.title {
+  font-size: 40px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.english {
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.status {
+  align-self: flex-start;
+}
+
+.body {
+  padding: var(--spacing-xl) var(--spacing-margin);
+}
+
+.topics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  text-align: center;
+}
+
+.topics li {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.pill {
+  display: block;
+  border-radius: var(--rounded-full);
+  padding: 6px var(--spacing-md);
+  color: var(--color-on-surface);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.pill small {
+  display: block;
+  font: 700 13px/1.3 var(--font-label);
+  letter-spacing: 0.08em;
+}
+
+.grammar { background: var(--color-grammar); }
+.vocabulary { background: var(--color-vocabulary); }
+.culture { background: var(--color-culture); }
+
+.topicList {
+  font-weight: 700;
+}
+
+.objectives {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  margin-top: var(--spacing-xl);
+  border-radius: var(--rounded-md);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.objectivesLabel {
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: var(--spacing-md);
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.objectivesLabel small {
+  display: block;
+  font: 700 12px/1.3 var(--font-label);
+  letter-spacing: 0.08em;
+}
+
+.objectivesList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.objectivesList li {
+  display: grid;
+  padding: var(--spacing-sm) var(--spacing-lg);
+}
+
+.objectivesList li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.gloss {
+  color: var(--color-gloss);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  .opener {
+    margin: calc(-1 * var(--spacing-lg)) calc(-1 * var(--spacing-margin-mobile)) var(--spacing-lg);
+  }
+
+  .banner {
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-margin-mobile);
+  }
+
+  .number {
+    font-size: 52px;
+  }
+
+  .title {
+    font-size: 30px;
+  }
+
+  .status {
+    flex-basis: 100%;
+  }
+
+  .body {
+    padding: var(--spacing-lg) var(--spacing-margin-mobile);
+  }
+
+  .topics,
+  .objectives {
+    grid-template-columns: 1fr;
+  }
+
+  .topics {
+    text-align: left;
+  }
+}

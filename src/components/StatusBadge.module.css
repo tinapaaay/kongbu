@@ -1,0 +1,28 @@
+.badge {
+  display: inline-block;
+  border-radius: var(--rounded-full);
+  padding: 2px 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.not-started {
+  background: var(--color-neutral);
+  color: var(--color-secondary);
+}
+
+.visited {
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-strong);
+}
+
+.practiced {
+  background: var(--color-word-bank);
+  color: var(--color-on-surface);
+}
+
+.mastered {
+  background: var(--color-success);
+  color: var(--color-surface);
+}

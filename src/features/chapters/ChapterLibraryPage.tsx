@@ -1,6 +1,9 @@
 import { Link, useSearchParams } from 'react-router'
 import { PageHeader } from '../../components/PageHeader'
+import { StatusBadge } from '../../components/StatusBadge'
 import { chapters } from '../../content'
+import { useLearnerData } from '../../data/learnerDataContext'
+import { chapterProgress } from '../../domain/progress/chapterProgress'
 import styles from './ChapterLibraryPage.module.css'
 
 const books = [
@@ -10,6 +13,7 @@ const books = [
 
 /** All chapters in textbook order. The book tab lives in the URL (?book=2), so refresh keeps it. */
 export function ChapterLibraryPage() {
+  const { data } = useLearnerData()
   const [searchParams] = useSearchParams()
   const volume = searchParams.get('book') === '2' ? 2 : 1
   const book = books[volume - 1]
@@ -50,12 +54,16 @@ export function ChapterLibraryPage() {
             <th scope="col" className={styles.hideOnPhone}>
               Page
             </th>
-            <th scope="col">Content</th>
+            <th scope="col">Status</th>
+            <th scope="col" className={styles.hideOnPhone}>
+              Best
+            </th>
           </tr>
         </thead>
         <tbody>
           {list.map((chapter) => {
             const available = chapter.contentStatus === 'available'
+            const progress = chapterProgress(chapter.id, data)
             return (
               <tr key={chapter.id} className={available ? styles.availableRow : styles.plannedRow}>
                 <td className={styles.number}>{String(chapter.number).padStart(2, '0')}</td>
@@ -70,12 +78,14 @@ export function ChapterLibraryPage() {
                     </span>
                   )}
                   <span className={styles.gloss}>{chapter.titleEn}</span>
+                  {!available && <span className={styles.coming}>Content coming later</span>}
                 </td>
                 <td className={`${styles.number} ${styles.hideOnPhone}`}>p.{chapter.textbookRef.page}</td>
                 <td>
-                  <span className={available ? styles.pillAvailable : styles.pillPlanned}>
-                    {available ? 'Available' : 'Coming later'}
-                  </span>
+                  <StatusBadge status={progress.status} />
+                </td>
+                <td className={`${styles.number} ${styles.hideOnPhone}`}>
+                  {progress.bestScore ? `${progress.bestScore.correct}/${progress.bestScore.total}` : '—'}
                 </td>
               </tr>
             )

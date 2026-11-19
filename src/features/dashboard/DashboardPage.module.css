@@ -1,0 +1,191 @@
+.next {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  background: var(--color-primary-subtle);
+  border-radius: var(--rounded-md);
+}
+
+.nextLabel {
+  font: 700 14px/1.2 var(--font-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary-strong);
+  margin-bottom: var(--spacing-xs);
+}
+
+.nextTitle {
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--spacing-lg);
+  align-items: start;
+}
+
+.column {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.box {
+  display: grid;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--rounded-md);
+}
+
+.boxHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.boxTitle {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.more,
+.chapterLink {
+  color: var(--color-primary-strong);
+  font-weight: 700;
+}
+
+.more {
+  font-size: 14px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list > li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.listRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+}
+
+.right {
+  text-align: right;
+}
+
+.strong {
+  font-weight: 700;
+}
+
+.gloss {
+  color: var(--color-gloss);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.meta {
+  color: var(--color-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.num {
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-on-surface);
+}
+
+.openPill {
+  display: inline-block;
+  border-radius: var(--rounded-full);
+  padding: 2px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--color-error-subtle);
+  color: var(--color-error);
+}
+
+.week {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day,
+.dayActive {
+  display: grid;
+  justify-items: center;
+  padding: 6px 0;
+  border-radius: var(--rounded-sm);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.day {
+  background: var(--color-neutral);
+  color: var(--color-secondary);
+}
+
+.day .num {
+  color: var(--color-secondary);
+}
+
+.dayActive {
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-strong);
+}
+
+.dayActive .num {
+  color: var(--color-primary-strong);
+}
+
+.recent {
+  margin-top: var(--spacing-lg);
+}
+
+.recentList {
+  margin: 0;
+  padding-left: var(--spacing-lg);
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .next > a {
+    width: 100%;
+  }
+}

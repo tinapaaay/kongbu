@@ -7,3 +7,6 @@ import { afterEach } from 'vitest'
 afterEach(() => {
   cleanup()
 })
+
+// jsdom doesn't implement scrolling; the app calls it after navigation.
+window.scrollTo = () => {}

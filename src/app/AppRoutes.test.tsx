@@ -17,7 +17,7 @@ describe('routes', () => {
   it.each([
     ['/', '오늘의 공부'],
     ['/learn', 'Chapters'],
-    ['/learn/11', 'Chapter 11'],
+    ['/learn/11', '집안일'],
     ['/practice/mistakes', 'Mistakes'],
     ['/quiz/test-session/results', 'Results'],
     ['/settings', 'Settings'],
@@ -51,7 +51,7 @@ describe('routes', () => {
 describe('navigation', () => {
   it('marks only the current section as active', async () => {
     renderApp('/learn/11')
-    await heading('Chapter 11')
+    await heading('집안일')
     const nav = desktopNav()
     expect(within(nav).getByRole('link', { name: 'Learn' })).toHaveAttribute('aria-current', 'page')
     expect(within(nav).getByRole('link', { name: 'Dashboard' })).not.toHaveAttribute('aria-current')
@@ -62,6 +62,16 @@ describe('navigation', () => {
     await heading('오늘의 공부')
     await userEvent.click(within(desktopNav()).getByRole('link', { name: 'Settings' }))
     expect(await heading('Settings')).toBeInTheDocument()
+  })
+
+  it('leaves focus alone on first load, then moves it to new content after navigating', async () => {
+    renderApp('/')
+    await heading('오늘의 공부')
+    expect(document.activeElement).not.toBe(document.getElementById('main'))
+
+    await userEvent.click(within(desktopNav()).getByRole('link', { name: 'Learn' }))
+    await heading('Chapters')
+    expect(document.activeElement).toBe(document.getElementById('main'))
   })
 
   it('offers a skip link for keyboard users', async () => {

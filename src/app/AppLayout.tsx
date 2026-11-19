@@ -11,16 +11,16 @@ import styles from './AppLayout.module.css'
 export function AppLayout() {
   const mainRef = useRef<HTMLElement>(null)
   const { pathname } = useLocation()
-  const isFirstRender = useRef(true)
+  const previousPath = useRef(pathname)
 
-  // After navigating, move keyboard and screen reader focus to the new page,
-  // like a full page load would. Skipped on the very first load.
+  // After moving to a different page, start at the top and move keyboard and
+  // screen reader focus to the new content, like a full page load would.
+  // Comparing paths (not counting renders) also works when React runs effects twice in development.
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    mainRef.current?.focus()
+    if (previousPath.current === pathname) return
+    previousPath.current = pathname
+    window.scrollTo(0, 0)
+    mainRef.current?.focus({ preventScroll: true })
   }, [pathname])
 
   return (

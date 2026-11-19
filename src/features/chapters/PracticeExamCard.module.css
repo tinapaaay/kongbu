@@ -1,0 +1,34 @@
+.card {
+  display: grid;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--color-neutral);
+  border: 2px solid var(--color-reading);
+  border-radius: var(--rounded-md);
+}
+
+.card > p {
+  max-width: 68ch;
+}
+
+.meta {
+  color: var(--color-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.meta strong {
+  color: var(--color-on-surface);
+}
+
+.notice {
+  background: var(--color-word-bank);
+  border-radius: var(--rounded-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.notice a {
+  color: var(--color-primary-strong);
+  font-weight: 700;
+}
