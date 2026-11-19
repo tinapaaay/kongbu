@@ -6,7 +6,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 ## Status
 
-**Phase 1, Milestone 8 (Results): complete.**
+**Phase 1, Milestone 9 (Mistake Review): complete.** The full core workflow works: Dashboard → Chapter 11 → Quiz → Results → Mistake Review.
 
 | Milestone | Status |
 |---|---|
@@ -18,7 +18,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 | 6. Dashboard → Chapter 11 | Done |
 | 7. Quiz Player | Done |
 | 8. Results | Done |
-| 9. Mistake Review | Pending |
+| 9. Mistake Review | Done |
 | 10. Final verification | Pending |
 
 The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md).
@@ -138,9 +138,9 @@ Screens use progress only through `useLearnerData()`. Storage details stay in `s
 | `/learn` | Chapter Library |
 | `/learn/11` | One chapter (1–60) |
 | `/practice` | Redirects to `/practice/mistakes` |
-| `/practice/mistakes` | Mistake Review |
+| `/practice/mistakes` | Mistake Review. Filters are in the address: `?chapter=ch11&concept=grammar.eul-geyo&range=7` |
 | `/quiz/:sessionId` | Quiz (no main navigation) |
 | `/quiz/:sessionId/results` | Results |
 | `/settings` | Settings |
 
-The Mistakes screen shows a short note until Milestone 9.
+
