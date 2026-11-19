@@ -6,14 +6,14 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 ## Status
 
-**Phase 1, Milestone 3 (content foundation): complete.**
+**Phase 1, Milestone 4 (scoring and quiz rules): complete.**
 
 | Milestone | Status |
 |---|---|
 | 1. Project setup | Done |
 | 2. App shell and tokens | Done |
 | 3. Content foundation | Done |
-| 4. Scoring and quiz rules | Pending |
+| 4. Scoring and quiz rules | Done |
 | 5. Local persistence and backup | Pending |
 | 6. Dashboard → Chapter 11 | Pending |
 | 7. Quiz Player | Pending |
@@ -75,7 +75,7 @@ src/
   app/            Routes, layouts, and navigation
   components/     Shared UI pieces (PageHeader, Notice)
   content/        Chapters, lessons, concepts, questions, and their validation
-  domain/         Pure rules with no UI, such as chapter-number checks
+  domain/         Pure rules with no UI: learner data, quiz building, scoring, progress
   features/       One folder per screen (dashboard, chapters, quiz, ...)
   styles/         tokens.css (generated) and global.css
   test/           Shared test setup
@@ -92,6 +92,20 @@ All study material lives in `src/content/`, and screens read it only through `sr
 - `validate.ts`: cross-checks, such as every question pointing to a real concept and every answer key matching a choice.
 
 `npm test` fails if any content breaks a rule. Questions are original EPS-TOPIK-style practice, stay `draft` until a person reviews them, and must never mention ①–④ in explanations, because choices can be shuffled.
+
+## Study rules
+
+The rules in `src/domain/` are plain TypeScript functions with no screens or storage, so each one is tested on its own.
+
+| Rule | File |
+|---|---|
+| A quiz has 10 questions from one chapter. Missed questions come first, then other questions on concepts with open mistakes, then unseen questions, then the ones seen longest ago | `quiz/buildSession.ts` |
+| Each question's four choices get a saved shuffled order | `quiz/buildSession.ts` |
+| The quiz screen gets questions without the answer key or explanation | `quiz/playableQuestion.ts` |
+| Scoring compares answers with the stored key. Skipped questions count as wrong | `quiz/scoreSession.ts` |
+| A mistake is fixed only when the same concept is answered correctly in a later quiz | `progress/mistakes.ts` |
+| Mastered means the latest quiz had at least 10 questions, at least 80% correct, and no open mistakes | `progress/chapterProgress.ts` |
+| Weekly activity counts questions per local day, Monday to Sunday | `progress/activity.ts` |
 
 ## Screens and URLs
 
