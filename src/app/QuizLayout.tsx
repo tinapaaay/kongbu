@@ -1,4 +1,5 @@
 import { Link, Outlet } from 'react-router'
+import { StorageNotice } from './StorageNotice'
 import styles from './QuizLayout.module.css'
 
 /**
@@ -14,6 +15,7 @@ export function QuizLayout() {
         </Link>
       </header>
       <main id="main" className={styles.main}>
+        <StorageNotice />
         <Outlet />
       </main>
     </div>

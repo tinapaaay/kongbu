@@ -68,10 +68,12 @@ export const learnerDataSchema = z.object({
   activeSession: activeSessionSchema.nullable(),
   sessions: z.array(completedSessionSchema),
   attempts: z.array(attemptSchema),
+  /** When a backup file was last downloaded. null means never. */
+  lastBackupAt: isoDateTime.nullable(),
 })
 export type LearnerData = z.infer<typeof learnerDataSchema>
 
 /** A brand-new learner: no visits, no quizzes, no attempts. */
 export function emptyLearnerData(): LearnerData {
-  return { schemaVersion: 1, chapterVisits: {}, activeSession: null, sessions: [], attempts: [] }
+  return { schemaVersion: 1, chapterVisits: {}, activeSession: null, sessions: [], attempts: [], lastBackupAt: null }
 }

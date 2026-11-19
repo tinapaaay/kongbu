@@ -10,11 +10,19 @@ import '@fontsource/titillium-web/900.css'
 import './styles/tokens.css'
 import './styles/global.css'
 import { AppRoutes } from './app/AppRoutes'
+import { LearnerDataProvider } from './data/LearnerDataProvider'
+import { createLocalStorageRepository } from './data/localStorageRepository'
+import { getBrowserStorage } from './data/storage'
+
+// Created once for the whole app. Phase 2 swaps this line for a database repository.
+const repository = createLocalStorageRepository(getBrowserStorage())
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <AppRoutes />
+      <LearnerDataProvider repository={repository}>
+        <AppRoutes />
+      </LearnerDataProvider>
     </BrowserRouter>
   </StrictMode>,
 )

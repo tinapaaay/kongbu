@@ -196,7 +196,14 @@ describe('weekActivity', () => {
 describe('learner data', () => {
   it('starts empty for a new learner, and the empty state is valid', () => {
     const empty = emptyLearnerData()
-    expect(empty).toEqual({ schemaVersion: 1, chapterVisits: {}, activeSession: null, sessions: [], attempts: [] })
+    expect(empty).toEqual({
+      schemaVersion: 1,
+      chapterVisits: {},
+      activeSession: null,
+      sessions: [],
+      attempts: [],
+      lastBackupAt: null,
+    })
     expect(learnerDataSchema.safeParse(empty).success).toBe(true)
   })
 

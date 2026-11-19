@@ -6,7 +6,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 ## Status
 
-**Phase 1, Milestone 4 (scoring and quiz rules): complete.**
+**Phase 1, Milestone 5 (local saving and backup): complete.**
 
 | Milestone | Status |
 |---|---|
@@ -14,7 +14,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 | 2. App shell and tokens | Done |
 | 3. Content foundation | Done |
 | 4. Scoring and quiz rules | Done |
-| 5. Local persistence and backup | Pending |
+| 5. Local persistence and backup | Done |
 | 6. Dashboard → Chapter 11 | Pending |
 | 7. Quiz Player | Pending |
 | 8. Results | Pending |
@@ -75,6 +75,7 @@ src/
   app/            Routes, layouts, and navigation
   components/     Shared UI pieces (PageHeader, Notice)
   content/        Chapters, lessons, concepts, questions, and their validation
+  data/           Saving progress in the browser, backups, and the data provider
   domain/         Pure rules with no UI: learner data, quiz building, scoring, progress
   features/       One folder per screen (dashboard, chapters, quiz, ...)
   styles/         tokens.css (generated) and global.css
@@ -107,6 +108,18 @@ The rules in `src/domain/` are plain TypeScript functions with no screens or sto
 | Mastered means the latest quiz had at least 10 questions, at least 80% correct, and no open mistakes | `progress/chapterProgress.ts` |
 | Weekly activity counts questions per local day, Monday to Sunday | `progress/activity.ts` |
 
+## Saved progress
+
+Progress is saved in the browser's localStorage under one key, `hangul-lab:learner-data`, as a single JSON value. Each change rewrites the whole value in one step, so it is never half-saved.
+
+- **Reload safe:** chapter visits, unfinished quizzes, submitted quizzes, and answers survive refreshes.
+- **Damaged data:** if saved data can't be read, a copy is kept under `hangul-lab:damaged-copy:<time>` and every page shows a warning. Nothing is silently deleted.
+- **Newer data:** data saved by a newer app version is never overwritten.
+- **Blocked or full storage:** the app keeps working for the current visit and shows a warning.
+- **Backups:** Settings downloads a `hangul-lab-backup-YYYY-MM-DD.json` file and restores one. A restore file is fully checked and summarized, and nothing is replaced until you confirm.
+
+Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, so Phase 2 can switch to a database by adding a new `LearnerRepository`.
+
 ## Screens and URLs
 
 | URL | Screen |
@@ -120,4 +133,4 @@ The rules in `src/domain/` are plain TypeScript functions with no screens or sto
 | `/quiz/:sessionId/results` | Results |
 | `/settings` | Settings |
 
-`data/` is added in a later milestone, as described in the plan. Screens still show short placeholder notes saying which milestone builds them.
+Screens still show short placeholder notes saying which milestone builds them.

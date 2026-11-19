@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { navItems } from './navItems'
+import { StorageNotice } from './StorageNotice'
 import styles from './AppLayout.module.css'
 
 /**
@@ -47,6 +48,7 @@ export function AppLayout() {
       </header>
 
       <main id="main" ref={mainRef} tabIndex={-1} className={styles.main}>
+        <StorageNotice />
         <Outlet />
       </main>
 
