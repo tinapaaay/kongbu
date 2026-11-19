@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hangul Lab Wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700;900&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Tokens from DESIGN.md (npx -y @google/design.md@0.4.0 export DESIGN.md --format css-vars) */
+:root {
+  --color-primary: #3f71a8; --color-primary-strong: #2f5a8a; --color-primary-subtle: #dce6ef;
+  --color-surface: #fefefe; --color-on-surface: #232121; --color-secondary: #5e5a55;
+  --color-neutral: #f2efeb; --color-border: #c9c5bf; --color-outline: #8c8780;
+  --color-gloss: #6c372a; --color-example: #006e8f;
+  --color-grammar: #e1914f; --color-vocabulary: #6995c0; --color-culture: #6ebdb5;
+  --color-conversation: #64568a; --color-reading: #d09196; --color-word-bank: #f9f4d2;
+  --color-success: #19675f; --color-success-subtle: #e1efea; --color-error: #a3343a; --color-error-subtle: #f6e6e5;
+  --spacing-xs: 4px; --spacing-sm: 8px; --spacing-md: 16px; --spacing-lg: 24px; --spacing-xl: 40px; --spacing-xxl: 64px;
+  --spacing-touch-target: 44px;
+  --rounded-sm: 4px; --rounded-md: 10px; --rounded-lg: 16px; --rounded-full: 9999px;
+  --font-ko: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-label: "Titillium Web", "Arial Narrow", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--color-neutral); color: var(--color-on-surface); font: 400 16px/1.6 var(--font-ko); }
+:lang(ko) { word-break: keep-all; }
+p { margin: 0; }
+button { font: inherit; }
+:focus-visible { outline: 3px solid var(--color-primary-strong); outline-offset: 2px; }
+
+/* ---------- Document chrome (outside the frames) ---------- */
+.doc { max-width: 1480px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-xxl); }
+.doc-head h1 { font-size: 30px; line-height: 1.25; margin: 0 0 var(--spacing-sm); }
+.doc-head p { color: var(--color-secondary); max-width: 72ch; }
+.toc { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); margin-top: var(--spacing-md); }
+.toc a { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--rounded-full); padding: 4px 14px; color: var(--color-primary-strong); font-weight: 700; text-decoration: none; font-size: 14px; }
+.flow { margin-top: var(--spacing-lg); background: var(--color-surface); border-radius: var(--rounded-md); padding: var(--spacing-md) var(--spacing-lg); display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-sm); font-weight: 700; }
+.flow span.arrow { color: var(--color-outline); font-weight: 400; }
+.screen { margin-top: var(--spacing-xxl); }
+.screen-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--spacing-sm) var(--spacing-md); margin-bottom: var(--spacing-md); }
+.screen-head h2 { font-size: 24px; line-height: 1.3; margin: 0; }
+.route { font: 700 14px/1 var(--font-label); letter-spacing: .04em; color: var(--color-primary-strong); background: var(--color-primary-subtle); padding: 6px 10px; border-radius: var(--rounded-full); }
+.purpose { color: var(--color-secondary); flex-basis: 100%; }
+.frames { display: grid; grid-template-columns: minmax(0, 1fr) 375px; gap: var(--spacing-lg); align-items: start; }
+.frame-label { font: 700 13px/1 var(--font-label); letter-spacing: .08em; color: var(--color-secondary); margin-bottom: var(--spacing-sm); }
+.frame { container-type: inline-size; background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--rounded-md); overflow: hidden; }
+.frame.phone { width: 375px; border-radius: 24px; }
+.notes { margin: var(--spacing-md) 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-sm) var(--spacing-lg); }
+.notes li { display: flex; gap: var(--spacing-sm); font-size: 14px; line-height: 1.5; }
+.mk { flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--color-on-surface); color: var(--color-surface); font: 700 12px/1 var(--font-label); vertical-align: middle; }
+.frame .mk { margin: 0 4px; }
+@media (max-width: 1000px) { .frames { grid-template-columns: 1fr; } .frame.phone { margin: 0 auto; } }
+@media (max-width: 420px) { .frame.phone { width: 100%; } }
+
+/* ---------- App UI inside frames ---------- */
+.app { min-height: 100%; position: relative; }
+.pad { padding: var(--spacing-lg); }
+.gloss { color: var(--color-gloss); font-size: 14px; line-height: 1.5; }
+.meta { color: var(--color-secondary); font-size: 14px; line-height: 1.5; }
+.n { font-family: var(--font-label); font-weight: 700; font-variant-numeric: tabular-nums; }
+.label { font: 700 13px/1.2 var(--font-label); letter-spacing: .08em; text-transform: uppercase; color: var(--color-secondary); }
+.h-page { font-size: 26px; line-height: 1.3; font-weight: 700; }
+.h-sec { font-size: 20px; line-height: 1.4; font-weight: 700; }
+.stack > * + * { margin-top: var(--spacing-md); }
+.row { display: flex; gap: var(--spacing-sm); flex-wrap: wrap; align-items: center; }
+.spread { display: flex; justify-content: space-between; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap; }
+.grid2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--spacing-lg); }
+.box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--rounded-md); padding: var(--spacing-md); }
+.plate { background: var(--color-primary-subtle); border-radius: var(--rounded-md); padding: var(--spacing-lg); }
+.tip { background: var(--color-neutral); border-radius: var(--rounded-lg); padding: var(--spacing-md); }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: var(--spacing-touch-target); padding: 0 var(--spacing-lg); border-radius: var(--rounded-md); font-weight: 700; border: 1px solid var(--color-primary); }
+.btn-p { background: var(--color-primary); color: var(--color-surface); }
+.btn-s { background: var(--color-surface); color: var(--color-primary-strong); }
+.btn-q { background: transparent; border-color: transparent; color: var(--color-secondary); padding: 0 var(--spacing-sm); }
+.status { display: inline-block; border-radius: var(--rounded-full); padding: 2px 10px; font-size: 13px; line-height: 1.5; white-space: nowrap; }
+.s-none { background: var(--color-neutral); color: var(--color-secondary); }
+.s-visited { background: var(--color-primary-subtle); color: var(--color-primary-strong); }
+.s-practiced { background: var(--color-word-bank); color: var(--color-on-surface); }
+.s-mastered { background: var(--color-success); color: var(--color-surface); }
+.s-open { background: var(--color-error-subtle); color: var(--color-error); }
+.s-fixed { background: var(--color-success-subtle); color: var(--color-success); }
+.s-draft { border: 1px solid var(--color-outline); color: var(--color-secondary); }
+.bar { height: 8px; background: var(--color-neutral); border-radius: var(--rounded-full); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--color-primary); }
+.list { list-style: none; margin: 0; padding: 0; }
+.list > li { padding: var(--spacing-sm) 0; border-top: 1px solid var(--color-border); }
+.list > li:first-child { border-top: 0; }
+.ph { background: repeating-linear-gradient(135deg, var(--color-neutral) 0 6px, var(--color-surface) 6px 12px); border: 1px dashed var(--color-outline); border-radius: var(--rounded-sm); color: var(--color-secondary); font-size: 13px; padding: var(--spacing-sm); text-align: center; }
+
+/* Nav */
+.topbar { display: flex; align-items: center; gap: var(--spacing-xs); padding: 0 var(--spacing-lg); min-height: 60px; border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+.brand { font: 700 18px/1 var(--font-label); letter-spacing: .02em; margin-right: var(--spacing-md); }
+.brand b { color: var(--color-primary); }
+.topbar a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: var(--rounded-full); color: var(--color-secondary); font-weight: 700; font-size: 15px; text-decoration: none; }
+.topbar a.on { background: var(--color-primary-subtle); color: var(--color-primary-strong); }
+.tabbar { display: none; }
+
+/* Section header (book style) */
+.sec { display: flex; align-items: center; margin-bottom: var(--spacing-md); }
+.tile { width: 40px; height: 40px; border-radius: var(--rounded-md); background: var(--color-on-surface); flex: none; position: relative; z-index: 1; display: grid; place-items: center; }
+.tile::after { content: ""; width: 16px; height: 16px; border: 2px solid var(--color-surface); border-radius: 3px; }
+.tab { display: inline-flex; align-items: center; gap: var(--spacing-sm); min-height: 36px; padding: 0 var(--spacing-md) 0 20px; margin-left: -10px; border-radius: 0 var(--rounded-md) var(--rounded-md) 0; font-weight: 700; }
+.tab small { font: 700 13px/1 var(--font-label); letter-spacing: .08em; }
+.rule { flex: 1; height: 1px; background: var(--color-border); margin-left: var(--spacing-md); }
+.t-g { background: var(--color-grammar); } .t-v { background: var(--color-vocabulary); } .t-c { background: var(--color-culture); }
+.t-r { background: var(--color-reading); } .t-k { background: var(--color-conversation); color: var(--color-surface); }
+
+/* Chapter banner */
+.banner { background: var(--color-primary); color: var(--color-surface); padding: var(--spacing-lg); display: flex; gap: var(--spacing-lg); align-items: center; }
+.banner .num { font: 900 60px/1 var(--font-label); }
+.banner .t { font-size: 32px; line-height: 1.2; font-weight: 700; }
+.opener { background: var(--color-primary-subtle); padding: var(--spacing-lg); }
+.topics { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); text-align: center; }
+.pill { border-radius: var(--rounded-full); padding: 4px 8px; font-weight: 700; margin-bottom: 6px; }
+.pill small { display: block; font: 700 12px/1.2 var(--font-label); letter-spacing: .08em; }
+.obj { display: grid; grid-template-columns: 150px 1fr; margin-top: var(--spacing-lg); border-radius: var(--rounded-md); overflow: hidden; background: var(--color-surface); }
+.obj > div:first-child { background: var(--color-primary); color: var(--color-surface); display: grid; place-content: center; text-align: center; font-weight: 700; padding: var(--spacing-sm); }
+.obj > div:last-child > p { padding: 6px var(--spacing-md); }
+.obj > div:last-child > p + p { border-top: 1px solid var(--color-border); }
+.jump { display: flex; gap: var(--spacing-sm); flex-wrap: wrap; padding: var(--spacing-md) var(--spacing-lg); border-bottom: 1px solid var(--color-border); position: sticky; top: 0; background: var(--color-surface); }
+.jump a { font-size: 14px; font-weight: 700; color: var(--color-primary-strong); text-decoration: none; border: 1px solid var(--color-border); border-radius: var(--rounded-full); padding: 2px 12px; }
+
+/* Quiz */
+.exam-page { background: var(--color-neutral); }
+.qbar { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-sm) var(--spacing-lg); background: var(--color-surface); border-bottom: 1px solid var(--color-border); min-height: 60px; }
+.dots { display: flex; gap: 6px; flex-wrap: wrap; }
+.dots span { width: 30px; height: 30px; display: grid; place-items: center; border-radius: var(--rounded-sm); border: 1px solid var(--color-outline); font: 700 13px/1 var(--font-label); background: var(--color-surface); }
+.dots .a { background: var(--color-primary-subtle); border-color: var(--color-primary-strong); color: var(--color-primary-strong); }
+.dots .cur { outline: 3px solid var(--color-primary-strong); outline-offset: 1px; }
+.qbox { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--rounded-md); padding: var(--spacing-md); text-align: center; font-size: 18px; }
+.choices { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--spacing-sm); }
+.choice { display: flex; align-items: center; gap: var(--spacing-md); min-height: 52px; padding: 6px var(--spacing-md); border: 1px solid var(--color-outline); border-radius: var(--rounded-md); background: var(--color-surface); font-size: 17px; }
+.choice .tag { margin-left: auto; font-size: 13px; font-weight: 700; }
+.choice.sel { background: var(--color-primary-subtle); color: var(--color-primary-strong); border: 2px solid var(--color-primary-strong); }
+.choice.ok { background: var(--color-success-subtle); color: var(--color-success); border: 2px solid var(--color-success); }
+.choice.bad { background: var(--color-error-subtle); color: var(--color-error); border: 2px solid var(--color-error); }
+.qnav { display: flex; justify-content: space-between; gap: var(--spacing-sm); flex-wrap: wrap; }
+.dialog-wrap { background: rgba(35, 33, 33, .4); padding: var(--spacing-xl) var(--spacing-lg); }
+.dialog { background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--rounded-md); padding: var(--spacing-lg); max-width: 440px; margin: 0 auto; }
+
+/* Results / mistakes */
+.score { display: flex; align-items: baseline; gap: var(--spacing-sm); }
+.score .big { font: 900 56px/1 var(--font-label); }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+th { text-align: left; font: 700 12px/1.3 var(--font-label); letter-spacing: .08em; color: var(--color-secondary); border-bottom: 1px solid var(--color-outline); padding: 6px 8px; }
+td { padding: 8px; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+td.r, th.r { text-align: right; }
+.answer-line { display: grid; grid-template-columns: 110px 1fr; gap: 2px var(--spacing-sm); font-size: 15px; }
+.filters { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: var(--spacing-sm); align-items: end; }
+.field label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+.select { min-height: var(--spacing-touch-target); border: 1px solid var(--color-outline); border-radius: var(--rounded-sm); padding: 0 var(--spacing-sm); display: flex; align-items: center; justify-content: space-between; background: var(--color-surface); font-size: 15px; }
+.select::after { content: "▾"; color: var(--color-secondary); }
+.concept-head { display: flex; justify-content: space-between; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap; padding-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-outline); }
+.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+.week div { border-radius: var(--rounded-sm); padding: 6px 0; font-size: 12px; background: var(--color-neutral); color: var(--color-secondary); }
+.week div.on { background: var(--color-primary-subtle); color: var(--color-primary-strong); font-weight: 700; }
+.book-tabs { display: flex; gap: var(--spacing-sm); }
+.book-tabs span { padding: 6px 16px; border-radius: var(--rounded-full); border: 1px solid var(--color-border); font-weight: 700; font-size: 15px; }
+.book-tabs span.on { background: var(--color-primary-subtle); color: var(--color-primary-strong); border-color: var(--color-primary-subtle); }
+.muted-row { color: var(--color-secondary); }
+
+/* ---------- Phone-width rules (container queries) ---------- */
+@container (max-width: 560px) {
+  .pad { padding: var(--spacing-md); }
+  .topbar { padding: 0 var(--spacing-md); justify-content: space-between; }
+  .topbar a { display: none; }
+  .tabbar { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--color-border); background: var(--color-surface); }
+  .tabbar a { display: grid; place-items: center; min-height: 56px; font-size: 12px; font-weight: 700; color: var(--color-secondary); text-decoration: none; }
+  .tabbar a.on { color: var(--color-primary-strong); box-shadow: inset 0 3px 0 var(--color-primary); }
+  .grid2, .topics, .obj, .filters { grid-template-columns: 1fr; }
+  .banner { padding: var(--spacing-md); }
+  .banner .num { font-size: 44px; } .banner .t { font-size: 26px; }
+  .opener { padding: var(--spacing-md); }
+  .topics { text-align: left; }
+  .tab small { display: none; }
+  .hide-phone { display: none !important; }
+  .qbar { padding: var(--spacing-sm) var(--spacing-md); flex-wrap: wrap; }
+  .dots span { width: 26px; height: 26px; }
+  .qnav .btn { flex: 1; }
+  .answer-line { grid-template-columns: 1fr; }
+  table .hide-phone { display: none; }
+  .score .big { font-size: 44px; }
+}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header class="doc-head">
+    <h1>Hangul Lab · Phase 1 wireframes</h1>
+    <p>Seven screens for the first working version. Each is shown at desktop size and phone size, with sample data where a returning learner would have history. Numbered marks match the notes under each screen. Content shown is placeholder or original example text.</p>
+    <nav class="toc" aria-label="Screens">
+      <a href="#s1">1 Dashboard</a><a href="#s2">2 Chapter Library</a><a href="#s3">3 Chapter 11</a><a href="#s4">4 Quiz</a><a href="#s5">5 Results</a><a href="#s6">6 Mistake Review</a><a href="#s7">7 Settings</a>
+    </nav>
+    <div class="flow" aria-label="Core flow">
+      <span>Dashboard</span><span class="arrow">→</span><span>Chapter 11</span><span class="arrow">→</span><span>Quiz</span><span class="arrow">→</span><span>Submit</span><span class="arrow">→</span><span>Results</span><span class="arrow">→</span><span>Mistake Review</span>
+    </div>
+  </header>
+
+  <!-- ============ 1 DASHBOARD ============ -->
+  <section class="screen" id="s1">
+    <div class="screen-head"><h2>1 · Dashboard</h2><span class="route">/</span><p class="purpose">Answers one question: what should I study now? Shown for a returning learner, with the first-visit version beside it.</p></div>
+    <div class="frames">
+      <div><p class="frame-label">DESKTOP · RETURNING LEARNER</p>
+        <div class="frame" data-clone="d1">
+          <div class="app">
+            <div class="topbar"><span class="brand"><b>HANGUL</b> LAB</span><a class="on">Dashboard</a><a>Learn</a><a>Practice</a><a>Settings</a></div>
+            <div class="pad stack">
+              <div class="spread"><div><p class="label">Today · Thu 20 Nov</p><p class="h-page" lang="ko">오늘의 공부</p></div><span class="meta hide-phone">Last studied yesterday</span></div>
+              <div class="plate spread"><div><p class="label" style="color:var(--color-primary-strong)">Next step <span class="mk">1</span></p><p class="h-sec">Resume Chapter 11 practice</p><p class="meta">Question 4 of 10 · started yesterday</p></div><span class="btn btn-p">Resume quiz</span></div>
+              <div class="grid2">
+                <div class="box stack">
+                  <div class="spread"><p class="h-sec">Weak concepts <span class="mk">2</span></p><a class="meta" style="color:var(--color-primary-strong);font-weight:700">See all mistakes</a></div>
+                  <ul class="list">
+                    <li class="spread"><div><p lang="ko"><b>-(으)ㄹ게요</b></p><p class="gloss">promise / offer</p></div><div style="text-align:right"><span class="status s-open">3 open</span><p class="meta"><span class="n">2/5</span> correct</p></div></li>
+                    <li class="spread"><div><p lang="ko"><b>쓰레기 분리배출</b></p><p class="gloss">waste sorting words</p></div><div style="text-align:right"><span class="status s-open">1 open</span><p class="meta"><span class="n">5/6</span> correct</p></div></li>
+                  </ul>
+                  <span class="btn btn-s">Review weak concepts</span>
+                </div>
+                <div class="stack">
+                  <div class="box stack">
+                    <p class="h-sec">Chapter progress <span class="mk">3</span></p>
+                    <div class="spread"><span lang="ko"><b class="n">11</b> 집안일</span><span class="status s-practiced">Practiced</span></div>
+                    <div class="bar" aria-hidden="true"><i style="width:10%"></i></div>
+                    <p class="meta"><span class="n">6</span> visited · <span class="n">3</span> practiced · <span class="n">1</span> mastered of <span class="n">60</span></p>
+                  </div>
+                  <div class="box stack">
+                    <p class="h-sec">This week <span class="mk">4</span></p>
+                    <div class="week"><div class="on">M<br>12</div><div>T<br>–</div><div class="on">W<br>20</div><div class="on">T<br>4</div><div>F<br>–</div><div>S<br>–</div><div>S<br>–</div></div>
+                    <p class="meta"><span class="n">36</span> questions answered · <span class="n">3</span> study days</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <nav class="tabbar"><a class="on">Home</a><a>Learn</a><a>Practice</a><a>Settings</a></nav>
+          </div>
+        </div>
+      </div>
+      <div><p class="frame-label">PHONE · FIRST VISIT <span class="mk">5</span></p>
+        <div class="frame phone">
+          <div class="app">
+            <div class="topbar"><span class="brand"><b>HANGUL</b> LAB</span><a class="on">Dashboard</a><a>Learn</a><a>Practice</a><a>Settings</a></div>
+            <div class="pad stack">
+              <div><p class="label">Today · Thu 20 Nov</p><p class="h-page" lang="ko">오늘의 공부</p></div>
+              <div class="plate stack"><p class="label" style="color:var(--color-primary-strong)">Start here</p><p class="h-sec" lang="ko">11 집안일</p><p class="gloss">Household Chores · Book 1, p.150</p><p class="meta">No study history yet. Read the chapter, then take a 10-question practice exam.</p><span class="btn btn-p">Open Chapter 11</span></div>
+              <div class="box"><p class="h-sec">Weak concepts</p><p class="meta">Concepts you miss will appear here after your first quiz.</p></div>
+              <div class="box"><p class="h-sec">Chapter progress</p><p class="meta"><span class="n">0</span> of <span class="n">60</span> chapters started.</p></div>
+            </div>
+            <nav class="tabbar"><a class="on">Home</a><a>Learn</a><a>Practice</a><a>Settings</a></nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ol class="notes">
+      <li><span class="mk">1</span>One next step, chosen in order: unfinished quiz, then open mistakes, then the current chapter. Only one primary button on the screen.</li>
+      <li><span class="mk">2</span>Weak concepts always show their evidence, such as "2/5 correct", so one lucky answer never looks like mastery.</li>
+      <li><span class="mk">3</span>Visited, practiced, and mastered are counted separately, as the PRD requires.</li>
+      <li><span class="mk">4</span>Weekly activity is calculated from saved attempts. Nothing is stored separately.</li>
+      <li><span class="mk">5</span>A first visit shows honest empty states: no fake progress, no "Continue", and no resume button.</li>
+    </ol>
+  </section>
+
+  <!-- ============ 2 LIBRARY ============ -->
+  <section class="screen" id="s2">
+    <div class="screen-head"><h2>2 · Chapter Library</h2><span class="route">/learn</span><p class="purpose">All 60 chapters from Book 1 and Book 2, in textbook order, with honest status.</p></div>
+    <div class="frames">
+      <div><p class="frame-label">DESKTOP</p>
+        <div class="frame" data-clone="d2">
+          <div class="app">
+            <div class="topbar"><span class="brand"><b>HANGUL</b> LAB</span><a>Dashboard</a><a class="on">Learn</a><a>Practice</a><a>Settings</a></div>
+            <div class="pad stack">
+              <div class="spread"><p class="h-page">Chapters</p><div class="book-tabs"><span class="on">Book 1 · 일상생활</span><span>Book 2 · 직장생활</span></div></div>
+              <p class="meta">Book 1 covers chapters 1–30. Content is added one chapter at a time. <span class="mk">1</span></p>
+              <table>
+                <thead><tr><th>NO.</th><th>CHAPTER</th><th class="hide-phone">GRAMMAR</th><th>STATUS</th><th class="r hide-phone">BEST</th></tr></thead>
+                <tbody>
+                  <tr class="muted-row"><td class="n">10</td><td><span lang="ko">물건 구입</span><br><span class="gloss">Shopping</span></td><td class="hide-phone meta">Content coming later</td><td><span class="status s-none">Not started</span></td><td class="r hide-phone">—</td></tr>
+                  <tr style="background:var(--color-primary-subtle)"><td class="n"><b>11</b></td><td><b lang="ko">집안일</b> <span class="mk">2</span><br><span class="gloss">Household Chores</span></td><td class="hide-phone" lang="ko">-아야/어야 되다 · -(으)ㄹ게요</td><td><span class="status s-practiced">Practiced</span></td><td class="r n hide-phone">6/10</td></tr>
+                  <tr class="muted-row"><td class="n">12</td><td><span lang="ko">대중교통</span><br><span class="gloss">Public Transportation</span></td><td class="hide-phone meta">Content coming later</td><td><span class="status s-none">Not started</span></td><td class="r hide-phone">—</td></tr>
+                  <tr class="muted-row"><td class="n">13</td><td><span lang="ko">주말 활동</span><br><span class="gloss">Weekend Activities</span></td><td class="hide-phone meta">Content coming later</td><td><span class="status s-none">Not started</span></td><td class="r hide-phone">—</td></tr>
+                </tbody>
+              </table>
+              <p class="meta">… chapters 1–9 and 14–30 continue in the same table. <span class="mk">3</span></p>
+            </div>
+            <nav class="tabbar"><a>Home</a><a class="on">Learn</a><a>Practice</a><a>Settings</a></nav>
+          </div>
+        </div>
+      </div>
+      <div><p class="frame-label">PHONE</p><div class="frame phone" data-from="d2"></div></div>
+    </div>
+    <ol class="notes">
+      <li><span class="mk">1</span>Two book tabs keep 60 chapters manageable. The current chapter's book opens by default.</li>
+      <li><span class="mk">2</span>Only chapters with content are links. Chapter 11 is highlighted as the current chapter.</li>
+      <li><span class="mk">3</span>Chapters without content still appear with their real titles, so the library matches the book's contents page.</li>
+    </ol>
+  </section>
+
+  <!-- ============ 3 CHAPTER ============ -->
+  <section class="screen" id="s3">
+    <div class="screen-head"><h2>3 · Chapter 11</h2><span class="route">/learn/11</span><p class="purpose">Study the chapter in book order, then start the practice exam.</p></div>
+    <div class="frames">
+      <div><p class="frame-label">DESKTOP</p>
+        <div class="frame" data-clone="d3">
+          <div class="app">
+            <div class="topbar"><span class="brand"><b>HANGUL</b> LAB</span><a>Dashboard</a><a class="on">Learn</a><a>Practice</a><a>Settings</a></div>
+            <div class="banner"><span class="num">11</span><div><p class="label" style="color:var(--color-primary-subtle)">BOOK 1 · p.150</p><p class="t" lang="ko">집안일</p><p>Household Chores</p></div></div>
+            <div class="opener">
+              <div class="topics">
+                <div><div class="pill t-g"><span lang="ko">문법</span><small>GRAMMAR</small></div><p lang="ko"><b>-아야/어야 되다 · -(으)ㄹ게요</b></p></div>
+                <div><div class="pill t-v"><span lang="ko">어휘</span><small>VOCABULARY</small></div><p lang="ko"><b>쓰레기 분리배출 · 집안일</b></p></div>
+                <div><div class="pill t-c"><span lang="ko">문화와 정보</span><small>CULTURE</small></div><p lang="ko"><b>쓰레기 분리배출</b></p></div>
+              </div>
+              <div class="obj"><div><span lang="ko">학습 목표</span></div><div><p lang="ko">쓰레기 버리는 방법을 묻고 대답할 수 있다.<br><span class="gloss">Ask and answer how to throw away trash.</span></p><p lang="ko">집안일에 대해 이야기할 수 있다.<br><span class="gloss">Talk about household chores.</span></p></div></div>
+            </div>
+            <nav class="jump" aria-label="Chapter sections"><a>Vocabulary 1</a><a>Grammar 1</a><a>Vocabulary 2</a><a>Grammar 2</a><a>Culture</a><a>Practice exam</a> <span class="mk">1</span></nav>
+            <div class="pad stack">
+              <div class="sec"><span class="tile"></span><span class="tab t-v" lang="ko">어휘 <small>VOCABULARY</small></span><span class="rule"></span></div>
+              <div class="grid2"><div class="ph">Word groups: Korean term, maroon English gloss, original example <span class="mk">2</span></div><div class="ph">Matching exercise</div></div>
+              <div class="sec"><span class="tile"></span><span class="tab t-g" lang="ko">문법 <small>GRAMMAR</small></span><span class="rule"></span></div>
+              <div class="grid2"><div class="ph">Pattern, explanation, conjugation table, highlighted examples</div><div class="tip"><b>TIP</b><p class="meta">Side note, such as -아야/어야 하다 in formal writing</p></div></div>
+              <div class="box spread" style="border-color:var(--color-reading);border-width:2px"><div><div class="sec" style="margin:0 0 6px"><span class="tile"></span><span class="tab t-r" lang="ko">연습 시험 <small>PRACTICE EXAM</small></span></div><p class="meta"><span class="n">10</span> original EPS-TOPIK-style questions · answers shown after you submit <span class="mk">3</span></p></div><span class="btn btn-p">Start practice exam</span></div>
+            </div>
+            <nav class="tabbar"><a>Home</a><a class="on">Learn</a><a>Practice</a><a>Settings</a></nav>
+          </div>
+        </div>
+      </div>
+      <div><p class="frame-label">PHONE</p><div class="frame phone" data-from="d3"></div></div>
+    </div>
+    <ol class="notes">
+      <li><span class="mk">1</span>A sticky jump bar follows the book's order and lets the learner skip straight to the exam.</li>
+      <li><span class="mk">2</span>Gray striped boxes are placeholders. Lesson text will be original, with book page references.</li>
+      <li><span class="mk">3</span>The exam card says the questions are original EPS-TOPIK-style practice, never real exam questions.</li>
+    </ol>
+  </section>
+
+  <!-- ============ 4 QUIZ ============ -->
+  <section class="screen" id="s4">
+    <div class="screen-head"><h2>4 · Quiz</h2><span class="route">/quiz/:sessionId</span><p class="purpose">Answer ten questions with no distractions. Correct answers stay hidden until the whole quiz is submitted.</p></div>
+    <div class="frames">
+      <div><p class="frame-label">DESKTOP · ANSWERING</p>
+        <div class="frame" data-clone="d4">
+          <div class="app exam-page">
+            <div class="qbar"><span class="btn btn-q">✕ Exit</span><b lang="ko">11 집안일 · Practice</b><span style="margin-left:auto" class="status s-draft">Draft question</span> <span class="mk">1</span></div>
+            <div class="pad stack">
+              <div class="spread"><div class="dots" aria-label="Question navigator"><span class="a">1</span><span class="a">2</span><span class="a">3</span><span class="cur">4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div><span class="meta"><span class="n">3</span> of <span class="n">10</span> answered <span class="mk">2</span></span></div>
+              <div class="sec" style="margin:0"><span class="tile"></span><span class="tab t-r" lang="ko">읽기 <small>READING</small></span><span class="rule"></span></div>
+              <p style="font-weight:700;font-size:18px" lang="ko"><span class="n">4.</span> 빈칸에 들어갈 가장 알맞은 것을 고르십시오.</p>
+              <div class="qbox" lang="ko">비가 와요. 제가 빨리 빨래를 (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).</div>
+              <ul class="choices" lang="ko">
+                <li class="choice">① 널게요</li>
+                <li class="choice sel">② 걷을게요<span class="tag" lang="en">Selected</span></li>
+                <li class="choice">③ 갤게요</li>
+                <li class="choice">④ 다릴게요</li>
+              </ul>
+              <p class="meta">Keys: 1–4 choose · ← → move between questions <span class="mk">3</span></p>
+              <div class="qnav"><span class="btn btn-s">← Previous</span><span class="btn btn-s">Next →</span></div>
+              <div style="text-align:right"><span class="btn btn-p">Submit quiz</span> <span class="mk">4</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div><p class="frame-label">PHONE · SUBMIT CONFIRMATION <span class="mk">5</span></p>
+        <div class="frame phone">
+          <div class="app exam-page">
+            <div class="qbar"><span class="btn btn-q">✕ Exit</span><b lang="ko">11 집안일</b></div>
+            <div class="dialog-wrap">
+              <div class="dialog stack" role="dialog" aria-label="Submit quiz">
+                <p class="h-sec">Submit your quiz?</p>
+                <p><b class="n">2</b> questions are unanswered: <b class="n">7</b> and <b class="n">9</b>. Unanswered questions count as incorrect.</p>
+                <p class="meta">You can't change answers after submitting.</p>
+                <div class="row"><span class="btn btn-s" style="flex:1">Go back</span><span class="btn btn-p" style="flex:1">Submit anyway</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ol class="notes">
+      <li><span class="mk">1</span>Main navigation is hidden during the quiz. Exit saves progress and asks for confirmation.</li>
+      <li><span class="mk">2</span>The navigator shows answered or unanswered only, never right or wrong.</li>
+      <li><span class="mk">3</span>Fully keyboard usable. Every answer and progress change saves immediately, so a refresh resumes here.</li>
+      <li><span class="mk">4</span>Submit is always available, not only on question 10.</li>
+      <li><span class="mk">5</span>Confirmation lists unanswered questions. Scoring happens once, even after a double click.</li>
+    </ol>
+  </section>
+
+  <!-- ============ 5 RESULTS ============ -->
+  <section class="screen" id="s5">
+    <div class="screen-head"><h2>5 · Results</h2><span class="route">/quiz/:sessionId/results</span><p class="purpose">Show the score, what it means, and an explanation for every question.</p></div>
+    <div class="frames">
+      <div><p class="frame-label">DESKTOP</p>
+        <div class="frame" data-clone="d5">
+          <div class="app">
+            <div class="topbar"><span class="brand"><b>HANGUL</b> LAB</span><a>Dashboard</a><a class="on">Learn</a><a>Practice</a><a>Settings</a></div>
+            <div class="pad stack">
+              <p class="label">Chapter 11 · Practice exam · 20 Nov</p>
+              <div class="grid2">
+                <div class="plate stack">
+                  <div class="score"><span class="big">7</span><span class="n" style="font-size:24px">/ 10</span><span class="meta">70%</span></div>
+                  <p><span class="status s-practiced">Practiced</span> <span class="mk">1</span></p>
+                  <p class="meta">Mastery needs at least 80% and correct answers on concepts you missed.</p>
+                  <div class="row"><span class="btn btn-p">Review mistakes</span><span class="btn btn-s">Back to chapter</span></div>
+                </div>
+                <div class="box">
+                  <p class="h-sec" style="margin-bottom:6px">By concept <span class="mk">2</span></p>
+                  <table><thead><tr><th>CONCEPT</th><th class="r">CORRECT</th></tr></thead><tbody>
+                    <tr><td lang="ko">-아야/어야 되다</td><td class="r n">3/3</td></tr>
+                    <tr><td lang="ko">-(으)ㄹ게요</td><td class="r n">1/3</td></tr>
+                    <tr><td lang="ko">집안일 어휘</td><td class="r n">2/2</td></tr>
+                    <tr><td lang="ko">쓰레기 분리배출</td><td class="r n">1/2</td></tr>
+                  </tbody></table>
+                </div>
+              </div>
+              <p class="h-sec">Answers and explanations <span class="mk">3</span></p>
+              <ul class="list">
+                <li class="spread"><span><b class="n">1.</b> <span lang="ko">전기밥솥 어휘</span></span><span class="status s-fixed">Correct</span></li>
+                <li class="stack">
+                  <div class="spread"><span><b class="n">4.</b> <span lang="ko">빈칸에 들어갈 알맞은 것</span></span><span class="status s-open">Incorrect</span></div>
+                  <ul class="choices" lang="ko">
+                    <li class="choice bad">① 널게요<span class="tag" lang="en">Your answer</span></li>
+                    <li class="choice ok">② 걷을게요<span class="tag" lang="en">Correct answer</span></li>
+                  </ul>
+                  <div class="tip"><p lang="ko"><b>빨래를 걷다</b> means taking dry laundry in. It is raining, so the speaker offers to take it in now with <b style="color:var(--color-example)">-(으)ㄹ게요</b>.</p><p class="meta">Concept: -(으)ㄹ게요 · Book 1, p.155</p></div>
+                </li>
+                <li class="spread"><span><b class="n">5.</b> <span lang="ko">쓰레기 분리배출 읽기</span></span><span class="status s-fixed">Correct</span></li>
+              </ul>
+            </div>
+            <nav class="tabbar"><a>Home</a><a class="on">Learn</a><a>Practice</a><a>Settings</a></nav>
+          </div>
+        </div>
+      </div>
+      <div><p class="frame-label">PHONE</p><div class="frame phone" data-from="d5"></div></div>
+    </div>
+    <ol class="notes">
+      <li><span class="mk">1</span>Status is explained in plain words, so 70% is not presented as a failure or as mastery.</li>
+      <li><span class="mk">2</span>The concept breakdown shows counts, which is the sample size the PRD asks for.</li>
+      <li><span class="mk">3</span>Wrong answers open by default and show your answer, the correct answer, the explanation, and the source page.</li>
+    </ol>
+  </section>
+
+  <!-- ============ 6 MISTAKES ============ -->
+  <section class="screen" id="s6">
+    <div class="screen-head"><h2>6 · Mistake Review</h2><span class="route">/practice/mistakes</span><p class="purpose">Every wrong answer, grouped by concept, filterable by chapter, concept, or date.</p></div>
+    <div class="frames">
+      <div><p class="frame-label">DESKTOP</p>
+        <div class="frame" data-clone="d6">
+          <div class="app">
+            <div class="topbar"><span class="brand"><b>HANGUL</b> LAB</span><a>Dashboard</a><a>Learn</a><a class="on">Practice</a><a>Settings</a></div>
+            <div class="pad stack">
+              <p class="h-page">Mistakes</p>
+              <div class="filters"><div class="field"><label>Chapter</label><div class="select">11 집안일</div></div><div class="field"><label>Concept</label><div class="select">All concepts</div></div><div class="field"><label>Date</label><div class="select">Last 30 days</div></div><span class="btn btn-q">Clear</span></div>
+              <p class="meta"><b class="n">4</b> open mistakes across <b class="n">2</b> concepts · <b class="n">1</b> fixed <span class="mk">1</span></p>
+              <div class="stack">
+                <div class="concept-head"><div><p class="h-sec" lang="ko">-(으)ㄹ게요</p><p class="meta">Missed <span class="n">3</span> times · <span class="n">2/5</span> correct overall · last missed 20 Nov <span class="mk">2</span></p></div><span class="btn btn-s">Practice this concept</span></div>
+                <ul class="list">
+                  <li class="stack"><div class="spread"><span lang="ko"><b class="n">Q4</b> 비가 와요. 제가 빨리 빨래를 ( ).</span><span class="status s-open">Open</span></div><div class="answer-line"><span class="meta">Your answer</span><span lang="ko" style="color:var(--color-error)">① 널게요</span><span class="meta">Correct</span><span lang="ko" style="color:var(--color-success)">② 걷을게요</span></div></li>
+                  <li class="stack"><div class="spread"><span lang="ko"><b class="n">Q8</b> 가: 설거지를 해야 돼요. 나: 제가 ( ).</span><span class="status s-fixed">Fixed</span></div><p class="meta">Answered correctly on 20 Nov after this mistake. <span class="mk">3</span></p></li>
+                </ul>
+              </div>
+            </div>
+            <nav class="tabbar"><a>Home</a><a>Learn</a><a class="on">Practice</a><a>Settings</a></nav>
+          </div>
+        </div>
+      </div>
+      <div><p class="frame-label">PHONE</p><div class="frame phone" data-from="d6"></div></div>
+    </div>
+    <ol class="notes">
+      <li><span class="mk">1</span>Filters update the URL, so a filtered view survives refresh and can be bookmarked.</li>
+      <li><span class="mk">2</span>Concepts with more repeated mistakes rise to the top.</li>
+      <li><span class="mk">3</span>A mistake becomes Fixed when the same concept is later answered correctly. "Practice this concept" is a Phase 3 feature and appears only when it works.</li>
+    </ol>
+  </section>
+
+  <!-- ============ 7 SETTINGS ============ -->
+  <section class="screen" id="s7">
+    <div class="screen-head"><h2>7 · Settings</h2><span class="route">/settings</span><p class="purpose">Move progress between Chrome and Safari, and protect it from browser data clearing.</p></div>
+    <div class="frames">
+      <div><p class="frame-label">DESKTOP</p>
+        <div class="frame" data-clone="d7">
+          <div class="app">
+            <div class="topbar"><span class="brand"><b>HANGUL</b> LAB</span><a>Dashboard</a><a>Learn</a><a>Practice</a><a class="on">Settings</a></div>
+            <div class="pad stack">
+              <p class="h-page">Settings</p>
+              <div class="tip"><p><b>Your progress is saved in this browser only.</b></p><p class="meta">Chrome and Safari keep separate copies, and Safari may delete site data after about 7 days without a visit. <span class="mk">1</span></p></div>
+              <div class="grid2">
+                <div class="box stack"><p class="h-sec">Download backup</p><p class="meta">Saves every quiz, answer, and chapter visit as one file.</p><p class="meta">Last backup: never <span class="mk">2</span></p><span class="btn btn-p">Download backup</span></div>
+                <div class="box stack"><p class="h-sec">Restore from backup</p><p class="meta">Replaces the progress in this browser. It does not merge.</p><div class="select" style="justify-content:flex-start">Choose file…</div><p class="meta">The file is checked before anything changes. <span class="mk">3</span></p></div>
+              </div>
+            </div>
+            <nav class="tabbar"><a>Home</a><a>Learn</a><a>Practice</a><a class="on">Settings</a></nav>
+          </div>
+        </div>
+      </div>
+      <div><p class="frame-label">PHONE</p><div class="frame phone" data-from="d7"></div></div>
+    </div>
+    <ol class="notes">
+      <li><span class="mk">1</span>Explains the browser limitation plainly, because it affects how the learner should study.</li>
+      <li><span class="mk">2</span>The dashboard can remind the learner when no backup has been made for 7 days.</li>
+      <li><span class="mk">3</span>Restore shows what the file contains and asks for confirmation before replacing data. Invalid files leave progress untouched.</li>
+    </ol>
+  </section>
+
+</div>
+<script>
+  // Phone frames reuse the desktop markup; container queries adapt the layout.
+  document.querySelectorAll('[data-from]').forEach(phone => {
+    const src = document.querySelector(`[data-clone="${phone.dataset.from}"] .app`);
+    if (src) phone.appendChild(src.cloneNode(true));
+  });
+</script>
+</body>
+</html>

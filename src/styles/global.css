@@ -1,0 +1,54 @@
+/*
+  Global styles for Hangul Lab.
+  Colors, spacing, and radii come from tokens.css, which is generated from DESIGN.md
+  by `npm run tokens`. Never type a hex color here; use a var(--color-...) token.
+*/
+
+/* Font stacks from DESIGN.md (the token export does not include typography). */
+:root {
+  --font-ko: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-label: "Titillium Web", "Arial Narrow", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  font: 400 16px/1.7 var(--font-ko);
+}
+
+/* Korean line breaking: keep words whole instead of splitting syllables. */
+:lang(ko) {
+  word-break: keep-all;
+}
+
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-primary-strong);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
