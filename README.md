@@ -6,13 +6,13 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 ## Status
 
-**Phase 1, Milestone 2 (app shell and navigation): complete.**
+**Phase 1, Milestone 3 (content foundation): complete.**
 
 | Milestone | Status |
 |---|---|
 | 1. Project setup | Done |
 | 2. App shell and tokens | Done |
-| 3. Content foundation | Pending |
+| 3. Content foundation | Done |
 | 4. Scoring and quiz rules | Pending |
 | 5. Local persistence and backup | Pending |
 | 6. Dashboard → Chapter 11 | Pending |
@@ -74,12 +74,24 @@ src/
   main.tsx        Starts React, the router, fonts, and global styles
   app/            Routes, layouts, and navigation
   components/     Shared UI pieces (PageHeader, Notice)
+  content/        Chapters, lessons, concepts, questions, and their validation
   domain/         Pure rules with no UI, such as chapter-number checks
   features/       One folder per screen (dashboard, chapters, quiz, ...)
   styles/         tokens.css (generated) and global.css
   test/           Shared test setup
 docs/             Plan, decisions, and design references
 ```
+
+## Study content
+
+All study material lives in `src/content/`, and screens read it only through `src/content/index.ts`.
+
+- `chapters.ts`: all 60 chapters from both books' contents pages.
+- `chapter-11/`: the lesson (vocabulary, grammar, culture), 6 concepts, and 22 original practice questions.
+- `schemas.ts`: the rules every chapter, concept, question, and lesson must follow.
+- `validate.ts`: cross-checks, such as every question pointing to a real concept and every answer key matching a choice.
+
+`npm test` fails if any content breaks a rule. Questions are original EPS-TOPIK-style practice, stay `draft` until a person reviews them, and must never mention ①–④ in explanations, because choices can be shuffled.
 
 ## Screens and URLs
 
@@ -94,4 +106,4 @@ docs/             Plan, decisions, and design references
 | `/quiz/:sessionId/results` | Results |
 | `/settings` | Settings |
 
-`content/` and `data/` are added in later milestones, as described in the plan. Screens still show short placeholder notes saying which milestone builds them.
+`data/` is added in a later milestone, as described in the plan. Screens still show short placeholder notes saying which milestone builds them.

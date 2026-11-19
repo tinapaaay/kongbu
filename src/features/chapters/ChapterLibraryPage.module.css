@@ -1,0 +1,128 @@
+.bookTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.bookTab {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--spacing-touch-target);
+  padding: 0 var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--rounded-full);
+  color: var(--color-secondary);
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 120ms;
+}
+
+.bookTab:hover {
+  background: var(--color-neutral);
+}
+
+.bookTabActive,
+.bookTabActive:hover {
+  background: var(--color-primary-subtle);
+  border-color: var(--color-primary-subtle);
+  color: var(--color-primary-strong);
+}
+
+.meta {
+  color: var(--color-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: var(--spacing-md);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  font: 700 14px/1.2 var(--font-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-outline);
+}
+
+.table td {
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.availableRow {
+  background: var(--color-primary-subtle);
+}
+
+.number {
+  font: 700 16px/1.4 var(--font-label);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.plannedRow .number {
+  color: var(--color-secondary);
+}
+
+.title,
+.titleLink {
+  display: block;
+  font-weight: 700;
+}
+
+.plannedRow .title {
+  color: var(--color-secondary);
+}
+
+.titleLink {
+  color: var(--color-primary-strong);
+}
+
+.gloss {
+  display: block;
+  color: var(--color-gloss);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pillAvailable,
+.pillPlanned {
+  display: inline-block;
+  border-radius: var(--rounded-full);
+  padding: 2px 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.pillAvailable {
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.pillPlanned {
+  background: var(--color-neutral);
+  color: var(--color-secondary);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .hideOnPhone {
+    display: none;
+  }
+}
