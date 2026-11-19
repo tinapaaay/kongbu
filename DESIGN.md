@@ -382,7 +382,7 @@ Section colors only identify section type. They are not decoration and do not in
 
 The book uses **Apple SD Gothic Neo** for Korean and **Titillium Web** for its English section labels and large numbers. Hangul Lab uses the same families.
 
-**Apple SD Gothic Neo** is built into macOS and iOS, so it needs no download there. On other systems, use Noto Sans KR from Fontsource. Font stack: `"Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif`. Use only weights 400 and 700.
+**Apple SD Gothic Neo** is built into macOS and iOS, so it needs no download there. Other systems use their own built-in Korean font, so no Korean web font is downloaded. A Korean web font would add about 178 KB of CSS to every page for devices that already have Korean fonts. Font stack: `"Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", "Noto Sans KR", sans-serif`. Use only weights 400 and 700.
 
 **Titillium Web** is open-licensed and self-hosted through Fontsource. It is used for uppercase English tab labels, large chapter numbers, question numbers, and scores. It is not used for Korean or paragraphs. Labels use weight 700 at 14px or larger with 0.08em letter spacing. Weight 900 is reserved for numbers 28px and larger, because it closes up the letter shapes at small sizes. Font stack: `"Titillium Web", "Arial Narrow", sans-serif`.
 

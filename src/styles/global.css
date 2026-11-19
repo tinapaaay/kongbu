@@ -6,7 +6,7 @@
 
 /* Font stacks from DESIGN.md (the token export does not include typography). */
 :root {
-  --font-ko: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-ko: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", "Noto Sans KR", sans-serif;
   --font-label: "Titillium Web", "Arial Narrow", sans-serif;
 }
 

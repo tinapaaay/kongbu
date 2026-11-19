@@ -6,12 +6,12 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 ## Status
 
-**Phase 1, Milestone 1 (project setup): complete.**
+**Phase 1, Milestone 2 (app shell and navigation): complete.**
 
 | Milestone | Status |
 |---|---|
 | 1. Project setup | Done |
-| 2. App shell and tokens | Pending |
+| 2. App shell and tokens | Done |
 | 3. Content foundation | Pending |
 | 4. Scoring and quiz rules | Pending |
 | 5. Local persistence and backup | Pending |
@@ -71,11 +71,27 @@ Visual references:
 
 ```text
 src/
-  main.tsx        Starts React and loads global styles
-  App.tsx         Current screen (replaced by the app shell in Milestone 2)
+  main.tsx        Starts React, the router, fonts, and global styles
+  app/            Routes, layouts, and navigation
+  components/     Shared UI pieces (PageHeader, Notice)
+  domain/         Pure rules with no UI, such as chapter-number checks
+  features/       One folder per screen (dashboard, chapters, quiz, ...)
   styles/         tokens.css (generated) and global.css
   test/           Shared test setup
 docs/             Plan, decisions, and design references
 ```
 
-More folders (`content/`, `domain/`, `data/`, `features/`, `components/`) are added in later milestones, as described in the plan.
+## Screens and URLs
+
+| URL | Screen |
+|---|---|
+| `/` | Dashboard |
+| `/learn` | Chapter Library |
+| `/learn/11` | One chapter (1–60) |
+| `/practice` | Redirects to `/practice/mistakes` |
+| `/practice/mistakes` | Mistake Review |
+| `/quiz/:sessionId` | Quiz (no main navigation) |
+| `/quiz/:sessionId/results` | Results |
+| `/settings` | Settings |
+
+`content/` and `data/` are added in later milestones, as described in the plan. Screens still show short placeholder notes saying which milestone builds them.

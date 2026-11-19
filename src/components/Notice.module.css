@@ -1,0 +1,15 @@
+.notice {
+  background: var(--color-neutral);
+  border-radius: var(--rounded-lg);
+  padding: var(--spacing-lg);
+  max-width: 68ch;
+}
+
+.notice > * + * {
+  margin-top: var(--spacing-sm);
+}
+
+.notice a {
+  color: var(--color-primary-strong);
+  font-weight: 700;
+}
