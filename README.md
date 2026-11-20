@@ -1,6 +1,6 @@
-# Gongbu (공부) · EPS-TOPIK Review
+# Kongbu (공부) · EPS-TOPIK Review
 
-An unofficial EPS-TOPIK review app based on the Standard Korean Language Textbook (Books 1 and 2). It is not made by or affiliated with HRD Korea. Formerly called Hangul Lab.
+An unofficial EPS-TOPIK review app based on the Standard Korean Language Textbook (Books 1 and 2). It is not made by or affiliated with HRD Korea. Formerly called Hangul Lab. "Kongbu" is 공부 ("study"), spelled the way it sounds.
 
 A personal Korean study workspace for EPS-TOPIK preparation, organized around the NEW EPS-TOPIK Standard Korean Textbook (Books 1 and 2).
 
@@ -203,7 +203,7 @@ Progress is saved in the browser's localStorage under one key, `hangul-lab:learn
 - **Damaged data:** if saved data can't be read, a copy is kept under `hangul-lab:damaged-copy:<time>` and every page shows a warning. Nothing is silently deleted.
 - **Newer data:** data saved by a newer app version is never overwritten.
 - **Blocked or full storage:** the app keeps working for the current visit and shows a warning.
-- **Backups:** Settings downloads a `gongbu-backup-YYYY-MM-DD.json` file and restores one (backups made under the old name, `hangul-lab-backup-…`, still restore). A restore file is fully checked and summarized, and nothing is replaced until you confirm.
+- **Backups:** Settings downloads a `kongbu-backup-YYYY-MM-DD.json` file and restores one (backups made under the app's earlier names, `hangul-lab-backup-…` and `gongbu-backup-…`, still restore). A restore file is fully checked and summarized, and nothing is replaced until you confirm.
 
 Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, so Phase 2 can switch to a database by adding a new `LearnerRepository`.
 

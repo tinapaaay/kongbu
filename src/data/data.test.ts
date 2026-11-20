@@ -232,14 +232,14 @@ describe('backups', () => {
   })
 
   it('names files by local date', () => {
-    expect(backupFileName(new Date(2026, 10, 20, 23, 30))).toBe('gongbu-backup-2026-11-20.json')
+    expect(backupFileName(new Date(2026, 10, 20, 23, 30))).toBe('kongbu-backup-2026-11-20.json')
   })
 
   it.each([
     ['plain text', 'hello', /couldn't be read/],
-    ['another JSON file', JSON.stringify({ name: 'shopping list' }), /isn't a Gongbu backup/],
-    ['damaged data', JSON.stringify({ app: 'gongbu', kind: 'backup', data: { schemaVersion: 1, attempts: 5 } }), /damaged/],
-    ['a newer version', JSON.stringify({ app: 'gongbu', kind: 'backup', data: { schemaVersion: 9 } }), /newer version/],
+    ['another JSON file', JSON.stringify({ name: 'shopping list' }), /isn't a Kongbu backup/],
+    ['damaged data', JSON.stringify({ app: 'kongbu', kind: 'backup', data: { schemaVersion: 1, attempts: 5 } }), /damaged/],
+    ['a newer version', JSON.stringify({ app: 'kongbu', kind: 'backup', data: { schemaVersion: 9 } }), /newer version/],
   ])('rejects %s with a clear message', (_label, text, message) => {
     const result = parseBackup(text)
     expect(result.ok).toBe(false)
@@ -275,8 +275,8 @@ describe('migrations', () => {
     ])
   })
 
-  it('a backup made under the old name (Hangul Lab) still restores', () => {
-    const old = JSON.stringify({ app: 'hangul-lab', kind: 'backup', exportedAt: NOW.toISOString(), data: emptyLearnerData() })
+  it.each(['hangul-lab', 'gongbu'])('a backup made under an old name (%s) still restores', (app) => {
+    const old = JSON.stringify({ app, kind: 'backup', exportedAt: NOW.toISOString(), data: emptyLearnerData() })
     expect(parseBackup(old)).toMatchObject({ ok: true })
   })
 

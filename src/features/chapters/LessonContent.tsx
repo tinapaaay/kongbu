@@ -79,7 +79,7 @@ export function LessonContent({ lesson }: { lesson: Lesson }) {
           ))}
         </div>
         <p className={styles.source}>
-          Summary written for Gongbu · Book {lesson.culture.textbookRef.volume}, p.{lesson.culture.textbookRef.page}
+          Summary written for Kongbu · Book {lesson.culture.textbookRef.volume}, p.{lesson.culture.textbookRef.page}
         </p>
       </section>
     </>

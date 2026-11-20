@@ -1,5 +1,5 @@
 /*
-  Global styles for Gongbu.
+  Global styles for Kongbu.
   Colors, spacing, and radii come from tokens.css, which is generated from DESIGN.md
   by `npm run tokens`. Never type a hex color here; use a var(--color-...) token.
 */
