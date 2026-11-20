@@ -6,6 +6,8 @@ A personal Korean study workspace for EPS-TOPIK preparation, organized around th
 
 Practice questions are original EPS-TOPIK-style questions, not real exam questions. Textbook PDFs and audio are private study material and are never committed to this repository.
 
+**Live app:** https://tinapaaay.github.io/kongbu/ (deployed by GitHub Actions on every push to `main`; progress is saved only in your browser)
+
 ## Status
 
 **Phase 1 (Functional MVP): complete and verified.** The full core workflow works in Chrome and Safari, on desktop and iPhone: Dashboard → Chapter 11 → Quiz → Results → Mistake Review.
