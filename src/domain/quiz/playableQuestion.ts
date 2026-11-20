@@ -13,7 +13,7 @@ export interface PlayableQuestion {
   context?: Question['context']
   /** Choices in this quiz's shuffled order. Display them as ①②③④ by position. */
   choices: Choice[]
-  isDraft: boolean
+  reviewStatus: Question['reviewStatus']
 }
 
 export const CHOICE_MARKERS = ['①', '②', '③', '④'] as const
@@ -32,7 +32,7 @@ export function toPlayableQuestion(question: Question, order: ChoiceId[]): Playa
     prompt: question.prompt,
     context: question.context,
     choices,
-    isDraft: question.reviewStatus === 'draft',
+    reviewStatus: question.reviewStatus,
   }
 }
 

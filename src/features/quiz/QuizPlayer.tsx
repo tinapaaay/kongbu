@@ -159,7 +159,10 @@ export function QuizPlayer({ initial }: { initial: ActiveSession }) {
             <legend className={styles.prompt}>
               <span className={styles.num}>{index + 1}.</span> <span lang="ko">{playable.prompt}</span>
             </legend>
-            {playable.isDraft && <p className={styles.draft}>Draft question · not yet reviewed</p>}
+            {playable.reviewStatus === 'draft' && <p className={styles.draft}>Draft question · not yet reviewed</p>}
+            {playable.reviewStatus === 'ai-reviewed' && (
+              <p className={styles.draft}>Reviewed by AI · not teacher-checked</p>
+            )}
 
             {playable.context && (
               <div className={styles.context} lang="ko">

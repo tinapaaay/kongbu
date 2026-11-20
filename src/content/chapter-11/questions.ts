@@ -32,7 +32,7 @@ const READ_MATCH = '다음 글을 읽고 내용과 같은 것을 고르십시오
 export const chapter11Questions: Question[] = [
   q({
     id: 'ch11-q001',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cleaning',
     format: 'vocabulary',
     difficulty: 1,
@@ -44,7 +44,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q002',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.laundry',
     format: 'sentence-completion',
     difficulty: 1,
@@ -57,7 +57,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q003',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eo-ya-doeda',
     format: 'grammar',
     difficulty: 1,
@@ -69,7 +69,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q004',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eul-geyo',
     format: 'grammar',
     difficulty: 1,
@@ -81,16 +81,16 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q005',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eul-geyo',
     format: 'grammar',
     difficulty: 2,
     prompt: CORRECT_SENTENCE,
     choices: [
-      '제 친구가 창문을 닦을게요.',
-      '내일 같이 청소할게요?',
-      '가: 쓰레기 좀 버려 주세요. 나: 네, 제가 버릴게요.',
-      '어제 제가 설거지를 할게요.',
+      '가: 쓰레기 좀 버려 주세요.\n나: 네, 제 친구가 버릴게요.',
+      '가: 쓰레기 좀 버려 주세요.\n나: 네, 제가 버릴게요?',
+      '가: 쓰레기 좀 버려 주세요.\n나: 네, 제가 버릴게요.',
+      '가: 쓰레기 좀 버려 주세요.\n나: 어제 제가 버릴게요.',
     ],
     correctChoiceId: 'c',
     explanation:
@@ -98,7 +98,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q006',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eul-geyo',
     format: 'dialogue-completion',
     difficulty: 1,
@@ -111,7 +111,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q007',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.waste-disposal',
     format: 'dialogue-completion',
     difficulty: 1,
@@ -124,7 +124,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q008',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.waste-disposal',
     format: 'dialogue-completion',
     difficulty: 1,
@@ -137,7 +137,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q009',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.waste-disposal',
     format: 'vocabulary',
     difficulty: 1,
@@ -149,7 +149,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q010',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cooking',
     format: 'vocabulary',
     difficulty: 1,
@@ -161,7 +161,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q011',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cleaning',
     format: 'vocabulary',
     difficulty: 2,
@@ -173,7 +173,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q012',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.s-irregular',
     format: 'dialogue-completion',
     difficulty: 2,
@@ -186,7 +186,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q013',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.s-irregular',
     format: 'grammar',
     difficulty: 3,
@@ -198,7 +198,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q014',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'culture.waste-separation',
     format: 'reading',
     difficulty: 2,
@@ -219,7 +219,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q015',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cooking',
     format: 'reading',
     difficulty: 2,
@@ -240,7 +240,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q016',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cleaning',
     format: 'sentence-completion',
     difficulty: 1,
@@ -253,7 +253,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q017',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eul-geyo',
     format: 'dialogue-completion',
     difficulty: 2,
@@ -266,7 +266,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q018',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.laundry',
     format: 'vocabulary',
     difficulty: 1,
@@ -278,7 +278,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q019',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.waste-disposal',
     format: 'sentence-completion',
     difficulty: 1,
@@ -290,7 +290,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q020',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eo-ya-doeda',
     format: 'sentence-completion',
     difficulty: 1,
@@ -302,7 +302,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q021',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eo-ya-doeda',
     format: 'dialogue-completion',
     difficulty: 2,
@@ -315,7 +315,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q022',
-    reviewStatus: 'approved',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'culture.waste-separation',
     format: 'vocabulary',
     difficulty: 3,
@@ -323,6 +323,6 @@ export const chapter11Questions: Question[] = [
     choices: ['캔', '달걀 껍데기', '헌 옷', '종이'],
     correctChoiceId: 'b',
     explanation:
-      'Eggshells (달걀 껍데기) look like food waste, but animals cannot eat them, so in Korea they go out as general waste. Cans and paper are recyclables, and old clothes go in a clothing bin.',
+      'In most areas of Korea, eggshells (달걀 껍데기) are treated as general waste rather than food waste, matching the textbook\'s classification. Local disposal rules can differ, so check your local government\'s guidance. Cans and paper are recyclables, and old clothes go in a clothing bin.',
   }),
 ]

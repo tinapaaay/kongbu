@@ -217,8 +217,8 @@ describe('toPlayableQuestion', () => {
     expect(keepBlanksTogether('가: 안녕하세요.\n나: 네.')).toBe('가: 안녕하세요.\n나: 네.')
   })
 
-  it.each([['draft', true], ['approved', false]] as const)('flags %s questions correctly', (reviewStatus, isDraft) => {
-    expect(toPlayableQuestion({ ...question, reviewStatus }, ['a', 'b', 'c', 'd']).isDraft).toBe(isDraft)
+  it.each(['draft', 'ai-reviewed', 'approved'] as const)('preserves the %s review status', (reviewStatus) => {
+    expect(toPlayableQuestion({ ...question, reviewStatus }, ['a', 'b', 'c', 'd']).reviewStatus).toBe(reviewStatus)
   })
 })
 
