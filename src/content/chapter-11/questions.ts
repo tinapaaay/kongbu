@@ -80,7 +80,7 @@ export const chapter11Questions: Question[] = [
     difficulty: 2,
     prompt: CORRECT_SENTENCE,
     choices: [
-      '이반 씨가 빨래를 할게요.',
+      '제 친구가 창문을 닦을게요.',
       '내일 같이 청소할게요?',
       '가: 쓰레기 좀 버려 주세요. 나: 네, 제가 버릴게요.',
       '어제 제가 설거지를 할게요.',
@@ -107,11 +107,11 @@ export const chapter11Questions: Question[] = [
     format: 'dialogue-completion',
     difficulty: 1,
     prompt: '다음 대화의 빈칸에 들어갈 가장 알맞은 것을 고르십시오.',
-    context: { kind: 'dialogue', text: '가: 헌 옷은 어디에 버려야 돼요?\n나: (          )' },
-    choices: ['수거함에 버려야 돼요.', '음식물 쓰레기통에 버려야 돼요.', '어제 버렸어요.', '세탁기를 돌려야 돼요.'],
+    context: { kind: 'dialogue', text: '가: 안 입는 헌 옷하고 신발이 많아요. 어디에 버려요?\n나: (          )' },
+    choices: ['의류 수거함에 버려야 돼요.', '음식물 쓰레기통에 버려야 돼요.', '어제 버렸어요.', '세탁기를 돌려야 돼요.'],
     correctChoiceId: 'a',
     explanation:
-      'Old clothes (헌 옷) go into a collection bin: 수거함에 버리다. The question asks where, so an answer about when or about laundry does not fit.',
+      'Old clothes (헌 옷) and shoes go into a clothing collection bin: 의류 수거함에 버리다. The question asks where, so an answer about when or about laundry does not fit.',
   }),
   q({
     id: 'ch11-q008',
@@ -189,17 +189,17 @@ export const chapter11Questions: Question[] = [
     prompt: READ_MATCH,
     context: {
       kind: 'passage',
-      text: '한국에서는 쓰레기를 따로따로 버립니다. 일반 쓰레기는 쓰레기봉투에 넣어서 버립니다. 쓰레기봉투는 마트나 편의점에서 삽니다. 헌 옷은 의류 수거함에 버립니다. 그리고 책상이나 침대 같은 큰 쓰레기에는 스티커를 붙여야 합니다.',
+      text: '저는 지난주에 새 기숙사로 이사했습니다. 이 기숙사에서는 월요일과 목요일에 일반 쓰레기를 버립니다. 음식물 쓰레기는 물기를 빼고 음식물 쓰레기통에 버립니다. 캔과 플라스틱은 1층 수거장에 따로 버립니다. 쓰레기봉투는 기숙사 앞 편의점에서 삽니다.',
     },
     choices: [
-      '헌 옷은 쓰레기봉투에 넣습니다.',
-      '큰 쓰레기는 쓰레기봉투에 넣습니다.',
-      '일반 쓰레기와 음식물 쓰레기를 같이 버립니다.',
-      '쓰레기봉투는 편의점에서 팝니다.',
+      '일반 쓰레기는 매일 버립니다.',
+      '음식물 쓰레기는 물기를 빼지 않고 버립니다.',
+      '캔과 플라스틱은 같이 버립니다.',
+      '쓰레기봉투는 기숙사 앞에서 살 수 있습니다.',
     ],
     correctChoiceId: 'd',
     explanation:
-      'The passage says trash bags are bought at marts or convenience stores, so convenience stores sell them. Old clothes go in a clothing bin, large items need a sticker, and trash is sorted, not mixed.',
+      'The writer buys trash bags at the convenience store in front of the dorm. General waste goes out only on Monday and Thursday, food waste is drained first (물기를 빼다), and cans and plastic are thrown away separately (따로).',
   }),
   q({
     id: 'ch11-q015',
@@ -209,7 +209,7 @@ export const chapter11Questions: Question[] = [
     prompt: READ_MATCH,
     context: {
       kind: 'passage',
-      text: '저는 기숙사에서 친구와 같이 삽니다. 월요일에는 제가 청소기를 돌리고 친구는 빨래를 합니다. 토요일에는 같이 음식을 만듭니다. 그리고 설거지는 제가 합니다.',
+      text: '저는 기숙사에서 친구와 같이 삽니다. 월요일에는 제가 청소기를 돌리고 친구는 빨래를 합니다. 토요일에는 같이 음식을 만들고 설거지는 제가 합니다.',
     },
     choices: [
       '친구는 월요일에 청소기를 돌립니다.',
@@ -239,11 +239,11 @@ export const chapter11Questions: Question[] = [
     format: 'dialogue-completion',
     difficulty: 2,
     prompt: '다음 대화의 빈칸에 들어갈 가장 알맞은 것을 고르십시오.',
-    context: { kind: 'dialogue', text: '가: 진수 씨, 창문 좀 닦아 주세요.\n나: (          )' },
-    choices: ['네, 제가 걷을게요.', '네, 창문이 커요.', '네, 창문을 닦을게요?', '네, 제가 닦을게요.'],
+    context: { kind: 'dialogue', text: '가: 진수 씨, 거실 청소기 좀 돌려 주세요.\n나: (          )' },
+    choices: ['네, 제가 옷을 갤게요.', '네, 거실이 넓어요.', '네, 청소기를 돌릴게요?', '네, 제가 돌릴게요.'],
     correctChoiceId: 'd',
     explanation:
-      'The request is to wipe the window, so the answer promises exactly that: 제가 닦을게요. -(으)ㄹ게요 cannot be a question, and 걷다 is the wrong action.',
+      'The request is to vacuum the living room, so the answer promises exactly that: 제가 돌릴게요. -(으)ㄹ게요 cannot be a question, and folding clothes (옷을 개다) is the wrong chore.',
   }),
   q({
     id: 'ch11-q018',
@@ -276,7 +276,7 @@ export const chapter11Questions: Question[] = [
     context: { kind: 'sentence', text: '이번 주말에도 일을 (          ).' },
     choices: ['해야 돼요', '하야 돼요', '해어야 돼요', '하어야 돼요'],
     correctChoiceId: 'a',
-    explanation: '-하다 verbs become -해야 되다, so 일하다 becomes 일을 해야 돼요. The other forms do not exist.',
+    explanation: '하다 always becomes 해야 되다, so 일을 하다 becomes 일을 해야 돼요. The other forms do not exist.',
   }),
   q({
     id: 'ch11-q021',
@@ -284,7 +284,7 @@ export const chapter11Questions: Question[] = [
     format: 'dialogue-completion',
     difficulty: 2,
     prompt: '다음 대화의 빈칸에 들어갈 가장 알맞은 것을 고르십시오.',
-    context: { kind: 'dialogue', text: '가: 이 캔은 어디에 버려요?\n나: 플라스틱하고 따로 (          ).' },
+    context: { kind: 'dialogue', text: '가: 이 캔도 플라스틱하고 같이 버려요?\n나: 아니요, 플라스틱하고 따로 (          ).' },
     choices: ['버리야 돼요', '버려어야 돼요', '버려야 돼요', '버릴야 돼요'],
     correctChoiceId: 'c',
     explanation:

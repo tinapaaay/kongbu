@@ -35,6 +35,8 @@ export const chapter11Lesson: Lesson = {
         { ko: '따로 버리다', en: 'to throw away separately' },
         { ko: '수거함에 버리다', en: 'to throw in a collection bin' },
         { ko: '같이', en: 'together' },
+        { ko: '일', en: 'work' },
+        { ko: '시작하다', en: 'to start' },
         { ko: '그래서', en: 'so, therefore' },
       ],
     },
@@ -139,7 +141,7 @@ export const chapter11Lesson: Lesson = {
         { ko: '내일 일찍 올게요.', en: "I'll come early tomorrow.", highlight: '올게요' },
       ],
       notes: [
-        'Use it only when the speaker is the one doing the action. "이반 씨가 빨래를 할게요" is wrong.',
+        'Use it only when the speaker is the one doing the action. "제 친구가 창문을 닦을게요" is wrong.',
         'Do not use it in questions. To offer something as a question, use a different ending.',
       ],
       textbookRef: { volume: 1, page: 155 },
