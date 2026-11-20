@@ -479,7 +479,7 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 
 **Status labels.** Not Started, Visited, Practiced, and Mastered are rounded pills that always contain the status word. Scores show their sample, such as `8/10`.
 
-**Draft label.** "Draft question" appears as a quiet outlined pill until a question is reviewed.
+**Review labels.** "Draft question · not yet reviewed" and "Reviewed by AI · not teacher-checked" appear as quiet outlined pills for draft and AI-reviewed questions, respectively.
 
 **Available now.** A pale-blue box above the chapter table on Learn. Its caps label uses the tab-label style in Primary Strong, and it lists each chapter that has content as a link: number, underlined Korean title, then a plain English gloss. It appears on both book tabs, so a learner never has to scroll past chapters without content to find one.
 
