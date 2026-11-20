@@ -113,7 +113,7 @@ Option A costs a little more thought now and avoids the bugs most damaging to a 
 - **Easier:** mistake review, Smart Review, analytics, and the move to Supabase.
 - **Harder:** you must learn to think of screens as views calculated from history.
 - **Limitation:** Phase 1 data stays in one browser on one device. See section 8.
-- **Revisit:** in Phase 2, when the repository gets a Supabase version.
+- **Revisit:** in Phase 2, when the repository gets a Supabase version. See [ADR-002](ADR-002-local-first-sync.md) (proposed): keep the local copy and sync it to Supabase.
 
 ### Action items
 

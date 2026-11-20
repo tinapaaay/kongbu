@@ -26,7 +26,7 @@ Milestone 11 acted on an outside review: progress is safe with several tabs open
 | 12. Design critique fixes | Done |
 | Polish: smaller critique items | Done |
 
-The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md).
+The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md). The proposed approach for Phase 2 (save locally first, then sync to Supabase) is in [docs/ADR-002-local-first-sync.md](docs/ADR-002-local-first-sync.md).
 
 ## Local setup
 
@@ -152,7 +152,7 @@ src/
   test/           Shared test setup
 tests/e2e/        Playwright browser tests
 scripts/          Build checks (secrets scan)
-docs/             Plan, decisions, and design references
+docs/             Plan, decision records (ADR-002), and design references
 ```
 
 ## Study content
