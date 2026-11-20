@@ -1,5 +1,5 @@
-import { getConcept } from '../../content'
-import type { SessionType } from '../../domain/learnerData'
+import { getConcept } from '../content'
+import type { SessionType } from '../domain/learnerData'
 
 /** "Practice exam", or "Review: <concept>" for a short quiz on one concept. */
 export function quizKindLabel(session: { type: SessionType; conceptId?: string }): string {

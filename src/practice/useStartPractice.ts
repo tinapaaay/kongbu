@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { getQuestionsForChapter, questions } from '../../content'
-import { useLearnerData } from '../../data/learnerDataContext'
-import { buildChapterSession, buildConceptReview } from '../../domain/quiz/buildSession'
+import { getQuestionsForChapter, questions } from '../content'
+import { useLearnerData } from '../data/learnerDataContext'
+import { buildChapterSession, buildConceptReview } from '../domain/quiz/buildSession'
 
 /**
  * Starting a chapter practice exam. If a quiz is already unfinished, the learner

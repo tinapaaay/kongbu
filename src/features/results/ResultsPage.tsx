@@ -4,12 +4,12 @@ import { formatDate } from '../../components/formatDate'
 import { Notice } from '../../components/Notice'
 import { PageHeader } from '../../components/PageHeader'
 import { StatusBadge } from '../../components/StatusBadge'
-import { getChapter, getConcept } from '../../content'
+import { conceptIdsForChapter, getChapter, getConcept } from '../../content'
 import { useLearnerData } from '../../data/learnerDataContext'
-import { quizKindLabel } from '../quiz/quizKindLabel'
+import { quizKindLabel } from '../../practice/quizKindLabel'
 import { chapterProgress, MASTERY_ACCURACY, MASTERY_MIN_QUESTIONS, percent } from '../../domain/progress/chapterProgress'
 import { conceptStats, weakConcepts } from '../../domain/progress/mistakes'
-import { PracticeConceptButton } from '../quiz/PracticeConceptButton'
+import { PracticeConceptButton } from '../../practice/PracticeConceptButton'
 import { AnswerReview } from './AnswerReview'
 import styles from './ResultsPage.module.css'
 
@@ -34,7 +34,7 @@ export function ResultsPage() {
 
   const chapter = getChapter(session.chapterId)
   const score = { correct: session.correctCount, total: session.totalCount }
-  const progress = chapterProgress(session.chapterId, data)
+  const progress = chapterProgress(session.chapterId, data, conceptIdsForChapter(session.chapterId))
   // Attempts for this quiz, in the order the questions were asked.
   const attempts = session.questionIds
     .map((id) => data.attempts.find((a) => a.sessionId === session.id && a.questionId === id))

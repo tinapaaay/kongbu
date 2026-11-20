@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router'
-import { getChapterByNumber, getLesson } from '../../content'
+import { conceptIdsForChapter, getChapterByNumber, getLesson } from '../../content'
 import { Notice } from '../../components/Notice'
-import { NotFoundPage } from '../not-found/NotFoundPage'
+import { NotFoundPage } from '../../components/NotFoundPage'
 import { parseChapterNumber } from '../../domain/chapterNumber'
 import { chapterProgress } from '../../domain/progress/chapterProgress'
 import { useLearnerData } from '../../data/learnerDataContext'
@@ -24,7 +24,7 @@ export function ChapterPage() {
   if (!chapter) return <NotFoundPage />
 
   const lesson = getLesson(chapter.id)
-  const progress = chapterProgress(chapter.id, data)
+  const progress = chapterProgress(chapter.id, data, conceptIdsForChapter(chapter.id))
 
   return (
     <>

@@ -85,6 +85,15 @@ export function validateContent({ chapters, concepts, questions, lessons }: Cont
     }
   }
 
+  // Every concept must be tested, because mastery requires a right answer in each one.
+  const tested = new Set(questions.map((q) => q.conceptId))
+  for (const concept of concepts) {
+    const chapter = chapterById.get(concept.chapterId)
+    if (chapter?.contentStatus === 'available' && !tested.has(concept.id)) {
+      errors.push(`concept "${concept.id}" has no questions, so its chapter could never be mastered`)
+    }
+  }
+
   // 5. Lessons.
   const lessonChapters = new Set(lessons.map((l) => l.chapterId))
   for (const lesson of lessons) {

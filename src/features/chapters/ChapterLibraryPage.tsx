@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from 'react-router'
 import { PageHeader } from '../../components/PageHeader'
 import { StatusBadge } from '../../components/StatusBadge'
-import { chapters } from '../../content'
+import { chapters, conceptIdsForChapter } from '../../content'
 import { useLearnerData } from '../../data/learnerDataContext'
 import { chapterProgress } from '../../domain/progress/chapterProgress'
 import styles from './ChapterLibraryPage.module.css'
@@ -86,7 +86,7 @@ export function ChapterLibraryPage() {
         <tbody>
           {list.map((chapter) => {
             const available = chapter.contentStatus === 'available'
-            const progress = chapterProgress(chapter.id, data)
+            const progress = chapterProgress(chapter.id, data, conceptIdsForChapter(chapter.id))
             return (
               <tr key={chapter.id} className={available ? styles.availableRow : styles.plannedRow}>
                 <td className={styles.number}>{String(chapter.number).padStart(2, '0')}</td>

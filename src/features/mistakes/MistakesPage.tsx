@@ -8,7 +8,7 @@ import { getChapter, getConcept, questions, studyAnchorId } from '../../content'
 import { useLearnerData } from '../../data/learnerDataContext'
 import { keepBlanksTogether } from '../../domain/quiz/playableQuestion'
 import { conceptStats, listMistakes, type MistakeEntry } from '../../domain/progress/mistakes'
-import { PracticeConceptButton } from '../quiz/PracticeConceptButton'
+import { PracticeConceptButton } from '../../practice/PracticeConceptButton'
 import { rangeStart, useMistakeFilters, type DateRange } from './useMistakeFilters'
 import styles from './MistakesPage.module.css'
 

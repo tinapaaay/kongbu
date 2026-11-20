@@ -8,7 +8,7 @@ import { QuizPage } from '../features/quiz/QuizPage'
 import { ResultsPage } from '../features/results/ResultsPage'
 import { MistakesPage } from '../features/mistakes/MistakesPage'
 import { SettingsPage } from '../features/settings/SettingsPage'
-import { NotFoundPage } from '../features/not-found/NotFoundPage'
+import { NotFoundPage } from '../components/NotFoundPage'
 
 /**
  * Every screen and its URL, in one place.

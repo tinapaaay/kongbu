@@ -3,13 +3,13 @@ import { Link } from 'react-router'
 import buttons from '../../components/buttons.module.css'
 import { PageHeader } from '../../components/PageHeader'
 import { StatusBadge } from '../../components/StatusBadge'
-import { chapters, getConcept } from '../../content'
+import { chapters, conceptIdsForChapter, getConcept } from '../../content'
 import { useLearnerData } from '../../data/learnerDataContext'
 import { weekActivity } from '../../domain/progress/activity'
 import { chapterProgress, percent, type ChapterStatus } from '../../domain/progress/chapterProgress'
 import { conceptStats, weakConcepts } from '../../domain/progress/mistakes'
 import { currentChapter, nextStep, type NextStep } from '../../domain/progress/nextStep'
-import { PracticeConceptButton } from '../quiz/PracticeConceptButton'
+import { PracticeConceptButton } from '../../practice/PracticeConceptButton'
 import styles from './DashboardPage.module.css'
 
 export function DashboardPage() {
@@ -17,10 +17,10 @@ export function DashboardPage() {
   // Read the clock once per visit, not on every render.
   const [today] = useState(() => new Date())
 
-  const step = nextStep(data, chapters)
+  const step = nextStep(data, chapters, conceptIdsForChapter)
   const weak = weakConcepts(data.attempts).slice(0, 3)
   const chapter = currentChapter(data, chapters)
-  const progress = chapterProgress(chapter.id, data)
+  const progress = chapterProgress(chapter.id, data, conceptIdsForChapter(chapter.id))
   const counts = statusCounts(data)
   const week = weekActivity(data.attempts, today)
   const weekTotal = week.reduce((sum, d) => sum + d.questions, 0)
@@ -230,7 +230,7 @@ function describeStep(step: NextStep) {
 
 function statusCounts(data: Parameters<typeof chapterProgress>[1]): Record<ChapterStatus, number> {
   const counts = { 'not-started': 0, visited: 0, practiced: 0, mastered: 0 }
-  for (const chapter of chapters) counts[chapterProgress(chapter.id, data).status]++
+  for (const chapter of chapters) counts[chapterProgress(chapter.id, data, conceptIdsForChapter(chapter.id)).status]++
   return counts
 }
 

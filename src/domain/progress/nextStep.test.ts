@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Chapter } from '../../content/schemas'
-import { chapters, getQuestionsForChapter } from '../../content'
+import { chapters, conceptIdsForChapter, getQuestionsForChapter } from '../../content'
 import { emptyLearnerData, type ActiveSession, type LearnerData } from '../learnerData'
 import { makeAttempt, makeSession, minutes } from '../testFixtures'
 import { currentChapter, nextStep } from './nextStep'
@@ -23,7 +23,7 @@ const active: ActiveSession = {
 
 describe('nextStep', () => {
   it('sends a new learner to the baseline chapter, Chapter 11', () => {
-    const step = nextStep(emptyLearnerData(), chapters)
+    const step = nextStep(emptyLearnerData(), chapters, conceptIdsForChapter)
     expect(step).toMatchObject({ kind: 'start-chapter', chapter: { number: 11 }, progress: { status: 'not-started' } })
   })
 
@@ -32,16 +32,16 @@ describe('nextStep', () => {
       activeSession: active,
       attempts: [makeAttempt({ questionId: 'ch11-q004', isCorrect: false })],
     })
-    expect(nextStep(withMistake, chapters)).toMatchObject({ kind: 'resume-quiz', answered: 1, total: 3 })
+    expect(nextStep(withMistake, chapters, conceptIdsForChapter)).toMatchObject({ kind: 'resume-quiz', answered: 1, total: 3 })
   })
 
   it('then sends the learner to open mistakes', () => {
-    const step = nextStep(data({ attempts: [makeAttempt({ questionId: 'ch11-q004', isCorrect: false })] }), chapters)
+    const step = nextStep(data({ attempts: [makeAttempt({ questionId: 'ch11-q004', isCorrect: false })] }), chapters, conceptIdsForChapter)
     expect(step).toMatchObject({ kind: 'review-mistakes', concept: { conceptId: 'grammar.eul-geyo' }, openConcepts: 1 })
   })
 
   it('suggests more practice after a quiz below mastery', () => {
-    const step = nextStep(data({ sessions: [makeSession({ correctCount: 6, totalCount: 10 })] }), chapters)
+    const step = nextStep(data({ sessions: [makeSession({ correctCount: 6, totalCount: 10 })] }), chapters, conceptIdsForChapter)
     expect(step.kind).toBe('practice-chapter')
   })
 
@@ -50,7 +50,7 @@ describe('nextStep', () => {
     const attempts = getQuestionsForChapter('ch11').map((q) =>
       makeAttempt({ questionId: q.id, conceptId: q.conceptId, isCorrect: true }),
     )
-    const step = nextStep(data({ sessions: [makeSession({ correctCount: 9, totalCount: 10 })], attempts }), chapters)
+    const step = nextStep(data({ sessions: [makeSession({ correctCount: 9, totalCount: 10 })], attempts }), chapters, conceptIdsForChapter)
     expect(step.kind).toBe('chapter-mastered')
   })
 })

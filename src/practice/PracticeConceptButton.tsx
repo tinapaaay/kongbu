@@ -1,5 +1,5 @@
-import buttons from '../../components/buttons.module.css'
-import { getConcept } from '../../content'
+import buttons from '../components/buttons.module.css'
+import { getConcept } from '../content'
 import { useStartConceptReview } from './useStartPractice'
 
 interface PracticeConceptButtonProps {

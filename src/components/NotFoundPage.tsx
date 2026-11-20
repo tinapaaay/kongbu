@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
-import { PageHeader } from '../../components/PageHeader'
-import { Notice } from '../../components/Notice'
+import { PageHeader } from './PageHeader'
+import { Notice } from './Notice'
 
 export function NotFoundPage() {
   return (

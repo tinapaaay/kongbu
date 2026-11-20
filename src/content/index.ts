@@ -40,3 +40,11 @@ export function getQuestionsForChapter(chapterId: string): Question[] {
 export function studyAnchorId(conceptId: string): string {
   return `study-${conceptId.replace(/[^a-z0-9]+/gi, '-')}`
 }
+
+/**
+ * The concepts a chapter teaches and tests. Validation guarantees each one has at least one question,
+ * so this list is exactly what mastery has to cover.
+ */
+export function conceptIdsForChapter(chapterId: string): string[] {
+  return concepts.filter((c) => c.chapterId === chapterId).map((c) => c.id)
+}

@@ -3,7 +3,7 @@ import { SectionHeader } from '../../components/SectionHeader'
 import { getChapter } from '../../content'
 import { percent, type ChapterProgress } from '../../domain/progress/chapterProgress'
 import { QUIZ_SIZE } from '../../domain/quiz/buildSession'
-import { useStartPractice } from '../quiz/useStartPractice'
+import { useStartPractice } from '../../practice/useStartPractice'
 import { StartPracticeButton } from './StartPracticeButton'
 import styles from './PracticeExamCard.module.css'
 

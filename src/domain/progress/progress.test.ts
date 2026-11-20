@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest'
+import { conceptIdsForChapter } from '../../content'
 import { emptyLearnerData, learnerDataSchema, type LearnerData } from '../learnerData'
 import { makeAttempt, makeSession, minutes } from '../testFixtures'
 import { localDateKey, weekActivity } from './activity'
 import { chapterProgress, percent } from './chapterProgress'
 import { conceptStats, listMistakes, weakConcepts } from './mistakes'
+
+/** Chapter 11's real concept list, as the screens pass it. */
+const CH11_CONCEPTS = conceptIdsForChapter('ch11')
+const ch11Progress = (data: LearnerData, conceptIds = CH11_CONCEPTS) => chapterProgress('ch11', data, conceptIds)
 
 const EUL = 'grammar.eul-geyo'
 const MUST = 'grammar.a-eo-ya-doeda'
@@ -110,7 +115,7 @@ describe('chapterProgress', () => {
   }
 
   it('shows a new learner as not started', () => {
-    expect(chapterProgress('ch11', emptyLearnerData())).toEqual({
+    expect(ch11Progress(emptyLearnerData())).toEqual({
       status: 'not-started',
       sessionsCompleted: 0,
       openMistakes: 0,
@@ -121,7 +126,7 @@ describe('chapterProgress', () => {
 
   it('shows an opened chapter as visited', () => {
     const visited = data({ chapterVisits: { ch11: { firstAt: minutes(0), lastAt: minutes(0) } } })
-    expect(chapterProgress('ch11', visited).status).toBe('visited')
+    expect(ch11Progress(visited).status).toBe('visited')
   })
 
   it('does not count an unfinished quiz as practice', () => {
@@ -136,11 +141,11 @@ describe('chapterProgress', () => {
       durationsMs: {},
       currentIndex: 0,
     }
-    expect(chapterProgress('ch11', data({ activeSession: active })).status).toBe('not-started')
+    expect(ch11Progress(data({ activeSession: active })).status).toBe('not-started')
   })
 
   it('shows a submitted quiz below 80% as practiced', () => {
-    const result = chapterProgress('ch11', data({ sessions: [makeSession({ correctCount: 7, totalCount: 10 })] }))
+    const result = ch11Progress(data({ sessions: [makeSession({ correctCount: 7, totalCount: 10 })] }))
     expect(result).toMatchObject({ status: 'practiced', latestScore: { correct: 7, total: 10 } })
   })
 
@@ -150,13 +155,13 @@ describe('chapterProgress', () => {
       makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: true, answeredAt: minutes(9), sessionId: 'quiz-2' }),
       makeAttempt({ questionId: 'ch11-q003', conceptId: MUST, isCorrect: true, answeredAt: minutes(9), sessionId: 'quiz-2' }),
     ]
-    const result = chapterProgress('ch11', data({ sessions: [makeSession({ correctCount: 8, totalCount: 10 })], attempts }), [EUL, MUST])
+    const result = ch11Progress(data({ sessions: [makeSession({ correctCount: 8, totalCount: 10 })], attempts }), [EUL, MUST])
     expect(result).toMatchObject({ status: 'mastered', conceptsShown: 2, conceptsTotal: 2 })
   })
 
   it('withholds mastery until every concept in the chapter has been answered correctly', () => {
     const attempts = [makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: true, answeredAt: minutes(1) })]
-    const result = chapterProgress('ch11', data({ sessions: [makeSession({ correctCount: 10, totalCount: 10 })], attempts }), [EUL, MUST])
+    const result = ch11Progress(data({ sessions: [makeSession({ correctCount: 10, totalCount: 10 })], attempts }), [EUL, MUST])
     expect(result).toMatchObject({ status: 'practiced', conceptsShown: 1, conceptsTotal: 2 })
   })
 
@@ -169,29 +174,29 @@ describe('chapterProgress', () => {
       makeSession({ id: 'exam', correctCount: 9, totalCount: 10, submittedAt: minutes(1) }),
       makeSession({ id: 'review', type: 'concept-review', conceptId: EUL, correctCount: 1, totalCount: 3, submittedAt: minutes(5) }),
     ]
-    const result = chapterProgress('ch11', data({ sessions, attempts }), [EUL, MUST])
+    const result = ch11Progress(data({ sessions, attempts }), [EUL, MUST])
     expect(result).toMatchObject({ status: 'mastered', latestScore: { correct: 9, total: 10 }, sessionsCompleted: 2 })
   })
 
   it('counts a concept review alone as practice', () => {
     const sessions = [makeSession({ id: 'review', type: 'concept-review', conceptId: EUL, correctCount: 1, totalCount: 3 })]
-    const result = chapterProgress('ch11', data({ sessions }))
+    const result = ch11Progress(data({ sessions }))
     expect(result.status).toBe('practiced')
     expect(result.latestScore).toBeUndefined()
   })
 
-  it('counts only concepts that have questions', () => {
-    expect(chapterProgress('ch11', emptyLearnerData()).conceptsTotal).toBe(8)
+  it('uses the concept list it is given', () => {
+    expect(ch11Progress(emptyLearnerData()).conceptsTotal).toBe(8)
   })
 
   it('withholds mastery while a missed concept is still open', () => {
     const attempts = [makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, answeredAt: minutes(1) })]
-    const result = chapterProgress('ch11', data({ sessions: [makeSession({ correctCount: 9, totalCount: 10 })], attempts }))
+    const result = ch11Progress(data({ sessions: [makeSession({ correctCount: 9, totalCount: 10 })], attempts }))
     expect(result).toMatchObject({ status: 'practiced', openMistakes: 1 })
   })
 
   it('withholds mastery for quizzes shorter than 10 questions', () => {
-    const result = chapterProgress('ch11', data({ sessions: [makeSession({ correctCount: 5, totalCount: 5 })] }))
+    const result = ch11Progress(data({ sessions: [makeSession({ correctCount: 5, totalCount: 5 })] }))
     expect(result.status).toBe('practiced')
   })
 
@@ -200,7 +205,7 @@ describe('chapterProgress', () => {
       makeSession({ id: 'a', correctCount: 9, totalCount: 10, submittedAt: minutes(1) }),
       makeSession({ id: 'b', correctCount: 6, totalCount: 10, submittedAt: minutes(9) }),
     ]
-    expect(chapterProgress('ch11', data({ sessions }))).toMatchObject({
+    expect(ch11Progress(data({ sessions }))).toMatchObject({
       status: 'practiced',
       sessionsCompleted: 2,
       latestScore: { correct: 6, total: 10 },
@@ -210,7 +215,7 @@ describe('chapterProgress', () => {
 
   it('ignores other chapters', () => {
     const sessions = [makeSession({ chapterId: 'ch12', correctCount: 10, totalCount: 10 })]
-    expect(chapterProgress('ch11', data({ sessions })).status).toBe('not-started')
+    expect(ch11Progress(data({ sessions })).status).toBe('not-started')
   })
 
   it('formats whole-number percentages', () => {

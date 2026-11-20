@@ -106,6 +106,12 @@ describe('validation catches broken content', () => {
     expect(validateContent(bundle).join('\n')).toMatch(/unknown concept "grammar.not-real"/)
   })
 
+  it('rejects a concept with no questions, because its chapter could never be mastered', () => {
+    const bundle = copy()
+    bundle.questions = bundle.questions.filter((q) => q.conceptId !== 'grammar.s-irregular')
+    expect(validateContent(bundle).join('\n')).toMatch(/concept "grammar.s-irregular" has no questions/)
+  })
+
   it('rejects duplicate question ids', () => {
     const bundle = copy()
     bundle.questions[1].id = bundle.questions[0].id

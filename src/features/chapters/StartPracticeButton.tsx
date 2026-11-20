@@ -1,6 +1,6 @@
 import buttons from '../../components/buttons.module.css'
 import type { ChapterProgress } from '../../domain/progress/chapterProgress'
-import { useStartPractice } from '../quiz/useStartPractice'
+import { useStartPractice } from '../../practice/useStartPractice'
 
 interface StartPracticeButtonProps {
   chapterId: string

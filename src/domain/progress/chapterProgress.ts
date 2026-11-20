@@ -1,4 +1,3 @@
-import { questions as allQuestions } from '../../content'
 import type { CompletedSession, LearnerData } from '../learnerData'
 import { weakConcepts } from './mistakes'
 
@@ -37,13 +36,10 @@ export interface ChapterProgress {
  * - mastered: the mastery rule above is met
  * An unfinished quiz never counts.
  *
- * `conceptIds` defaults to the chapter's concepts that have questions. Tests pass their own.
+ * `conceptIds` is every concept the chapter tests. The caller passes it (from `conceptIdsForChapter`),
+ * so this rule only works with what it is given and never reads study content itself.
  */
-export function chapterProgress(
-  chapterId: string,
-  data: LearnerData,
-  conceptIds: string[] = conceptsWithQuestions(chapterId),
-): ChapterProgress {
+export function chapterProgress(chapterId: string, data: LearnerData, conceptIds: string[]): ChapterProgress {
   const allSessions = data.sessions.filter((s) => s.chapterId === chapterId)
   // Scores and mastery come from full practice exams; short concept reviews count as practice only.
   const sessions = allSessions
@@ -94,7 +90,3 @@ function toScore(session: CompletedSession): Score {
   return { correct: session.correctCount, total: session.totalCount }
 }
 
-/** The chapter's concepts that at least one question tests. A concept with no questions can't be shown. */
-function conceptsWithQuestions(chapterId: string): string[] {
-  return [...new Set(allQuestions.filter((q) => q.chapterId === chapterId).map((q) => q.conceptId))]
-}

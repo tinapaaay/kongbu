@@ -35,7 +35,11 @@ export function currentChapter(data: LearnerData, chapters: Chapter[]): Chapter 
  *   2. Review open mistakes.
  *   3. Work on the current chapter: open it, practice it, or move on once mastered.
  */
-export function nextStep(data: LearnerData, chapters: Chapter[]): NextStep {
+export function nextStep(
+  data: LearnerData,
+  chapters: Chapter[],
+  conceptIdsFor: (chapterId: string) => string[],
+): NextStep {
   const active = data.activeSession
   if (active) {
     const chapter = chapters.find((c) => c.id === active.chapterId)
@@ -54,7 +58,7 @@ export function nextStep(data: LearnerData, chapters: Chapter[]): NextStep {
   if (weak.length > 0) return { kind: 'review-mistakes', concept: weak[0], openConcepts: weak.length }
 
   const chapter = currentChapter(data, chapters)
-  const progress = chapterProgress(chapter.id, data)
+  const progress = chapterProgress(chapter.id, data, conceptIdsFor(chapter.id))
   if (progress.status === 'mastered') return { kind: 'chapter-mastered', chapter, progress }
   if (progress.status === 'practiced') return { kind: 'practice-chapter', chapter, progress }
   return { kind: 'start-chapter', chapter, progress }
