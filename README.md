@@ -62,6 +62,7 @@ npx playwright install chromium webkit
 | `npm run design:lint` | Checks `DESIGN.md` against the design.md format |
 | `npm run design:check-type` | Fails if any stylesheet uses a font size that isn't a typography level in `DESIGN.md` |
 | `npm run test:e2e` | Runs browser tests against the production build in Chrome, Safari, and iPhone Safari |
+| `npm run check:content-split` | Fails if a chapter's questions are in the main app file instead of their own file |
 | `npm run check:secrets` | Fails if anything that looks like a key or token is in `dist/` |
 | `npm run verify` | Runs everything above in order. Use it before every push |
 
@@ -143,17 +144,23 @@ Visual references:
 src/
   main.tsx        Starts React, the router, fonts, and global styles
   app/            Routes, layouts, and navigation
-  components/     Shared UI pieces (PageHeader, SectionHeader, StatusBadge, ConfirmDialog, buttons)
-  content/        Chapters, lessons, concepts, questions, and their validation
+  components/     Shared UI pieces (PageHeader, SectionHeader, StatusBadge, ConfirmDialog, buttons,
+                  NotFoundPage, ContentBoundary for loading and retry)
+  content/        Chapters, lessons, concepts, questions, and their validation.
+                  Each chapter's lesson and questions download on demand as their own file
   data/           Saving progress in the browser, backups, and the data provider
   domain/         Pure rules with no UI: learner data, quiz building, scoring, progress
-  features/       One folder per screen (dashboard, chapters, quiz, ...)
+  features/       One folder per screen (dashboard, chapters, quiz, ...). Screens never import each other
+  practice/       Starting practice exams and concept reviews, shared by several screens
   styles/         tokens.css (generated) and global.css
   test/           Shared test setup
 tests/e2e/        Playwright browser tests
-scripts/          Build checks (secrets scan)
+scripts/          Build checks (secrets, type scale, content split)
 docs/             Plan, decision records (ADR-002), and design references
 ```
+
+
+`src/architecture.test.ts` keeps these boundaries in place. It fails if a rule in `domain/` loads study content, if a screen imports another screen's folder, or if anything but `content/index.ts` imports a chapter's files directly.
 
 ## Study content
 
@@ -162,6 +169,8 @@ All study material lives in `src/content/`, and screens read it only through `sr
 - `chapters.ts`: all 60 chapters from both books' contents pages.
 - `chapter-11/`: the lesson (vocabulary, grammar, culture), 8 concepts, and 22 original practice questions. Household words are split into laundry, cleaning, and cooking, so one right answer about brooms can't fix a laundry mistake.
 - `schemas.ts`: the rules every chapter, concept, question, and lesson must follow.
+- **What loads when:** chapter titles and concept names load with the app. Each chapter's lesson and questions (`chapter-11/index.ts`) are a separate file, downloaded the first time a screen needs them through `loadChapterContent()` or `useChapterContent()`. The app also downloads your current chapter in the background, so it keeps working if the connection drops after the app opens. To add a chapter, add one line to the `loaders` list in `index.ts`.
+- `allContent.ts`: every chapter at once, for tests and validation only.
 - `validate.ts`: cross-checks, such as every question pointing to a real concept and every answer key matching a choice.
 
 `npm test` fails if any content breaks a rule. Questions are original EPS-TOPIK-style practice, stay `draft` until a person reviews them, and must never mention ①–④ in explanations, because choices can be shuffled.

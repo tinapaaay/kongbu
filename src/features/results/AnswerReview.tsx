@@ -1,9 +1,9 @@
-import { getConcept, questions, type ChoiceId } from '../../content'
+import { getConcept, type ChoiceId } from '../../content'
+import { useQuestionsById } from '../../content/useChapterContent'
 import type { Attempt } from '../../domain/learnerData'
 import { CHOICE_MARKERS, keepBlanksTogether } from '../../domain/quiz/playableQuestion'
 import styles from './AnswerReview.module.css'
 
-const questionsById = new Map(questions.map((q) => [q.id, q]))
 
 interface AnswerReviewProps {
   attempt: Attempt
@@ -18,7 +18,7 @@ interface AnswerReviewProps {
  * The correct answer comes from the attempt, which saved the answer key at submission time.
  */
 export function AnswerReview({ attempt, number, choiceOrder }: AnswerReviewProps) {
-  const question = questionsById.get(attempt.questionId)
+  const question = useQuestionsById([attempt.chapterId]).get(attempt.questionId)
   const concept = getConcept(attempt.conceptId)
   const skipped = attempt.selectedChoiceId === null
   const outcome = attempt.isCorrect ? 'correct' : skipped ? 'skipped' : 'incorrect'

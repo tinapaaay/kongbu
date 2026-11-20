@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
-import { questions } from '../../content'
+import { questions } from '../../content/allContent'
 import type { ActiveSession } from '../../domain/learnerData'
 import { buildChapterSession } from '../../domain/quiz/buildSession'
 import { seededRandom, sequentialIds } from '../../domain/random'

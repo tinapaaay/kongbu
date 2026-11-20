@@ -1,4 +1,5 @@
-import { Outlet } from 'react-router'
+import { Outlet, useLocation } from 'react-router'
+import { ContentBoundary } from '../components/ContentBoundary'
 import styles from './QuizLayout.module.css'
 
 /**
@@ -6,9 +7,12 @@ import styles from './QuizLayout.module.css'
  * The quiz screen draws its own header with the exit button and progress.
  */
 export function QuizLayout() {
+  const { pathname } = useLocation()
   return (
     <div className={styles.shell}>
-      <Outlet />
+      <ContentBoundary resetKey={pathname}>
+        <Outlet />
+      </ContentBoundary>
     </div>
   )
 }

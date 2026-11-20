@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getQuestionsForChapter, questions } from '../../content'
+import { getQuestionsForChapter, questions } from '../../content/allContent'
 import type { Question } from '../../content/schemas'
 import type { ActiveSession } from '../learnerData'
 import { seededRandom, sequentialIds } from '../random'

@@ -48,6 +48,13 @@ describe('architecture', () => {
     expect(problems).toEqual([])
   })
 
+  it('only content/index.ts reaches chapter files, so each chapter stays its own on-demand download', () => {
+    const problems = files
+      .filter((f) => f.path !== 'content/index.ts' && f.path !== 'content/allContent.ts' && !/^content\/chapter-[^/]+\//.test(f.path))
+      .flatMap((f) => f.imports.filter((i) => /\/chapter-\d+\/|allContent/.test(i.from)).map((i) => `${f.path} → ${i.from}`))
+    expect(problems).toEqual([])
+  })
+
   it('domain/ and data/ never import screens', () => {
     const problems = files
       .filter((f) => f.path.startsWith('domain/') || f.path.startsWith('data/'))

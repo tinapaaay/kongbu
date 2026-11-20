@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
+import { ContentBoundary } from '../components/ContentBoundary'
 import { navItems } from './navItems'
 import { StorageNotice } from './StorageNotice'
 import styles from './AppLayout.module.css'
@@ -60,7 +61,9 @@ export function AppLayout() {
 
       <main id="main" ref={mainRef} tabIndex={-1} className={styles.main}>
         <StorageNotice />
-        <Outlet />
+        <ContentBoundary resetKey={pathname}>
+          <Outlet />
+        </ContentBoundary>
       </main>
 
       <nav aria-label="Main" className={styles.tabBar}>

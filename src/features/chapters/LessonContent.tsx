@@ -1,9 +1,22 @@
+import { useEffect } from 'react'
+import { useLocation } from 'react-router'
 import { studyAnchorId, type GrammarPoint, type Lesson } from '../../content'
 import { SectionHeader } from '../../components/SectionHeader'
 import styles from './LessonContent.module.css'
 
 /** The lesson body, in textbook order: vocabulary, grammar, and culture. */
 export function LessonContent({ lesson }: { lesson: Lesson }) {
+  const { hash } = useLocation()
+
+  // The lesson may arrive after the page has opened (it downloads on demand), so a link like
+  // /learn/11#study-grammar-eul-geyo scrolls to its section once the section exists.
+  useEffect(() => {
+    const target = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null
+    if (target && !target.contains(document.activeElement)) {
+      target.scrollIntoView({ block: 'start' })
+      target.focus({ preventScroll: true })
+    }
+  }, [hash])
   const sections = [
     { id: 'vocabulary', label: 'Vocabulary' },
     ...lesson.grammar.map((g, i) => ({ id: `grammar-${i + 1}`, label: g.pattern })),

@@ -18,7 +18,8 @@ export function PracticeConceptButton({ conceptId, label = 'Practice', variant =
   if (review.hasUnfinishedQuiz) return null
   const name = getConcept(conceptId)?.labelEn ?? conceptId
   return (
-    <button
+    <>
+      <button
       type="button"
       className={buttons[variant]}
       disabled={review.starting !== null}
@@ -27,6 +28,8 @@ export function PracticeConceptButton({ conceptId, label = 'Practice', variant =
       aria-label={label.includes(name) ? undefined : `${label}: ${name}`}
     >
       {label}
-    </button>
+      </button>
+      {review.problem && <span role="alert">{review.problem}</span>}
+    </>
   )
 }

@@ -5,7 +5,8 @@ import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { SectionHeader } from '../../components/SectionHeader'
 import { useDocumentTitle } from '../../components/useDocumentTitle'
 import { quizKindLabel } from '../../practice/quizKindLabel'
-import { getChapter, questions } from '../../content'
+import { getChapter } from '../../content'
+import { useQuestionsById } from '../../content/useChapterContent'
 import { StorageNotice } from '../../app/StorageNotice'
 import { useLearnerData } from '../../data/learnerDataContext'
 import type { ActiveSession } from '../../domain/learnerData'
@@ -14,7 +15,6 @@ import { quizReducer, unansweredQuestionIds, type QuizAction } from '../../domai
 import { scoreSession } from '../../domain/quiz/scoreSession'
 import styles from './QuizPlayer.module.css'
 
-const questionsById = new Map(questions.map((q) => [q.id, q]))
 
 /** Time on one question is capped, so leaving the tab open doesn't inflate it. */
 const MAX_VIEW_MS = 10 * 60 * 1000
@@ -30,6 +30,7 @@ export function QuizPlayer({ initial }: { initial: ActiveSession }) {
   const lastSaved = useRef(initial)
   const firstQuestionShown = useRef(true)
 
+  const questionsById = useQuestionsById([session.chapterId])
   const chapter = getChapter(session.chapterId)
   const kind = quizKindLabel(session)
   useDocumentTitle(`${kind} · ${chapter?.titleKo ?? ''}`)

@@ -137,3 +137,9 @@ export const lessonSchema = z.object({
 export type VocabularyGroup = z.infer<typeof vocabularyGroupSchema>
 export type GrammarPoint = z.infer<typeof grammarPointSchema>
 export type Lesson = z.infer<typeof lessonSchema>
+
+/** One chapter's study material, loaded on demand. Chapters without content have no lesson and no questions. */
+export interface ChapterContent {
+  lesson?: Lesson
+  questions: Question[]
+}

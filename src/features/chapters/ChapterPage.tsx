@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router'
-import { conceptIdsForChapter, getChapterByNumber, getLesson } from '../../content'
+import { conceptIdsForChapter, getChapterByNumber } from '../../content'
+import { useChapterContent } from '../../content/useChapterContent'
 import { Notice } from '../../components/Notice'
 import { NotFoundPage } from '../../components/NotFoundPage'
 import { parseChapterNumber } from '../../domain/chapterNumber'
@@ -21,9 +22,10 @@ export function ChapterPage() {
   }, [chapterNumber, recordChapterVisit])
 
   const chapter = chapterNumber === null ? undefined : getChapterByNumber(chapterNumber)
+  // Downloads this chapter's lesson the first time; shows "Loading…" meanwhile.
+  const { lesson } = useChapterContent(chapter?.id ?? '')
   if (!chapter) return <NotFoundPage />
 
-  const lesson = getLesson(chapter.id)
   const progress = chapterProgress(chapter.id, data, conceptIdsForChapter(chapter.id))
 
   return (

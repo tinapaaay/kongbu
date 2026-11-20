@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { getQuestionsForChapter, studyAnchorId } from '../../content'
+import { getQuestionsForChapter, studyAnchorId } from '../../content/allContent'
 import { MemoryStorage } from '../../data/storage'
 import { makeSession } from '../../domain/testFixtures'
 import { renderApp } from '../../test/renderApp'

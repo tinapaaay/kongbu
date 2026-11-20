@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { getQuestionsForChapter, questions } from '../content'
+import { forgetFailedChapters, getConcept, loadChapterContent } from '../content'
+import { useChapterContent } from '../content/useChapterContent'
 import { useLearnerData } from '../data/learnerDataContext'
 import { buildChapterSession, buildConceptReview } from '../domain/quiz/buildSession'
 
@@ -15,7 +16,8 @@ export function useStartPractice(chapterId: string) {
   const [problem, setProblem] = useState<string | null>(null)
 
   const active = data.activeSession
-  const questionCount = getQuestionsForChapter(chapterId).length
+  const { questions } = useChapterContent(chapterId)
+  const questionCount = questions.length
 
   async function start() {
     if (active) {
@@ -25,7 +27,7 @@ export function useStartPractice(chapterId: string) {
     setStarting(true)
     const result = buildChapterSession({
       chapterId,
-      questions: getQuestionsForChapter(chapterId),
+      questions,
       attempts: data.attempts,
       now: new Date(),
     })
@@ -58,6 +60,7 @@ export function useStartConceptReview() {
   const { data, saveActiveSession } = useLearnerData()
   const navigate = useNavigate()
   const [starting, setStarting] = useState<string | null>(null)
+  const [problem, setProblem] = useState<string | null>(null)
   const active = data.activeSession
 
   async function start(conceptId: string) {
@@ -66,6 +69,18 @@ export function useStartConceptReview() {
       return
     }
     setStarting(conceptId)
+    setProblem(null)
+    const chapterId = getConcept(conceptId)?.chapterId ?? ''
+    let questions
+    try {
+      // Usually already downloaded (you are looking at that chapter's mistakes); fetched if not.
+      questions = (await loadChapterContent(chapterId)).questions
+    } catch {
+      forgetFailedChapters()
+      setProblem("This chapter couldn't be loaded. Check your internet connection, then try again.")
+      setStarting(null)
+      return
+    }
     const result = buildConceptReview({ conceptId, questions, attempts: data.attempts, now: new Date() })
     if (!result.ok) {
       setStarting(null)
@@ -75,5 +90,5 @@ export function useStartConceptReview() {
     navigate(`/quiz/${result.session.id}`)
   }
 
-  return { start, starting, hasUnfinishedQuiz: active !== null }
+  return { start, starting, problem, hasUnfinishedQuiz: active !== null }
 }

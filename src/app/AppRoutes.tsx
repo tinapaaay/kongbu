@@ -8,6 +8,7 @@ import { QuizPage } from '../features/quiz/QuizPage'
 import { ResultsPage } from '../features/results/ResultsPage'
 import { MistakesPage } from '../features/mistakes/MistakesPage'
 import { SettingsPage } from '../features/settings/SettingsPage'
+import { PrefetchChapters } from './PrefetchChapters'
 import { NotFoundPage } from '../components/NotFoundPage'
 
 /**
@@ -17,7 +18,9 @@ import { NotFoundPage } from '../components/NotFoundPage'
  */
 export function AppRoutes() {
   return (
-    <Routes>
+    <>
+      <PrefetchChapters />
+      <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<DashboardPage />} />
         <Route path="learn" element={<ChapterLibraryPage />} />
@@ -32,5 +35,6 @@ export function AppRoutes() {
         <Route index element={<QuizPage />} />
       </Route>
     </Routes>
+    </>
   )
 }

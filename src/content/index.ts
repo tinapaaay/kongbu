@@ -1,19 +1,64 @@
 /**
  * The only door into study content. Screens and rules import from here,
  * never from individual chapter files, so content can move without breaking them.
+ *
+ * What loads with the app (small, needed on every screen): the 60 chapter titles and every concept name.
+ * What loads on demand (large): each chapter's lesson and questions, one file per chapter,
+ * through loadChapterContent() or the hooks in useChapterContent.ts.
  */
 import { chapters } from './chapters'
 import { chapter11Concepts } from './chapter-11/concepts'
-import { chapter11Lesson } from './chapter-11/lesson'
-import { chapter11Questions } from './chapter-11/questions'
-import type { Chapter, ChapterId, Concept, Lesson, Question } from './schemas'
+import type { Chapter, ChapterContent, ChapterId, Concept } from './schemas'
 
 export * from './schemas'
 export { chapters }
 
 export const concepts: Concept[] = [...chapter11Concepts]
-export const questions: Question[] = [...chapter11Questions]
-export const lessons: Lesson[] = [chapter11Lesson]
+
+/**
+ * How to fetch each chapter that has content. `import()` tells the build tool to put
+ * that chapter in its own file, downloaded the first time it's needed.
+ */
+const loaders: Record<string, () => Promise<ChapterContent>> = {
+  ch11: () => import('./chapter-11/index').then((m) => m.chapterContent),
+}
+
+const NO_CONTENT: ChapterContent = { questions: [] }
+const loaded = new Map<string, Promise<ChapterContent>>()
+
+export function hasContent(chapterId: string): boolean {
+  return chapterId in loaders
+}
+
+/**
+ * The chapter's lesson and questions. Each chapter is downloaded once and then reused.
+ * A failed download is remembered (so the page can show an error instead of retrying in a loop)
+ * until forgetFailedChapters() is called, for example by a "Try again" button.
+ */
+export function loadChapterContent(chapterId: string): Promise<ChapterContent> {
+  const existing = loaded.get(chapterId)
+  if (existing) return existing
+
+  const load = loaders[chapterId]
+  const promise = load ? load() : Promise.resolve(NO_CONTENT)
+  // React's use() reads these fields: once a chapter has loaded, revisiting it shows the page
+  // straight away instead of flashing "Loading…" again.
+  const tracked = promise as Promise<ChapterContent> & Record<string, unknown>
+  tracked.status = 'pending'
+  promise.then(
+    (value) => Object.assign(tracked, { status: 'fulfilled', value }),
+    (reason) => Object.assign(tracked, { status: 'rejected', reason }),
+  )
+  loaded.set(chapterId, promise)
+  return promise
+}
+
+/** Lets failed chapter downloads be tried again. */
+export function forgetFailedChapters(): void {
+  for (const [chapterId, promise] of loaded) {
+    if ((promise as Promise<ChapterContent> & { status?: string }).status === 'rejected') loaded.delete(chapterId)
+  }
+}
 
 export function getChapterByNumber(number: number): Chapter | undefined {
   return chapters.find((c) => c.number === number)
@@ -23,17 +68,8 @@ export function getChapter(id: ChapterId | string): Chapter | undefined {
   return chapters.find((c) => c.id === id)
 }
 
-export function getLesson(chapterId: string): Lesson | undefined {
-  return lessons.find((l) => l.chapterId === chapterId)
-}
-
 export function getConcept(id: string): Concept | undefined {
   return concepts.find((c) => c.id === id)
-}
-
-/** Questions for one chapter only. This is what keeps quizzes from mixing in other chapters. */
-export function getQuestionsForChapter(chapterId: string): Question[] {
-  return questions.filter((q) => q.chapterId === chapterId)
 }
 
 /** The id of the place in a chapter's lesson that teaches a concept, for links like /learn/11#study-grammar-eul-geyo. */

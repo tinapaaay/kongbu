@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Chapter } from '../../content/schemas'
-import { chapters, conceptIdsForChapter, getQuestionsForChapter } from '../../content'
+import { chapters, conceptIdsForChapter, getQuestionsForChapter } from '../../content/allContent'
 import { emptyLearnerData, type ActiveSession, type LearnerData } from '../learnerData'
 import { makeAttempt, makeSession, minutes } from '../testFixtures'
 import { currentChapter, nextStep } from './nextStep'

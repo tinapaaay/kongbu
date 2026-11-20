@@ -8,7 +8,7 @@ import {
   lessons,
   questions,
   type Question,
-} from './index'
+} from './allContent'
 import { validateContent, type ContentBundle } from './validate'
 
 const real: ContentBundle = { chapters, concepts, questions, lessons }
@@ -142,5 +142,23 @@ describe('validation catches broken content', () => {
     const bundle = copy()
     bundle.lessons[0].grammar[0].examples[0].highlight = '없는 말'
     expect(validateContent(bundle).join('\n')).toMatch(/highlight "없는 말"/)
+  })
+})
+
+describe('on-demand chapter content', () => {
+  it('downloads a chapter once and reuses it', async () => {
+    const { loadChapterContent, hasContent } = await import('./index')
+    expect(hasContent('ch11')).toBe(true)
+    const first = loadChapterContent('ch11')
+    expect(loadChapterContent('ch11')).toBe(first)
+    const content = await first
+    expect(content.lesson?.chapterId).toBe('ch11')
+    expect(content.questions).toEqual(getQuestionsForChapter('ch11'))
+  })
+
+  it('gives chapters without content an empty result, with nothing to download', async () => {
+    const { loadChapterContent, hasContent } = await import('./index')
+    expect(hasContent('ch12')).toBe(false)
+    expect(await loadChapterContent('ch12')).toEqual({ questions: [] })
   })
 })

@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
-import { questions, type ChoiceId, type Question } from '../../content'
+import { questions, type ChoiceId, type Question } from '../../content/allContent'
 import type { Attempt, CompletedSession } from '../../domain/learnerData'
 import { buildChapterSession } from '../../domain/quiz/buildSession'
 import { scoreSession } from '../../domain/quiz/scoreSession'

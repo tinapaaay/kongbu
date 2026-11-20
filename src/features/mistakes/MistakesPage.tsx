@@ -4,15 +4,14 @@ import buttons from '../../components/buttons.module.css'
 import { formatDate } from '../../components/formatDate'
 import { Notice } from '../../components/Notice'
 import { PageHeader } from '../../components/PageHeader'
-import { getChapter, getConcept, questions, studyAnchorId } from '../../content'
+import { getChapter, getConcept, studyAnchorId } from '../../content'
+import { useQuestionsById } from '../../content/useChapterContent'
 import { useLearnerData } from '../../data/learnerDataContext'
 import { keepBlanksTogether } from '../../domain/quiz/playableQuestion'
 import { conceptStats, listMistakes, type MistakeEntry } from '../../domain/progress/mistakes'
 import { PracticeConceptButton } from '../../practice/PracticeConceptButton'
 import { rangeStart, useMistakeFilters, type DateRange } from './useMistakeFilters'
 import styles from './MistakesPage.module.css'
-
-const questionsById = new Map(questions.map((q) => [q.id, q]))
 
 export function MistakesPage() {
   const { data } = useLearnerData()
@@ -201,7 +200,7 @@ export function MistakesPage() {
 
 function MistakeItem({ entry }: { entry: MistakeEntry }) {
   const { attempt, status } = entry
-  const question = questionsById.get(attempt.questionId)
+  const question = useQuestionsById([attempt.chapterId]).get(attempt.questionId)
   const textOf = (id: string | null) => (id ? (question?.choices.find((c) => c.id === id)?.text ?? id) : null)
   const picked = textOf(attempt.selectedChoiceId)
   const correct = textOf(attempt.correctChoiceId)
