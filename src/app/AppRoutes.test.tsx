@@ -59,6 +59,12 @@ describe('navigation', () => {
     expect(within(nav).getByRole('link', { name: 'Dashboard' })).not.toHaveAttribute('aria-current')
   })
 
+  it('names the mistakes tab for what it holds', async () => {
+    renderApp('/practice/mistakes')
+    await heading('Mistakes')
+    expect(within(desktopNav()).getByRole('link', { name: 'Mistakes' })).toHaveAttribute('aria-current', 'page')
+  })
+
   it('moves to a new page when a link is clicked', async () => {
     renderApp('/')
     await heading('오늘의 공부')

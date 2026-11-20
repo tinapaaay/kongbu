@@ -47,7 +47,7 @@ export function MistakesPage() {
 
   return (
     <>
-      <PageHeader title="Mistakes" eyebrow="Practice" />
+      <PageHeader title="Mistakes" eyebrow="Review" />
 
       {allMistakes.length === 0 ? (
         <Notice>

@@ -46,9 +46,10 @@ export const navItems: NavItem[] = [
     ),
   },
   {
-    to: '/practice',
-    label: 'Practice',
-    shortLabel: 'Practice',
+    // Named for what it holds today. Phase 3 adds flashcards and review here and can rename it then.
+    to: '/practice/mistakes',
+    label: 'Mistakes',
+    shortLabel: 'Mistakes',
     icon: (
       <svg {...iconProps}>
         <rect x="5" y="3" width="14" height="18" rx="2" />

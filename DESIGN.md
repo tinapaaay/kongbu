@@ -469,6 +469,10 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 
 **Mastery checklist.** Results lists the three mastery conditions with ✓ (Success) or ○ (Secondary) and a hidden "Done"/"Not yet" for screen readers, instead of a paragraph of rules.
 
+**Chapter list.** Chapters with content have a linked title and a status pill. Chapters without content are quieter: regular-weight secondary title and the words "Coming later" in the status column, so gray is never the only signal.
+
+**File picker.** The native file input stays (for its label, keyboard use, and screen readers), but its button is restyled with `::file-selector-button` to match the secondary button.
+
 **Tap areas.** Anything tapped on its own (buttons, number squares, jump links, standalone links like "See all mistakes") is at least 44px tall. Links inside a sentence can stay text height.
 
 **Answer choices.** Full-width white rounded rows with ①, ②, ③, or ④ at the left. Before submission only Selected appears, with pale-blue fill and the word "Selected." After submission, correct and wrong answers use their colors plus "Correct answer" and "Your answer."

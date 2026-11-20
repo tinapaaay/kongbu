@@ -45,7 +45,8 @@ describe('Chapter Library', () => {
 
   it('shows every chapter as not started for a new learner', async () => {
     await renderAt('/learn')
-    expect(screen.getAllByText('Not started')).toHaveLength(30)
+    expect(screen.getAllByText('Not started')).toHaveLength(1)
+    expect(screen.getAllByText('Coming later')).toHaveLength(29)
     expect(screen.queryByText(/Practiced|Mastered|Visited/)).not.toBeInTheDocument()
   })
 })

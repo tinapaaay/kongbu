@@ -1,4 +1,5 @@
 import { useId, useState, type ChangeEvent } from 'react'
+import buttons from '../../components/buttons.module.css'
 import { PageHeader } from '../../components/PageHeader'
 import { daysBetween, formatDate } from '../../components/formatDate'
 import { MAX_BACKUP_BYTES, parseBackup, type BackupSummary } from '../../data/backup'
@@ -18,9 +19,13 @@ const BACKUP_REMINDER_DAYS = 7
 interface SettingsPageProps {
   /** Replaced in tests so no real file download happens. */
   download?: (fileName: string, text: string) => void
+  /** The current time. Tests pass a fixed clock so "N days ago" doesn't depend on the day they run. */
+  now?: () => Date
 }
 
-export function SettingsPage({ download = downloadTextFile }: SettingsPageProps) {
+const systemNow = () => new Date()
+
+export function SettingsPage({ download = downloadTextFile, now = systemNow }: SettingsPageProps) {
   const { data, exportBackup, replaceAll } = useLearnerData()
   const [restore, setRestore] = useState<RestoreState>({ step: 'idle' })
   const [downloaded, setDownloaded] = useState(false)
@@ -28,11 +33,18 @@ export function SettingsPage({ download = downloadTextFile }: SettingsPageProps)
   const fileHintId = useId()
 
   // Read the clock once when the page opens, not on every render.
-  const [openedAt] = useState(() => new Date())
+  const [openedAt] = useState(now)
 
   const hasProgress = data.attempts.length > 0 || Object.keys(data.chapterVisits).length > 0
-  const backupIsOld =
-    hasProgress && (data.lastBackupAt === null || daysBetween(data.lastBackupAt, openedAt) >= BACKUP_REMINDER_DAYS)
+  const daysSinceBackup = data.lastBackupAt === null ? null : daysBetween(data.lastBackupAt, openedAt)
+  // Say exactly what is true: "never" and "8 days ago" are different situations.
+  const backupReminder = !hasProgress
+    ? null
+    : daysSinceBackup === null
+      ? "You haven't downloaded a backup yet. Download one to keep your progress safe."
+      : daysSinceBackup >= BACKUP_REMINDER_DAYS
+        ? `Your last backup was ${daysSinceBackup} days ago. Download a new one.`
+        : null
 
   async function handleDownload() {
     const { fileName, text } = await exportBackup()
@@ -90,10 +102,8 @@ export function SettingsPage({ download = downloadTextFile }: SettingsPageProps)
           <p className={styles.meta}>
             Last backup: {data.lastBackupAt ? formatDate(data.lastBackupAt) : 'never'}
           </p>
-          {backupIsOld && (
-            <p className={styles.reminder}>It has been a while since your last backup. Download one now.</p>
-          )}
-          <button type="button" className={styles.primary} onClick={handleDownload}>
+          {backupReminder && <p className={styles.reminder}>{backupReminder}</p>}
+          <button type="button" className={buttons.primary} onClick={handleDownload}>
             Download backup
           </button>
           {downloaded && (
@@ -122,10 +132,10 @@ export function SettingsPage({ download = downloadTextFile }: SettingsPageProps)
                 This browser's current {count(data.attempts.length, 'answer', 'answers')} will be replaced.
               </p>
               <div className={styles.row}>
-                <button type="button" className={styles.secondary} onClick={() => setRestore({ step: 'idle' })}>
+                <button type="button" className={buttons.secondary} onClick={() => setRestore({ step: 'idle' })}>
                   Cancel
                 </button>
-                <button type="button" className={styles.primary} onClick={confirmRestore}>
+                <button type="button" className={buttons.primary} onClick={confirmRestore}>
                   Replace progress
                 </button>
               </div>

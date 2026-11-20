@@ -57,42 +57,6 @@
   line-height: 1.5;
 }
 
-.primary,
-.secondary {
-  min-height: var(--spacing-touch-target);
-  padding: 0 var(--spacing-lg);
-  border-radius: var(--rounded-md);
-  font: 700 16px/1.5 var(--font-ko);
-  cursor: pointer;
-  transition: background-color 120ms;
-}
-
-.primary {
-  background: var(--color-primary);
-  color: var(--color-surface);
-  border: 1px solid var(--color-primary);
-}
-
-/* Hover only where there is a mouse, so a tap on a phone doesn't leave it highlighted. */
-@media (hover: hover) {
-  .primary:hover {
-    background: var(--color-primary-strong);
-  }
-}
-
-.secondary {
-  background: var(--color-surface);
-  color: var(--color-primary-strong);
-  border: 1px solid var(--color-primary);
-}
-
-/* Hover only where there is a mouse, so a tap on a phone doesn't leave it highlighted. */
-@media (hover: hover) {
-  .secondary:hover {
-    background: var(--color-neutral);
-  }
-}
-
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -121,6 +85,27 @@
   font: inherit;
   width: 100%;
   min-width: 0;
+  color: var(--color-secondary);
+}
+
+/* The browser's own "Choose File" button, restyled as a secondary button.
+   The real file input stays, so its label, keyboard use, and screen reader support are unchanged. */
+.file::file-selector-button {
+  min-height: var(--spacing-touch-target);
+  margin-right: var(--spacing-sm);
+  padding: 0 var(--spacing-lg);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--rounded-md);
+  background: var(--color-surface);
+  color: var(--color-primary-strong);
+  font: 700 16px/1.5 var(--font-ko);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .file::file-selector-button:hover {
+    background: var(--color-neutral);
+  }
 }
 
 .error {

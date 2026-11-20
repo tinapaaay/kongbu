@@ -62,7 +62,8 @@ export function ChapterLibraryPage() {
       </section>
 
       <p className={styles.meta}>
-        {book.label} covers chapters {book.range}. Content is added one chapter at a time.
+        {book.label} covers chapters {book.range}. Content is added one chapter at a time; chapters marked
+        &ldquo;Coming later&rdquo; show their textbook title only.
       </p>
 
       <table className={styles.table}>
@@ -100,11 +101,11 @@ export function ChapterLibraryPage() {
                     </span>
                   )}
                   <span className={styles.gloss}>{chapter.titleEn}</span>
-                  {!available && <span className={styles.coming}>Content coming later</span>}
                 </td>
                 <td className={`${styles.number} ${styles.hideOnPhone}`}>p.{chapter.textbookRef.page}</td>
                 <td>
-                  <StatusBadge status={progress.status} />
+                  {/* A chapter without content has no progress to show, so the status says why instead. */}
+                  {available ? <StatusBadge status={progress.status} /> : <span className={styles.coming}>Coming later</span>}
                 </td>
                 <td className={`${styles.number} ${styles.hideOnPhone}`}>
                   {progress.bestScore ? `${progress.bestScore.correct}/${progress.bestScore.total}` : '—'}

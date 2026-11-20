@@ -127,8 +127,15 @@
   font-weight: 700;
 }
 
-.plannedRow .title {
+.plannedRow .title,
+.plannedRow .gloss {
   color: var(--color-secondary);
+}
+
+/* Rows without content are quieter, so the one you can open stands out.
+   The title is plain text (not a link) and the status says "Coming later", so gray is never the only signal. */
+.plannedRow .title {
+  font-weight: 400;
 }
 
 .titleLink {
@@ -148,6 +155,7 @@
 .coming {
   display: block;
   color: var(--color-secondary);
+  white-space: nowrap;
   font-size: 14px;
   line-height: 1.4;
 }

@@ -24,6 +24,7 @@ Milestone 11 acted on an outside review: progress is safe with several tabs open
 | 10. Final verification | Done |
 | 11. Trust and polish (from an outside review) | Done |
 | 12. Design critique fixes | Done |
+| Polish: smaller critique items | Done |
 
 The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md).
 

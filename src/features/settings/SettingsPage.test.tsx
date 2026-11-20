@@ -13,7 +13,7 @@ const NOW = new Date('2026-11-20T09:00:00.000Z')
 
 async function renderSettings(storage = new MemoryStorage()) {
   const download = vi.fn()
-  renderApp('/settings', { storage, now: () => NOW, children: <SettingsPage download={download} /> })
+  renderApp('/settings', { storage, now: () => NOW, children: <SettingsPage download={download} now={() => NOW} /> })
   await screen.findByRole('heading', { level: 1, name: 'Settings' })
   return { download, storage }
 }
@@ -40,6 +40,20 @@ describe('Settings: backup', () => {
     await renderSettings()
     expect(screen.getByText(/saved in this browser only/)).toBeInTheDocument()
     expect(screen.getByText('Last backup: never')).toBeInTheDocument()
+  })
+
+  it('says plainly when no backup was ever made, or how old the last one is', async () => {
+    const progress = { sessions: [makeSession({ correctCount: 1, totalCount: 1 })], attempts: [makeAttempt({ questionId: 'ch11-q001', isCorrect: true })] }
+    const never = new MemoryStorage()
+    never.setItem(STORAGE_KEY, JSON.stringify({ ...emptyLearnerData(), ...progress }))
+    await renderSettings(never)
+    expect(screen.getByText("You haven't downloaded a backup yet. Download one to keep your progress safe.")).toBeInTheDocument()
+    document.body.innerHTML = ''
+
+    const old = new MemoryStorage()
+    old.setItem(STORAGE_KEY, JSON.stringify({ ...emptyLearnerData(), ...progress, lastBackupAt: '2026-11-10T09:00:00.000Z' }))
+    await renderSettings(old)
+    expect(screen.getByText('Your last backup was 10 days ago. Download a new one.')).toBeInTheDocument()
   })
 
   it('downloads a valid backup file and records the backup time', async () => {
