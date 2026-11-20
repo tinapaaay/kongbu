@@ -34,7 +34,7 @@ function describe(load: 'damaged' | 'newer-version' | 'unavailable' | null, save
   }
   if (load === 'newer-version' || save === 'read-only') {
     return {
-      title: 'Progress was saved by a newer version of Hangul Lab.',
+      title: 'Progress was saved by a newer version of Gongbu.',
       body: "To protect it, this version won't change it. Changes you make now are not saved.",
       showRestore: false,
     }

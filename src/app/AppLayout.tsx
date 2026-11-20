@@ -42,8 +42,10 @@ export function AppLayout() {
       </a>
 
       <header className={styles.topBar}>
-        <Link to="/" className={styles.brand} aria-label="Hangul Lab home">
-          <span className={styles.brandAccent}>HANGUL</span> LAB
+        <Link to="/" className={styles.brand} aria-label="Gongbu EPS-TOPIK Review home">
+          {/* A real space between the two parts, so screen readers don't hear one long word. */}
+          <span className={styles.brandAccent}>GONGBU</span>{' '}
+          <span className={styles.brandTagline}>EPS-TOPIK Review</span>
         </Link>
         <nav aria-label="Main" className={styles.topNav}>
           {navItems.map((item) => (

@@ -1,9 +1,16 @@
 import { learnerDataSchema, type LearnerData } from '../domain/learnerData'
 import { migrate } from './migrations'
 
+/**
+ * The marker inside every backup file. The app was called Hangul Lab before it became Gongbu,
+ * so backups made under the old name still restore.
+ */
+const APP_ID = 'gongbu'
+const OLD_APP_IDS = ['hangul-lab']
+
 /** Wraps learner data with a marker, so a random JSON file isn't mistaken for a backup. */
 interface BackupFile {
-  app: 'hangul-lab'
+  app: string
   kind: 'backup'
   exportedAt: string
   data: LearnerData
@@ -13,7 +20,7 @@ interface BackupFile {
 export const MAX_BACKUP_BYTES = 5 * 1024 * 1024
 
 export function createBackup(data: LearnerData, now: Date): string {
-  const file: BackupFile = { app: 'hangul-lab', kind: 'backup', exportedAt: now.toISOString(), data }
+  const file: BackupFile = { app: APP_ID, kind: 'backup', exportedAt: now.toISOString(), data }
   return JSON.stringify(file, null, 2)
 }
 
@@ -21,7 +28,7 @@ export function backupFileName(now: Date): string {
   const y = now.getFullYear()
   const m = String(now.getMonth() + 1).padStart(2, '0')
   const d = String(now.getDate()).padStart(2, '0')
-  return `hangul-lab-backup-${y}-${m}-${d}.json`
+  return `gongbu-backup-${y}-${m}-${d}.json`
 }
 
 export interface BackupSummary {
@@ -45,18 +52,19 @@ export function parseBackup(text: string): ParseBackupResult {
   try {
     parsed = JSON.parse(text)
   } catch {
-    return { ok: false, message: "This file isn't a Hangul Lab backup. It couldn't be read as a backup file." }
+    return { ok: false, message: "This file isn't a Gongbu backup. It couldn't be read as a backup file." }
   }
 
   const file = parsed as Partial<BackupFile> | null
-  if (!file || typeof file !== 'object' || file.app !== 'hangul-lab' || file.kind !== 'backup') {
-    return { ok: false, message: "This file isn't a Hangul Lab backup." }
+  const knownApp = typeof file?.app === 'string' && [APP_ID, ...OLD_APP_IDS].includes(file.app)
+  if (!file || typeof file !== 'object' || !knownApp || file.kind !== 'backup') {
+    return { ok: false, message: "This file isn't a Gongbu backup." }
   }
 
   const migrated = migrate(file.data)
   if (!migrated.ok) {
     return migrated.reason === 'newer-version'
-      ? { ok: false, message: 'This backup was made by a newer version of Hangul Lab. Update the app, then try again.' }
+      ? { ok: false, message: 'This backup was made by a newer version of Gongbu. Update the app, then try again.' }
       : { ok: false, message: 'This backup is damaged and cannot be restored.' }
   }
 

@@ -1,4 +1,6 @@
-# Hangul Lab
+# Gongbu (공부) · EPS-TOPIK Review
+
+An unofficial EPS-TOPIK review app based on the Standard Korean Language Textbook (Books 1 and 2). It is not made by or affiliated with HRD Korea. Formerly called Hangul Lab.
 
 A personal Korean study workspace for EPS-TOPIK preparation, organized around the NEW EPS-TOPIK Standard Korean Textbook (Books 1 and 2).
 
@@ -193,7 +195,7 @@ The rules in `src/domain/` are plain TypeScript functions with no screens or sto
 
 ## Saved progress
 
-Progress is saved in the browser's localStorage under one key, `hangul-lab:learner-data`, as a single JSON value. Each change rewrites the whole value in one step, so it is never half-saved.
+Progress is saved in the browser's localStorage under one key, `hangul-lab:learner-data`, as a single JSON value. The key keeps the app's old name on purpose: renaming it would make existing progress look empty. Each change rewrites the whole value in one step, so it is never half-saved.
 
 - **Reload safe:** chapter visits, unfinished quizzes, submitted quizzes, and answers survive refreshes.
 - **Several tabs:** every change starts from the latest saved copy, not the tab's own older copy, so a forgotten tab can't erase work from another tab. Tabs also update when another tab saves.
@@ -201,7 +203,7 @@ Progress is saved in the browser's localStorage under one key, `hangul-lab:learn
 - **Damaged data:** if saved data can't be read, a copy is kept under `hangul-lab:damaged-copy:<time>` and every page shows a warning. Nothing is silently deleted.
 - **Newer data:** data saved by a newer app version is never overwritten.
 - **Blocked or full storage:** the app keeps working for the current visit and shows a warning.
-- **Backups:** Settings downloads a `hangul-lab-backup-YYYY-MM-DD.json` file and restores one. A restore file is fully checked and summarized, and nothing is replaced until you confirm.
+- **Backups:** Settings downloads a `gongbu-backup-YYYY-MM-DD.json` file and restores one (backups made under the old name, `hangul-lab-backup-…`, still restore). A restore file is fully checked and summarized, and nothing is replaced until you confirm.
 
 Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, so Phase 2 can switch to a database by adding a new `LearnerRepository`.
 

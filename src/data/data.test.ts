@@ -232,14 +232,14 @@ describe('backups', () => {
   })
 
   it('names files by local date', () => {
-    expect(backupFileName(new Date(2026, 10, 20, 23, 30))).toBe('hangul-lab-backup-2026-11-20.json')
+    expect(backupFileName(new Date(2026, 10, 20, 23, 30))).toBe('gongbu-backup-2026-11-20.json')
   })
 
   it.each([
     ['plain text', 'hello', /couldn't be read/],
-    ['another JSON file', JSON.stringify({ name: 'shopping list' }), /isn't a Hangul Lab backup/],
-    ['damaged data', JSON.stringify({ app: 'hangul-lab', kind: 'backup', data: { schemaVersion: 1, attempts: 5 } }), /damaged/],
-    ['a newer version', JSON.stringify({ app: 'hangul-lab', kind: 'backup', data: { schemaVersion: 9 } }), /newer version/],
+    ['another JSON file', JSON.stringify({ name: 'shopping list' }), /isn't a Gongbu backup/],
+    ['damaged data', JSON.stringify({ app: 'gongbu', kind: 'backup', data: { schemaVersion: 1, attempts: 5 } }), /damaged/],
+    ['a newer version', JSON.stringify({ app: 'gongbu', kind: 'backup', data: { schemaVersion: 9 } }), /newer version/],
   ])('rejects %s with a clear message', (_label, text, message) => {
     const result = parseBackup(text)
     expect(result.ok).toBe(false)
@@ -273,6 +273,11 @@ describe('migrations', () => {
       'vocabulary.cooking',
       'grammar.eul-geyo',
     ])
+  })
+
+  it('a backup made under the old name (Hangul Lab) still restores', () => {
+    const old = JSON.stringify({ app: 'hangul-lab', kind: 'backup', exportedAt: NOW.toISOString(), data: emptyLearnerData() })
+    expect(parseBackup(old)).toMatchObject({ ok: true })
   })
 
   it('a saved version 1 backup still restores', () => {

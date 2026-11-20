@@ -7,7 +7,7 @@ export function NotFoundPage() {
     <>
       <PageHeader title="Page not found" />
       <Notice>
-        <p>This address doesn't match any page in Hangul Lab.</p>
+        <p>This address doesn't match any page in Gongbu.</p>
         <p>
           <Link to="/">Go to the dashboard</Link>
         </p>

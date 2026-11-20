@@ -40,11 +40,19 @@
   display: inline-flex;
   align-items: center;
   /* Flex layout drops plain spaces between words, so the gap adds the space back. */
-  gap: 0.3em;
+  gap: 0.6em;
 }
 
 .brandAccent {
   color: var(--color-primary);
+}
+
+/* What the app is for, beside the name: smaller and gray, so it never competes with the name. */
+.brandTagline {
+  color: var(--color-secondary);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .topNav {

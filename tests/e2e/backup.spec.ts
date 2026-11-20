@@ -15,7 +15,7 @@ test('a backup downloaded in one browser restores in another', async ({ browser,
     page.waitForEvent('download'),
     page.getByRole('button', { name: 'Download backup' }).click(),
   ])
-  expect(download.suggestedFilename()).toMatch(/^hangul-lab-backup-\d{4}-\d{2}-\d{2}\.json$/)
+  expect(download.suggestedFilename()).toMatch(/^gongbu-backup-\d{4}-\d{2}-\d{2}\.json$/)
   const file = testInfo.outputPath(download.suggestedFilename())
   await download.saveAs(file)
   await expect(page.getByText(/Last backup: \d/)).toBeVisible()
@@ -48,7 +48,7 @@ test('a file that is not a backup is rejected without touching progress', async 
   await writeFile(file, '{"shopping":["milk"]}')
   await page.getByLabel('Backup file').setInputFiles(file)
 
-  await expect(page.getByRole('alert')).toContainText("isn't a Hangul Lab backup")
+  await expect(page.getByRole('alert')).toContainText("isn't a Gongbu backup")
   await expect(page.getByRole('alert')).toContainText('not changed')
   await expect(page.getByText(/This browser has 1 quiz and 10 answers saved/)).toBeVisible()
 })

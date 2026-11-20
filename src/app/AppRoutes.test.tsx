@@ -46,7 +46,7 @@ describe('routes', () => {
     await heading('Chapters')
     // The title is set just after the page appears, so wait for it instead of checking at once.
     // Checking immediately passed on a fast machine but could fail on a busy one (a "flaky" test).
-    await waitFor(() => expect(document.title).toBe('Chapters · Hangul Lab'))
+    await waitFor(() => expect(document.title).toBe('Chapters · Gongbu'))
   })
 })
 

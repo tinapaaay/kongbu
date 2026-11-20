@@ -1,5 +1,7 @@
 # Hangul Lab: Phase 0 Plan
 
+> The app was renamed **Gongbu (공부) · EPS-TOPIK Review** on 2026-11-20. This plan keeps its original name as a record of what was decided at the time.
+
 **Status:** Phase 0 complete. Phase 1 was approved and is now complete; see the README for verified acceptance criteria.
 **Date:** 2026-11-19
 **Source of truth:** Hangul Lab PRD v1.0

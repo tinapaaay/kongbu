@@ -3,6 +3,8 @@ import { SaveError, type LearnerRepository, type LoadResult } from './LearnerRep
 import { migrate } from './migrations'
 import { MemoryStorage, type StorageLike } from './storage'
 
+// These keys keep the app's old name (Hangul Lab) on purpose: changing them would make
+// existing saved progress look empty. Visitors never see them.
 export const STORAGE_KEY = 'hangul-lab:learner-data'
 export const DAMAGED_COPY_PREFIX = 'hangul-lab:damaged-copy:'
 

@@ -1,6 +1,6 @@
 ---
 version: alpha
-name: Hangul Lab
+name: Gongbu
 description: A personal EPS-TOPIK study workspace whose colors, section system, and page structure follow the NEW EPS-TOPIK Standard Korean Textbook the learner studies from.
 
 colors:
@@ -371,17 +371,17 @@ components:
     padding: "{spacing.md}"
 ---
 
-# Hangul Lab
+# Gongbu
 
 ## Overview
 
-Hangul Lab should feel like the **NEW EPS-TOPIK Standard Korean Textbook (Books 1 and 2) turned into a study app**. The learner already spends hours with these books, so the app adopts their visual language: a royal-blue chapter banner, colored tabs that identify each kind of section, white rounded boxes on softly tinted pages, maroon English translations under Korean, and highlighted examples.
+Gongbu (공부, "study") should feel like the **NEW EPS-TOPIK Standard Korean Textbook (Books 1 and 2) turned into a study app**. The learner already spends hours with these books, so the app adopts their visual language: a royal-blue chapter banner, colored tabs that identify each kind of section, white rounded boxes on softly tinted pages, maroon English translations under Korean, and highlighted examples.
 
 This was a deliberate choice to match the learner's material instead of inventing a separate style. Moving between the book and the app should feel continuous. When the app says **문법 GRAMMAR** on an orange tab, the learner should recognize it at once.
 
-The app copies the book's **colors, section system, and page structure**. It does not copy the book's photographs, illustrations, cartoon characters, cover, logos, or text. All lesson explanations and questions are original. This is appropriate for a private study tool. If Hangul Lab ever becomes public, this direction must be reviewed so the app is not mistaken for an official publication.
+The app copies the book's **colors, section system, and page structure**. It does not copy the book's photographs, illustrations, cartoon characters, cover, logos, or text. All lesson explanations and questions are original. This is appropriate for a private study tool. If Gongbu ever becomes public, this direction must be reviewed so the app is not mistaken for an official publication.
 
-Where the printed book conflicts with screen accessibility, accessibility wins. The book uses white text on light orange, teal, and rose, and uses bright cyan text for examples. Those pairs are too faint on screens, so Hangul Lab keeps the exact book colors for fills and uses near-black text on them, or uses slightly darker versions of the colors for text.
+Where the printed book conflicts with screen accessibility, accessibility wins. The book uses white text on light orange, teal, and rose, and uses bright cyan text for examples. Those pairs are too faint on screens, so Gongbu keeps the exact book colors for fills and uses near-black text on them, or uses slightly darker versions of the colors for text.
 
 The first release has a light theme only.
 
@@ -397,7 +397,7 @@ These values were measured from rendered pages of Book 1, Chapter 11 (pages 150�
 - **On-surface (#232121):** *Book black.* The text color and the black icon tile beside each section tab.
 - **Secondary (#5E5A55):** Muted text for metadata and labels that do not need emphasis.
 - **Border (#C9C5BF) and Outline (#8C8780):** Light rules divide content. Outline marks controls such as answer choices and inputs, with at least 3:1 contrast.
-- **Gloss (#6C372A):** *Translation maroon.* The book prints English translations in this color under Korean. Hangul Lab does the same for every English gloss.
+- **Gloss (#6C372A):** *Translation maroon.* The book prints English translations in this color under Korean. Gongbu does the same for every English gloss.
 - **Example (#006E8F):** *Darkened example cyan.* The book highlights target grammar in examples with bright cyan (#00AFDD). This darker version keeps the meaning while staying readable.
 - **Section colors:** each section type keeps the book's color.
   - **Grammar (#E1914F):** orange.
@@ -413,7 +413,7 @@ Section colors only identify section type. They are not decoration and do not in
 
 ## Typography
 
-The book uses **Apple SD Gothic Neo** for Korean and **Titillium Web** for its English section labels and large numbers. Hangul Lab uses the same families.
+The book uses **Apple SD Gothic Neo** for Korean and **Titillium Web** for its English section labels and large numbers. Gongbu uses the same families.
 
 **Apple SD Gothic Neo** is built into macOS and iOS, so it needs no download there. Other systems use their own built-in Korean font, so no Korean web font is downloaded. A Korean web font would add about 178 KB of CSS to every page for devices that already have Korean fonts. Font stack: `"Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", "Noto Sans KR", sans-serif`. Use only weights 400 and 700.
 
@@ -455,7 +455,7 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 
 ## Components
 
-**Navigation.** A white bar with the app name and text links. The active item is a pale-blue pill with Primary Strong text and `aria-current="page"`.
+**Navigation.** A white bar with the app name, GONGBU in textbook blue, followed by "EPS-TOPIK REVIEW" as a smaller gray label, then text links. The label says what the app is for, since the name alone (공부, "study") doesn't. The active item is a pale-blue pill with Primary Strong text and `aria-current="page"`.
 
 **Chapter banner.** Textbook blue with the chapter number and title in white. The book prints the number in light blue, but that is too faint on screen. The banner must not include book photos or characters. It carries the chapter's main action (start or resume the practice exam) as a white secondary button, so it is visible without scrolling; the same button repeats at the end of the lesson. On phones the topic pills shrink to one compact row each, so the lesson starts on the first screen.
 

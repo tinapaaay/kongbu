@@ -32,6 +32,7 @@ reference/
 
 # Learner backups downloaded from the app
 hangul-lab-backup*.json
+gongbu-backup*.json
 
 # Local tool settings
 .claude/settings.local.json

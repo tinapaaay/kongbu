@@ -22,7 +22,7 @@ function savedData(storage: MemoryStorage) {
   return JSON.parse(storage.getItem(STORAGE_KEY) ?? 'null')
 }
 
-function backupFile(text: string, name = 'hangul-lab-backup-2026-11-19.json') {
+function backupFile(text: string, name = 'gongbu-backup-2026-11-19.json') {
   return new File([text], name, { type: 'application/json' })
 }
 
@@ -62,8 +62,8 @@ describe('Settings: backup', () => {
 
     expect(download).toHaveBeenCalledTimes(1)
     const [fileName, text] = download.mock.calls[0]
-    expect(fileName).toMatch(/^hangul-lab-backup-\d{4}-\d{2}-\d{2}\.json$/)
-    expect(JSON.parse(text)).toMatchObject({ app: 'hangul-lab', kind: 'backup' })
+    expect(fileName).toMatch(/^gongbu-backup-\d{4}-\d{2}-\d{2}\.json$/)
+    expect(JSON.parse(text)).toMatchObject({ app: 'gongbu', kind: 'backup' })
     expect(savedData(storage).lastBackupAt).toBe(NOW.toISOString())
     expect(await screen.findByRole('status')).toHaveTextContent('Backup downloaded')
   })
@@ -105,7 +105,7 @@ describe('Settings: restore', () => {
 
     await userEvent.upload(screen.getByLabelText('Backup file'), backupFile('{"name":"shopping list"}', 'list.json'))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(/isn't a Hangul Lab backup.*not changed/)
+    expect(await screen.findByRole('alert')).toHaveTextContent(/isn't a Gongbu backup.*not changed/)
     expect(screen.getByLabelText('Backup file')).toHaveAttribute('aria-invalid', 'true')
     expect(storage.getItem(STORAGE_KEY)).toBe(existing)
   })

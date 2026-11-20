@@ -1,3 +1,10 @@
+.about {
+  max-width: 68ch;
+  margin-top: var(--spacing-xl);
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
 .explainer {
   background: var(--color-neutral);
   border-radius: var(--rounded-lg);

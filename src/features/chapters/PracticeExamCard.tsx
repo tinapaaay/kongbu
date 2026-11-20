@@ -21,7 +21,7 @@ export function PracticeExamCard({ chapterId, progress }: { chapterId: string; p
         explanations appear after you submit.
       </p>
       <p className={styles.meta}>
-        These are practice questions written for Hangul Lab, not real exam questions. Questions you missed before
+        These are practice questions written for Gongbu, not real exam questions. Questions you missed before
         come back first.
       </p>
 

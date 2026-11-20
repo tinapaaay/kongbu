@@ -60,7 +60,7 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
     if (!file) return
 
     if (file.size > MAX_BACKUP_BYTES) {
-      setRestore({ step: 'error', message: 'This file is too large to be a Hangul Lab backup.' })
+      setRestore({ step: 'error', message: 'This file is too large to be a Gongbu backup.' })
       return
     }
     const result = parseBackup(await file.text())
@@ -173,6 +173,17 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
           )}
         </section>
       </div>
+
+      <section className={styles.about} aria-labelledby="about-heading">
+        <h2 id="about-heading" className={styles.panelTitle}>
+          About Gongbu
+        </h2>
+        <p className={styles.meta}>
+          Gongbu (<span lang="ko">공부</span>, “study”) is an unofficial review app for the EPS-TOPIK, based on the
+          Standard Korean Language Textbook. It is not made by or affiliated with HRD Korea, and its practice questions
+          are original, not real exam questions.
+        </p>
+      </section>
     </>
   )
 }
