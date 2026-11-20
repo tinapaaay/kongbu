@@ -133,6 +133,9 @@
 
 .titleLink {
   color: var(--color-primary-strong);
+  /* Taller tap area; the padding is taken back with a negative margin so the row doesn't grow. */
+  padding: 9px 0;
+  margin: -9px 0;
 }
 
 .gloss {
@@ -145,7 +148,7 @@
 .coming {
   display: block;
   color: var(--color-secondary);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.4;
 }
 

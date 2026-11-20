@@ -27,7 +27,7 @@ test('a new learner completes the core workflow and can return later', async ({ 
   await expect(page.getByText(/not real exam questions/)).toBeVisible()
 
   // 3. Start a practice exam.
-  await page.getByRole('button', { name: 'Start practice exam' }).click()
+  await page.getByRole('button', { name: 'Start practice exam' }).first().click()
   await expect(currentQuestion(page)).toHaveAccessibleName(/^1\./)
   await expect(currentQuestion(page).getByRole('radio')).toHaveCount(4)
   await expect(page.getByText(/Correct answer|Explanation/)).toHaveCount(0)
@@ -80,7 +80,7 @@ test('a new learner completes the core workflow and can return later', async ({ 
 
 test('chapter filters keep other chapters out of a quiz', async ({ page }) => {
   await openChapter11FromDashboard(page)
-  await page.getByRole('button', { name: 'Start practice exam' }).click()
+  await page.getByRole('button', { name: 'Start practice exam' }).first().click()
   await expect(currentQuestion(page)).toBeVisible()
   const ids = await page.evaluate(() => JSON.parse(localStorage.getItem('hangul-lab:learner-data')!).activeSession.questionIds)
   expect(ids).toHaveLength(10)
@@ -89,7 +89,7 @@ test('chapter filters keep other chapters out of a quiz', async ({ page }) => {
 
 test('submitting the same quiz twice records it once', async ({ page }) => {
   await openChapter11FromDashboard(page)
-  await page.getByRole('button', { name: 'Start practice exam' }).click()
+  await page.getByRole('button', { name: 'Start practice exam' }).first().click()
   await page.getByRole('button', { name: 'Submit quiz' }).click()
   const confirm = page.getByRole('dialog').getByRole('button', { name: /^Submit/ })
   // Two clicks in the same instant, before the page can update: the real double-click race.

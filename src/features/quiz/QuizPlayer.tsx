@@ -107,6 +107,7 @@ export function QuizPlayer({ initial }: { initial: ActiveSession }) {
   })
 
   const unanswered = unansweredQuestionIds(session).map((id) => session.questionIds.indexOf(id) + 1)
+  const readyToSubmit = index === total - 1 || unanswered.length === 0
 
   return (
     <>
@@ -198,6 +199,8 @@ export function QuizPlayer({ initial }: { initial: ActiveSession }) {
 
         <p className={styles.hint}>Keys: 1–4 choose an answer · ← → change question</p>
 
+        {/* One main button at a time: Next while you work through the quiz,
+            Submit once you reach the last question or have answered everything. */}
         <div className={styles.controls}>
           <button
             type="button"
@@ -209,13 +212,17 @@ export function QuizPlayer({ initial }: { initial: ActiveSession }) {
           </button>
           <button
             type="button"
-            className={buttons.secondary}
+            className={readyToSubmit ? buttons.secondary : buttons.primary}
             onClick={() => move({ type: 'next' })}
             disabled={index === total - 1}
           >
             Next →
           </button>
-          <button type="button" className={`${buttons.primary} ${styles.submit}`} onClick={() => setDialog('submit')}>
+          <button
+            type="button"
+            className={`${readyToSubmit ? buttons.primary : buttons.secondary} ${styles.submit}`}
+            onClick={() => setDialog('submit')}
+          >
             Submit quiz
           </button>
         </div>

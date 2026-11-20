@@ -9,6 +9,7 @@ import { useLearnerData } from '../../data/learnerDataContext'
 import { ChapterBanner } from './ChapterBanner'
 import { LessonContent } from './LessonContent'
 import { PracticeExamCard } from './PracticeExamCard'
+import { StartPracticeButton } from './StartPracticeButton'
 
 export function ChapterPage() {
   const chapterNumber = parseChapterNumber(useParams().chapterNumber)
@@ -27,7 +28,12 @@ export function ChapterPage() {
 
   return (
     <>
-      <ChapterBanner chapter={chapter} lesson={lesson} status={progress.status} />
+      <ChapterBanner
+        chapter={chapter}
+        lesson={lesson}
+        status={progress.status}
+        action={lesson && <StartPracticeButton chapterId={chapter.id} progress={progress} variant="secondary" />}
+      />
       {lesson ? (
         <>
           <LessonContent lesson={lesson} />

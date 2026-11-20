@@ -1,15 +1,15 @@
 import { Link } from 'react-router'
 import { SectionHeader } from '../../components/SectionHeader'
-import buttons from '../../components/buttons.module.css'
 import { getChapter } from '../../content'
 import { percent, type ChapterProgress } from '../../domain/progress/chapterProgress'
 import { QUIZ_SIZE } from '../../domain/quiz/buildSession'
 import { useStartPractice } from '../quiz/useStartPractice'
+import { StartPracticeButton } from './StartPracticeButton'
 import styles from './PracticeExamCard.module.css'
 
 /** The end of the chapter: start, resume, or retake the practice exam. */
 export function PracticeExamCard({ chapterId, progress }: { chapterId: string; progress: ChapterProgress }) {
-  const { start, starting, problem, questionCount, resumable, otherActive } = useStartPractice(chapterId)
+  const { problem, questionCount, otherActive } = useStartPractice(chapterId)
   const otherChapter = otherActive ? getChapter(otherActive.chapterId) : undefined
 
   return (
@@ -40,13 +40,7 @@ export function PracticeExamCard({ chapterId, progress }: { chapterId: string; p
         </p>
       ) : (
         <div>
-          <button type="button" className={buttons.primary} onClick={start} disabled={starting}>
-            {resumable
-              ? `Resume practice exam (${Object.keys(resumable.answers).length}/${resumable.questionIds.length} answered)`
-              : progress.sessionsCompleted > 0
-                ? 'Take another practice exam'
-                : 'Start practice exam'}
-          </button>
+          <StartPracticeButton chapterId={chapterId} progress={progress} />
         </div>
       )}
 

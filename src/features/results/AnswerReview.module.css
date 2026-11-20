@@ -50,7 +50,7 @@
   flex: none;
   border-radius: var(--rounded-full);
   padding: 2px 10px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -76,7 +76,7 @@
   padding: var(--spacing-md);
   border: 1px solid var(--color-border);
   border-radius: var(--rounded-md);
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.8;
 }
 
@@ -96,7 +96,7 @@
   padding: var(--spacing-xs) var(--spacing-md);
   border: 1px solid var(--color-border);
   border-radius: var(--rounded-md);
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.6;
 }
 
@@ -114,7 +114,7 @@
 
 .marker {
   flex: none;
-  font-size: 19px;
+  font-size: 18px;
 }
 
 .choiceText {
@@ -123,7 +123,7 @@
 
 .tag {
   flex: none;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -136,7 +136,7 @@
 }
 
 .explanationLabel {
-  font: 700 13px/1.2 var(--font-label);
+  font: 700 14px/1.2 var(--font-label);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-secondary);

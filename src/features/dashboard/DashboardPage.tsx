@@ -9,6 +9,7 @@ import { weekActivity } from '../../domain/progress/activity'
 import { chapterProgress, percent, type ChapterStatus } from '../../domain/progress/chapterProgress'
 import { conceptStats, weakConcepts } from '../../domain/progress/mistakes'
 import { currentChapter, nextStep, type NextStep } from '../../domain/progress/nextStep'
+import { PracticeConceptButton } from '../quiz/PracticeConceptButton'
 import styles from './DashboardPage.module.css'
 
 export function DashboardPage() {
@@ -70,6 +71,7 @@ export function DashboardPage() {
                         </span>{' '}
                         correct
                       </p>
+                      <PracticeConceptButton conceptId={stat.conceptId} />
                     </div>
                   </li>
                 )

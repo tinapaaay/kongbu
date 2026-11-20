@@ -23,6 +23,7 @@ Milestone 11 acted on an outside review: progress is safe with several tabs open
 | 9. Mistake Review | Done |
 | 10. Final verification | Done |
 | 11. Trust and polish (from an outside review) | Done |
+| 12. Design critique fixes | Done |
 
 The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md).
 
@@ -58,6 +59,7 @@ npx playwright install chromium webkit
 | `npm run build` | Builds the production site into `dist/` |
 | `npm run tokens` | Regenerates `src/styles/tokens.css` from `DESIGN.md` |
 | `npm run design:lint` | Checks `DESIGN.md` against the design.md format |
+| `npm run design:check-type` | Fails if any stylesheet uses a font size that isn't a typography level in `DESIGN.md` |
 | `npm run test:e2e` | Runs browser tests against the production build in Chrome, Safari, and iPhone Safari |
 | `npm run check:secrets` | Fails if anything that looks like a key or token is in `dist/` |
 | `npm run verify` | Runs everything above in order. Use it before every push |

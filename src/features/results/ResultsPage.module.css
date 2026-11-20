@@ -41,6 +41,39 @@
   font-weight: 700;
 }
 
+.checklistTitle {
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+}
+
+.checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--spacing-xs);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.checklist li {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+}
+
+.checkMark {
+  font-weight: 700;
+}
+
+/* The mark and the hidden "Done"/"Not yet" carry the meaning; color only supports it. */
+.checkDone {
+  color: var(--color-success);
+}
+
+.checkTodo {
+  color: var(--color-secondary);
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -67,7 +100,7 @@
 
 .table th {
   text-align: left;
-  font: 700 13px/1.2 var(--font-label);
+  font: 700 14px/1.2 var(--font-label);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-secondary);
@@ -128,7 +161,8 @@
     grid-template-columns: 1fr;
   }
 
-  .actions > a {
+  .actions > a,
+  .actions > button {
     flex-basis: 100%;
   }
 }

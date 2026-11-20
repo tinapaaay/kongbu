@@ -78,9 +78,16 @@ describe('Chapter 11 page', () => {
 })
 
 describe('Starting the practice exam', () => {
+  it('offers the practice exam at the top of the chapter, not only at the end', async () => {
+    await renderChapter()
+    const header = screen.getByRole('heading', { level: 1 }).closest('header')!
+    expect(within(header).getByRole('button', { name: 'Start practice exam' })).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Start practice exam' })).toHaveLength(2)
+  })
+
   it('saves a new 10-question quiz and opens it', async () => {
     const storage = await renderChapter()
-    await userEvent.click(screen.getByRole('button', { name: 'Start practice exam' }))
+    await userEvent.click(screen.getAllByRole('button', { name: 'Start practice exam' })[0])
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Practice exam' })).toBeInTheDocument()
     const active = readSaved(storage).activeSession
@@ -90,13 +97,13 @@ describe('Starting the practice exam', () => {
 
   it('offers to resume instead of starting over', async () => {
     const storage = await renderChapter()
-    await userEvent.click(screen.getByRole('button', { name: 'Start practice exam' }))
+    await userEvent.click(screen.getAllByRole('button', { name: 'Start practice exam' })[0])
     await screen.findByRole('heading', { level: 1, name: 'Practice exam' })
     const firstQuizId = readSaved(storage).activeSession?.id
 
     // Come back to the chapter in a new visit.
     renderApp('/learn/11', { storage })
-    const resume = await screen.findByRole('button', { name: /Resume practice exam \(0\/10 answered\)/ })
+    const [resume] = await screen.findAllByRole('button', { name: /Resume practice exam \(0\/10 answered\)/ })
     await userEvent.click(resume)
     expect(readSaved(storage).activeSession?.id).toBe(firstQuizId)
   })

@@ -82,8 +82,8 @@ describe('Mistake Review: list', () => {
     await openMistakes()
     const open = screen.getByRole('region', { name: '-(으)ㄹ게요' })
     const fixed = screen.getByRole('region', { name: '청소 어휘' })
-    expect(within(open).getByRole('button', { name: 'Practice this concept' })).toBeInTheDocument()
-    expect(within(fixed).queryByRole('button', { name: 'Practice this concept' })).not.toBeInTheDocument()
+    expect(within(open).getByRole('button', { name: /^Practice this concept/ })).toBeInTheDocument()
+    expect(within(fixed).queryByRole('button', { name: /^Practice this concept/ })).not.toBeInTheDocument()
   })
 
   it('starts a short quiz on just that concept, missed questions included', async () => {
@@ -91,7 +91,7 @@ describe('Mistake Review: list', () => {
     const user = userEvent.setup()
     renderApp('/practice/mistakes', { storage })
     await screen.findByRole('heading', { level: 1, name: 'Mistakes' })
-    await user.click(within(screen.getByRole('region', { name: '-(으)ㄹ게요' })).getByRole('button', { name: 'Practice this concept' }))
+    await user.click(within(screen.getByRole('region', { name: '-(으)ㄹ게요' })).getByRole('button', { name: /^Practice this concept/ }))
 
     expect(await screen.findByRole('heading', { level: 1, name: "Review: I'll (promise or offer)" })).toBeInTheDocument()
     const quiz = readSaved(storage).activeSession!

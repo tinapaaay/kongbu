@@ -11,7 +11,7 @@ test('core quizzes work with no internet connection and no AI', async ({ page, c
 
   await page.getByRole('link', { name: 'Open Chapter 11' }).click()
   await expectHeading(page, '집안일')
-  await page.getByRole('button', { name: 'Start practice exam' }).click()
+  await page.getByRole('button', { name: 'Start practice exam' }).first().click()
   await chooseAnswer(page, 0)
   await expect(currentQuestion(page)).toBeVisible()
   await submitQuiz(page)
@@ -26,7 +26,7 @@ test('the app never contacts another website', async ({ page }) => {
   })
 
   await openChapter11FromDashboard(page)
-  await page.getByRole('button', { name: 'Start practice exam' }).click()
+  await page.getByRole('button', { name: 'Start practice exam' }).first().click()
   await submitQuiz(page)
   await page.goto('/practice/mistakes')
   await page.goto('/settings')

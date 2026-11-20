@@ -7,8 +7,9 @@ import { StatusBadge } from '../../components/StatusBadge'
 import { getChapter, getConcept } from '../../content'
 import { useLearnerData } from '../../data/learnerDataContext'
 import { quizKindLabel } from '../quiz/quizKindLabel'
-import { chapterProgress, MASTERY_ACCURACY, percent } from '../../domain/progress/chapterProgress'
-import { conceptStats } from '../../domain/progress/mistakes'
+import { chapterProgress, MASTERY_ACCURACY, MASTERY_MIN_QUESTIONS, percent } from '../../domain/progress/chapterProgress'
+import { conceptStats, weakConcepts } from '../../domain/progress/mistakes'
+import { PracticeConceptButton } from '../quiz/PracticeConceptButton'
 import { AnswerReview } from './AnswerReview'
 import styles from './ResultsPage.module.css'
 
@@ -40,6 +41,12 @@ export function ResultsPage() {
     .filter((a) => a !== undefined)
   const byConcept = conceptStats(attempts).sort((a, b) => a.correct / a.total - b.correct / b.total)
   const missed = attempts.filter((a) => !a.isCorrect).length
+  // The one concept to work on next: the weakest one from this quiz that still has open mistakes.
+  const inThisQuiz = new Set(attempts.map((a) => a.conceptId))
+  const focus = weakConcepts(data.attempts, session.chapterId).find((c) => inThisQuiz.has(c.conceptId))
+  const focusConcept = focus ? getConcept(focus.conceptId) : undefined
+  // A concept review can't start while another quiz is unfinished, so then Review mistakes leads instead.
+  const canPractice = !!focus && !!focusConcept && !data.activeSession
 
   return (
     <>
@@ -61,10 +68,20 @@ export function ResultsPage() {
           <p className={styles.statusLine}>
             <span lang="ko">{chapter?.titleKo}</span> <StatusBadge status={progress.status} />
           </p>
-          <p className={styles.meta}>{statusExplanation(progress)}</p>
+          <MasteryChecklist progress={progress} />
           <div className={styles.actions}>
+            {canPractice && focus && focusConcept && (
+              <PracticeConceptButton
+                conceptId={focus.conceptId}
+                label={`Practice ${focusConcept.labelEn} (${focus.openMistakes} open)`}
+                variant="primary"
+              />
+            )}
             {missed > 0 && (
-              <Link to={`/practice/mistakes?chapter=${session.chapterId}`} className={buttons.primary}>
+              <Link
+                to={`/practice/mistakes?chapter=${session.chapterId}`}
+                className={canPractice ? buttons.secondary : buttons.primary}
+              >
                 Review mistakes
               </Link>
             )}
@@ -124,17 +141,43 @@ export function ResultsPage() {
   )
 }
 
-function statusExplanation(progress: ReturnType<typeof chapterProgress>): string {
+/** The three mastery conditions as a checklist, so you can see which ones are left. */
+function MasteryChecklist({ progress }: { progress: ReturnType<typeof chapterProgress> }) {
   const threshold = Math.round(MASTERY_ACCURACY * 100)
-  if (progress.status === 'mastered') {
-    return 'Chapter mastered: your latest exam met the bar, every concept has a right answer, and every mistake has been fixed.'
-  }
-  const missing: string[] = []
-  if (progress.openMistakes > 0) {
-    missing.push(`${progress.openMistakes} open ${progress.openMistakes === 1 ? 'mistake' : 'mistakes'} to fix`)
-  }
-  const untested = progress.conceptsTotal - progress.conceptsShown
-  if (untested > 0) missing.push(`${untested} of ${progress.conceptsTotal} concepts still without a right answer`)
-  const left = missing.length > 0 ? ` Still to go: ${missing.join(', ')}.` : ''
-  return `Mastery needs at least ${threshold}% on a 10-question exam, a right answer in every concept, and no open mistakes.${left}`
+  const latest = progress.latestScore
+  const items = [
+    {
+      done: !!latest && latest.total >= MASTERY_MIN_QUESTIONS && percent(latest) >= threshold,
+      text: `${threshold}% or more on your latest ${MASTERY_MIN_QUESTIONS}-question practice exam`,
+    },
+    {
+      done: progress.conceptsShown === progress.conceptsTotal,
+      text: `A right answer in every concept (${progress.conceptsShown} of ${progress.conceptsTotal})`,
+    },
+    {
+      done: progress.openMistakes === 0,
+      text:
+        progress.openMistakes === 0
+          ? 'No open mistakes'
+          : `No open mistakes (${progress.openMistakes} still open)`,
+    },
+  ]
+  return (
+    <div>
+      <p className={styles.checklistTitle}>
+        {progress.status === 'mastered' ? 'Chapter mastered' : 'To master this chapter'}
+      </p>
+      <ul className={styles.checklist}>
+        {items.map((item) => (
+          <li key={item.text} className={item.done ? styles.checkDone : styles.checkTodo}>
+            <span aria-hidden="true" className={styles.checkMark}>
+              {item.done ? '✓' : '○'}
+            </span>
+            <span className={styles.visuallyHidden}>{item.done ? 'Done: ' : 'Not yet: '}</span>
+            {item.text}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 }

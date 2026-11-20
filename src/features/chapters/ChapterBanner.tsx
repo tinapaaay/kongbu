@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { Chapter, Lesson } from '../../content'
 import { StatusBadge } from '../../components/StatusBadge'
 import { useDocumentTitle } from '../../components/useDocumentTitle'
@@ -8,10 +9,12 @@ interface ChapterBannerProps {
   chapter: Chapter
   lesson?: Lesson
   status: ChapterStatus
+  /** The chapter's main action, shown in the banner so it is visible without scrolling. */
+  action?: ReactNode
 }
 
 /** The textbook-style chapter opener: blue banner, topic pills, and learning objectives. */
-export function ChapterBanner({ chapter, lesson, status }: ChapterBannerProps) {
+export function ChapterBanner({ chapter, lesson, status, action }: ChapterBannerProps) {
   useDocumentTitle(`${chapter.number} ${chapter.titleKo}`)
   const book = chapter.textbookRef.volume
 
@@ -33,6 +36,7 @@ export function ChapterBanner({ chapter, lesson, status }: ChapterBannerProps) {
         <div className={styles.status}>
           <StatusBadge status={status} />
         </div>
+        {action && <div className={styles.action}>{action}</div>}
       </div>
 
       {lesson && (

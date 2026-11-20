@@ -33,11 +33,32 @@ typography:
     fontWeight: 900
     lineHeight: 1
     letterSpacing: -0.02em
+  score-number:
+    fontFamily: Titillium Web
+    fontSize: 64px
+    fontWeight: 900
+    lineHeight: 1
+  chapter-number-mobile:
+    fontFamily: Titillium Web
+    fontSize: 52px
+    fontWeight: 900
+    lineHeight: 1
+    letterSpacing: -0.02em
+  number-md:
+    fontFamily: Titillium Web
+    fontSize: 28px
+    fontWeight: 900
+    lineHeight: 1
   chapter-title:
     fontFamily: Apple SD Gothic Neo
     fontSize: 40px
     fontWeight: 700
     lineHeight: 1.2
+  page-title:
+    fontFamily: Apple SD Gothic Neo
+    fontSize: 32px
+    fontWeight: 700
+    lineHeight: 1.25
   chapter-title-mobile:
     fontFamily: Apple SD Gothic Neo
     fontSize: 30px
@@ -336,6 +357,12 @@ components:
     typography: "{typography.gloss}"
     rounded: "{rounded.sm}"
     padding: "{spacing.sm}"
+  question-number-answered:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.surface}"
+    typography: "{typography.tab-label}"
+    rounded: "{rounded.sm}"
+    size: "{spacing.touch-target}"
   available-now:
     backgroundColor: "{colors.primary-subtle}"
     textColor: "{colors.primary-strong}"
@@ -398,6 +425,8 @@ Korean content follows the book's hierarchy:
 - Answer choices and passages use regular weight.
 - English translations sit directly underneath, smaller and maroon.
 
+**Only the sizes listed above are used, and nothing is smaller than 14px.** Hangul is dense, so it gets hard to read below 14px. `npm run design:check-type` fails if any stylesheet uses a size that isn't one of these levels, so new sizes have to be added here on purpose instead of creeping in.
+
 Use `lang="ko"` and `word-break: keep-all` for Korean text. Keep paragraphs near 68 characters wide.
 
 ## Layout
@@ -428,13 +457,19 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 
 **Navigation.** A white bar with the app name and text links. The active item is a pale-blue pill with Primary Strong text and `aria-current="page"`.
 
-**Chapter banner.** Textbook blue with the chapter number and title in white. The book prints the number in light blue, but that is too faint on screen. The banner must not include book photos or characters.
+**Chapter banner.** Textbook blue with the chapter number and title in white. The book prints the number in light blue, but that is too faint on screen. The banner must not include book photos or characters. It carries the chapter's main action (start or resume the practice exam) as a white secondary button, so it is visible without scrolling; the same button repeats at the end of the lesson. On phones the topic pills shrink to one compact row each, so the lesson starts on the first screen.
 
 **Section tabs.** Grammar, vocabulary, conversation, culture, and reading each use their book color. The tab includes both Korean and English. Do not invent new section colors.
 
-**Vocabulary entries.** Korean term in bold, English gloss beneath it in maroon. Group related terms under colored headings that follow the book's category style.
+**Vocabulary entries.** Korean term in bold, English gloss beneath it in maroon. Group related terms under colored headings that follow the book's category style. Word cards flow in columns at their natural height, so a long list never leaves empty boxes beside it.
 
 **Grammar entries.** Pattern title, short explanation, a conjugation table with gray rules, and examples where the target form is highlighted in Example color.
+
+**Quiz buttons.** One main button at a time. Next is primary while you work through the quiz; Submit becomes primary on the last question or once everything is answered. Question number buttons are 44px squares: white when unanswered, filled Primary with white numbers when answered, and outlined when current.
+
+**Mastery checklist.** Results lists the three mastery conditions with ✓ (Success) or ○ (Secondary) and a hidden "Done"/"Not yet" for screen readers, instead of a paragraph of rules.
+
+**Tap areas.** Anything tapped on its own (buttons, number squares, jump links, standalone links like "See all mistakes") is at least 44px tall. Links inside a sentence can stay text height.
 
 **Answer choices.** Full-width white rounded rows with ①, ②, ③, or ④ at the left. Before submission only Selected appears, with pale-blue fill and the word "Selected." After submission, correct and wrong answers use their colors plus "Correct answer" and "Your answer."
 

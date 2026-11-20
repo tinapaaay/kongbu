@@ -30,7 +30,7 @@ test.describe('automated accessibility checks', () => {
     await openChapter11FromDashboard(page)
     await expectNoViolations(page)
 
-    await page.getByRole('button', { name: 'Start practice exam' }).click()
+    await page.getByRole('button', { name: 'Start practice exam' }).first().click()
     await expect(currentQuestion(page)).toBeVisible()
     await currentQuestion(page).locator('label').first().click()
     await expectNoViolations(page)
@@ -65,7 +65,7 @@ test('a quiz can be taken with the keyboard alone', async ({ page, isMobile, bro
   await openChapter11FromDashboard(page)
 
   // Reach the start button with the keyboard.
-  await page.getByRole('button', { name: 'Start practice exam' }).focus()
+  await page.getByRole('button', { name: 'Start practice exam' }).first().focus()
   await page.keyboard.press('Enter')
   await expect(currentQuestion(page)).toHaveAccessibleName(/^1\./)
 

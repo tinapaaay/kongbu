@@ -42,7 +42,7 @@ export async function submitQuiz(page: Page) {
 /** Starts an exam from Chapter 11 and submits it straight away (every question skipped). */
 export async function takeQuickExam(page: Page) {
   await openChapter11FromDashboard(page)
-  await page.getByRole('button', { name: 'Start practice exam' }).click()
+  await page.getByRole('button', { name: 'Start practice exam' }).first().click()
   await expect(currentQuestion(page)).toBeVisible()
   await submitQuiz(page)
 }

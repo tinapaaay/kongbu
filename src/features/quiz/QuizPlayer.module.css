@@ -78,11 +78,19 @@
   gap: 6px;
 }
 
+/* On a phone, two even rows of five instead of eight and a leftover two. */
+@media (max-width: 767px) {
+  .navigator {
+    display: grid;
+    grid-template-columns: repeat(5, var(--spacing-touch-target));
+  }
+}
+
 .dot {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: var(--spacing-touch-target);
+  height: var(--spacing-touch-target);
   border: 1px solid var(--color-outline);
   border-radius: var(--rounded-sm);
   background: var(--color-surface);
@@ -91,10 +99,11 @@
   cursor: pointer;
 }
 
+/* Answered questions are filled, so the unanswered (white) ones stand out at a glance. */
 .dotAnswered {
-  background: var(--color-primary-subtle);
-  border-color: var(--color-primary-strong);
-  color: var(--color-primary-strong);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-surface);
 }
 
 .dot[aria-current='step'] {
@@ -134,7 +143,7 @@
   border-radius: var(--rounded-full);
   background: var(--color-surface);
   color: var(--color-secondary);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -208,7 +217,7 @@
 }
 
 .tag {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -265,6 +274,11 @@
 
   .hint {
     display: none;
+  }
+
+  /* The hint above is hidden on phones, so the buttons need their own space from answer ④. */
+  .controls {
+    margin-top: var(--spacing-lg);
   }
 
   .controls > button:not(.submit) {
