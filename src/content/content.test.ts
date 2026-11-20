@@ -58,7 +58,7 @@ describe('real content', () => {
   it('marks every question as original and keeps unreviewed ones as drafts', () => {
     for (const question of questions) {
       expect(question.source).toBe('original')
-      expect(['draft', 'approved']).toContain(question.reviewStatus)
+      expect(['draft', 'ai-reviewed', 'approved']).toContain(question.reviewStatus)
     }
   })
 

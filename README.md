@@ -109,7 +109,7 @@ All eight steps pass in the browser tests: open the dashboard, select Chapter 11
 
 **Known limits:**
 
-- The 22 Chapter 11 questions are drafts. They were checked against Book 1 (pages 150–159) and fixed where needed, but a person should still review them and mark them `approved`.
+- The 22 Chapter 11 questions are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 150–159, authorized by the product owner. The quiz shows “Reviewed by AI · not teacher-checked”; `approved` is reserved for a subsequent human review. See the [per-question review](docs/content/chapter-11-review.md) for changes, answer rationales, and limits.
 - If the same quiz is open in two tabs, the tab that saves last keeps its answers for that quiz. Submitted quizzes are never lost.
 - Progress is stored per browser. Use Settings → Backup to move it between Chrome and Safari until Phase 2 adds a database.
 - Only Chapter 11 has content. Other chapters show their real titles with "Content coming later."
@@ -173,7 +173,7 @@ All study material lives in `src/content/`, and screens read it only through `sr
 - `allContent.ts`: every chapter at once, for tests and validation only.
 - `validate.ts`: cross-checks, such as every question pointing to a real concept and every answer key matching a choice.
 
-`npm test` fails if any content breaks a rule. Questions are original EPS-TOPIK-style practice, stay `draft` until a person reviews them, and must never mention ①–④ in explanations, because choices can be shuffled.
+`npm test` fails if any content breaks a rule. Questions are original EPS-TOPIK-style practice, default to `draft`; AI review sets `ai-reviewed`, while human approval sets `approved`, and must never mention ①–④ in explanations, because choices can be shuffled.
 
 ## Study rules
 

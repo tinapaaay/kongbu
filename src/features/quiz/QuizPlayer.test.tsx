@@ -50,7 +50,8 @@ describe('Quiz player: answering', () => {
     expect(radios.map((r) => r.closest('label')!.textContent)).toEqual(
       expectedOrder.map((text, i) => `${['①', '②', '③', '④'][i]}${text}`),
     )
-    expect(screen.getByText('Draft question · not yet reviewed')).toBeInTheDocument()
+    expect(screen.queryByText('Draft question · not yet reviewed')).not.toBeInTheDocument()
+    expect(screen.getByText('Reviewed by AI · not teacher-checked')).toBeInTheDocument()
   })
 
   it('never shows the answer key or explanation before submitting', async () => {

@@ -83,7 +83,7 @@ export const questionSchema = z.object({
   /** Shown after submitting. Must not mention ①–④, because choices may be shuffled. */
   explanation: z.string().min(20),
   source: z.literal('original'),
-  reviewStatus: z.enum(['draft', 'approved']),
+  reviewStatus: z.enum(['draft', 'ai-reviewed', 'approved']),
 })
 export type Question = z.infer<typeof questionSchema>
 

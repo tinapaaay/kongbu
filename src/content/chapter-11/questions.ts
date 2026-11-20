@@ -3,23 +3,25 @@ import type { ChoiceId, Question } from '../schemas'
 /**
  * Original EPS-TOPIK-style practice questions for Chapter 11.
  * They are written for this app and are NOT real or leaked exam questions.
- * Every question stays "draft" until a person checks it against the textbook.
+ * Approvals record the AI-assisted textbook review authorized by the product owner.
+ * See docs/content/chapter-11-review.md; new questions default to draft.
  */
 
-type Draft = Omit<Question, 'choices' | 'source' | 'reviewStatus' | 'chapterId'> & {
+type QuestionInput = Omit<Question, 'choices' | 'source' | 'reviewStatus' | 'chapterId'> & {
+  reviewStatus?: Question['reviewStatus']
   choices: [string, string, string, string]
 }
 
 const ids: ChoiceId[] = ['a', 'b', 'c', 'd']
 
 /** Fills in the fields every Chapter 11 question shares, and turns four strings into choices a–d. */
-function q(draft: Draft): Question {
+function q(input: QuestionInput): Question {
   return {
-    ...draft,
+    ...input,
     chapterId: 'ch11',
-    choices: draft.choices.map((text, i) => ({ id: ids[i], text })),
+    choices: input.choices.map((text, i) => ({ id: ids[i], text })),
     source: 'original',
-    reviewStatus: 'draft',
+    reviewStatus: input.reviewStatus ?? 'draft',
   }
 }
 
@@ -30,6 +32,7 @@ const READ_MATCH = '다음 글을 읽고 내용과 같은 것을 고르십시오
 export const chapter11Questions: Question[] = [
   q({
     id: 'ch11-q001',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cleaning',
     format: 'vocabulary',
     difficulty: 1,
@@ -41,6 +44,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q002',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.laundry',
     format: 'sentence-completion',
     difficulty: 1,
@@ -49,10 +53,11 @@ export const chapter11Questions: Question[] = [
     choices: ['걷어야 돼요', '널어야 돼요', '돌려야 돼요', '닦아야 돼요'],
     correctChoiceId: 'a',
     explanation:
-      'When it rains, you take dry laundry in: 빨래를 걷다. 빨래를 널다 means hanging it out, which is the opposite of what the rain requires.',
+      'When it rains, you take the laundry in: 빨래를 걷다. 빨래를 널다 means hanging it out, which is the opposite of what the rain requires.',
   }),
   q({
     id: 'ch11-q003',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eo-ya-doeda',
     format: 'grammar',
     difficulty: 1,
@@ -64,6 +69,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q004',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eul-geyo',
     format: 'grammar',
     difficulty: 1,
@@ -75,22 +81,24 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q005',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eul-geyo',
     format: 'grammar',
     difficulty: 2,
     prompt: CORRECT_SENTENCE,
     choices: [
-      '제 친구가 창문을 닦을게요.',
-      '내일 같이 청소할게요?',
-      '가: 쓰레기 좀 버려 주세요. 나: 네, 제가 버릴게요.',
-      '어제 제가 설거지를 할게요.',
+      '가: 쓰레기 좀 버려 주세요.\n나: 네, 제 친구가 버릴게요.',
+      '가: 쓰레기 좀 버려 주세요.\n나: 네, 제가 버릴게요?',
+      '가: 쓰레기 좀 버려 주세요.\n나: 네, 제가 버릴게요.',
+      '가: 쓰레기 좀 버려 주세요.\n나: 어제 제가 버릴게요.',
     ],
     correctChoiceId: 'c',
     explanation:
-      '-(으)ㄹ게요 is a promise by the speaker, often answering a request. It cannot describe someone else, be a question, or talk about the past (어제).',
+      "In the standard usage taught in this chapter, -(으)ㄹ게요 expresses the speaker's intention or promise, often in reply to a request. The other choices use a third-person subject, a question, or 어제 (yesterday), which do not fit that use.",
   }),
   q({
     id: 'ch11-q006',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eul-geyo',
     format: 'dialogue-completion',
     difficulty: 1,
@@ -103,6 +111,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q007',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.waste-disposal',
     format: 'dialogue-completion',
     difficulty: 1,
@@ -115,6 +124,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q008',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.waste-disposal',
     format: 'dialogue-completion',
     difficulty: 1,
@@ -127,6 +137,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q009',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.waste-disposal',
     format: 'vocabulary',
     difficulty: 1,
@@ -138,6 +149,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q010',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cooking',
     format: 'vocabulary',
     difficulty: 1,
@@ -149,29 +161,32 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q011',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cleaning',
     format: 'vocabulary',
     difficulty: 2,
     prompt: '다음 중 맞는 표현을 고르십시오.',
-    choices: ['바닥을 쓸다', '창문을 널다', '빨래를 닦다', '밥을 돌리다'],
+    choices: ['바닥을 쓸다', '창문을 널다', '빨래를 닦다', '밥을 개다'],
     correctChoiceId: 'a',
     explanation:
-      'You sweep a floor: 바닥을 쓸다. The natural pairs for the others are 창문을 닦다, 빨래를 널다, and 밥을 하다 or 짓다.',
+      'You sweep a floor: 바닥을 쓸다. The natural pairs for the others are 창문을 닦다, 빨래를 널다, and 밥을 하다 or 짓다. 개다 pairs with 옷 (fold clothes), not 밥.',
   }),
   q({
     id: 'ch11-q012',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.s-irregular',
     format: 'dialogue-completion',
     difficulty: 2,
     prompt: '다음 대화의 빈칸에 들어갈 가장 알맞은 것을 고르십시오.',
     context: { kind: 'dialogue', text: '가: 밥이 없어요.\n나: 그럼 제가 밥을 (          ).' },
-    choices: ['짓을게요', '지을게요', '짓게요', '지게요'],
+    choices: ['짓을게요', '지을게요', '지어을게요', '지을께요'],
     correctChoiceId: 'b',
     explanation:
-      '짓다 is ㅅ irregular. Before an ending starting with a vowel, the ㅅ drops: 짓 + 을게요 becomes 지을게요.',
+      '짓다 is ㅅ irregular. Before an ending starting with a vowel, the ㅅ drops: 짓 + 을게요 becomes 지을게요. Do not retain ㅅ or insert an extra 어. The ending is spelled 게요, not 께요.',
   }),
   q({
     id: 'ch11-q013',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.s-irregular',
     format: 'grammar',
     difficulty: 3,
@@ -183,6 +198,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q014',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'culture.waste-separation',
     format: 'reading',
     difficulty: 2,
@@ -203,6 +219,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q015',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cooking',
     format: 'reading',
     difficulty: 2,
@@ -223,6 +240,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q016',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.cleaning',
     format: 'sentence-completion',
     difficulty: 1,
@@ -235,18 +253,20 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q017',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eul-geyo',
     format: 'dialogue-completion',
     difficulty: 2,
     prompt: '다음 대화의 빈칸에 들어갈 가장 알맞은 것을 고르십시오.',
     context: { kind: 'dialogue', text: '가: 진수 씨, 거실 청소기 좀 돌려 주세요.\n나: (          )' },
-    choices: ['네, 제가 옷을 갤게요.', '네, 거실이 넓어요.', '네, 청소기를 돌릴게요?', '네, 제가 돌릴게요.'],
+    choices: ['네, 제가 옷을 갤게요.', '네, 거실이 넓어요.', '네, 제가 빨래를 널게요.', '네, 제가 돌릴게요.'],
     correctChoiceId: 'd',
     explanation:
-      'The request is to vacuum the living room, so the answer promises exactly that: 제가 돌릴게요. -(으)ㄹ게요 cannot be a question, and folding clothes (옷을 개다) is the wrong chore.',
+      'The request is to vacuum the living room, so the answer promises exactly that: 제가 돌릴게요. Folding clothes (옷을 개다) and hanging laundry (빨래를 널다) are different chores. 거실이 넓어요 describes the room instead of accepting the request.',
   }),
   q({
     id: 'ch11-q018',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.laundry',
     format: 'vocabulary',
     difficulty: 1,
@@ -258,6 +278,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q019',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.waste-disposal',
     format: 'sentence-completion',
     difficulty: 1,
@@ -269,6 +290,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q020',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eo-ya-doeda',
     format: 'sentence-completion',
     difficulty: 1,
@@ -280,6 +302,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q021',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eo-ya-doeda',
     format: 'dialogue-completion',
     difficulty: 2,
@@ -292,6 +315,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q022',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'culture.waste-separation',
     format: 'vocabulary',
     difficulty: 3,
@@ -299,6 +323,6 @@ export const chapter11Questions: Question[] = [
     choices: ['캔', '달걀 껍데기', '헌 옷', '종이'],
     correctChoiceId: 'b',
     explanation:
-      'Eggshells (달걀 껍데기) look like food waste, but animals cannot eat them, so in Korea they go out as general waste. Cans and paper are recyclables, and old clothes go in a clothing bin.',
+      'In most areas of Korea, eggshells (달걀 껍데기) are treated as general waste rather than food waste, matching the textbook\'s classification. Local disposal rules can differ, so check your local government\'s guidance. Cans and paper are recyclables, and old clothes go in a clothing bin.',
   }),
 ]
