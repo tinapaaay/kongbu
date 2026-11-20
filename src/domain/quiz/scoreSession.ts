@@ -44,6 +44,7 @@ export function scoreSession(
       id: active.id,
       type: active.type,
       chapterId: active.chapterId,
+      ...(active.conceptId ? { conceptId: active.conceptId } : {}),
       startedAt: active.startedAt,
       submittedAt,
       questionIds: [...active.questionIds],

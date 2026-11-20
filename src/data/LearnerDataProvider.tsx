@@ -34,6 +34,9 @@ export function LearnerDataProvider({ repository, now = systemNow, children }: L
     }
   }, [repository])
 
+  // When another tab saves, show its changes here too, so this tab never works from an old copy.
+  useEffect(() => repository.watch(setData), [repository])
+
   /** Runs one change, keeps the result on screen, and records whether it was saved. */
   const run = useCallback(async (change: () => Promise<LearnerData>): Promise<LearnerData> => {
     try {

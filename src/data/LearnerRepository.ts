@@ -10,6 +10,11 @@ import type { ActiveSession, Attempt, CompletedSession, LearnerData } from '../d
  */
 export interface LearnerRepository {
   load(): Promise<LoadResult>
+  /**
+   * Calls `onChange` with the new data whenever progress changes somewhere else,
+   * such as another open tab. Returns a function that stops watching.
+   */
+  watch(onChange: (data: LearnerData) => void): () => void
   recordChapterVisit(chapterId: string, now: Date): Promise<LearnerData>
   /** Saves the quiz in progress, or clears it with null. */
   saveActiveSession(session: ActiveSession | null): Promise<LearnerData>

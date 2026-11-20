@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { renderApp } from '../test/renderApp'
@@ -44,7 +44,9 @@ describe('routes', () => {
   it('sets the browser tab title for each page', async () => {
     renderApp('/learn')
     await heading('Chapters')
-    expect(document.title).toBe('Chapters · Hangul Lab')
+    // The title is set just after the page appears, so wait for it instead of checking at once.
+    // Checking immediately passed on a fast machine but could fail on a busy one (a "flaky" test).
+    await waitFor(() => expect(document.title).toBe('Chapters · Hangul Lab'))
   })
 })
 

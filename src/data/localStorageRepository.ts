@@ -6,18 +6,62 @@ import { MemoryStorage, type StorageLike } from './storage'
 export const STORAGE_KEY = 'hangul-lab:learner-data'
 export const DAMAGED_COPY_PREFIX = 'hangul-lab:damaged-copy:'
 
+/** Calls `onChange` when another tab changes the saved value of `key`. Returns a function that stops listening. */
+export type ListenForChanges = (key: string, onChange: () => void) => () => void
+
+/** The browser fires a `storage` event in every *other* tab of this site when one tab writes. */
+export const listenToOtherTabs: ListenForChanges = (key, onChange) => {
+  const handle = (event: StorageEvent) => {
+    if (event.key === key || event.key === null) onChange()
+  }
+  window.addEventListener('storage', handle)
+  return () => window.removeEventListener('storage', handle)
+}
+
+const listenNowhere: ListenForChanges = () => () => {}
+
 /**
  * Saves all learner data as one JSON value under one key.
  * One key means every change is a single write: it either fully happens or not at all.
  *
+ * Several tabs can be open at once. So every change starts from the latest saved copy
+ * (read, then change, then write), never from this tab's older copy in memory.
+ * Otherwise a forgotten tab could erase a quiz finished in another tab (a "lost update").
+ *
  * Pass `null` as storage when the browser blocks storage; data then lives in memory only.
  */
-export function createLocalStorageRepository(storage: StorageLike | null): LearnerRepository {
+export function createLocalStorageRepository(
+  storage: StorageLike | null,
+  { listen = typeof window === 'undefined' ? listenNowhere : listenToOtherTabs }: { listen?: ListenForChanges } = {},
+): LearnerRepository {
   const target = storage ?? new MemoryStorage()
   const persistent = storage !== null
   let current: LearnerData = emptyLearnerData()
   /** True when saved data is from a newer app version and must not be overwritten. */
   let readOnly = false
+
+  /**
+   * The newest saved copy, which another tab may have changed since this tab loaded.
+   * Falls back to this tab's copy if storage is blocked or what's saved can't be read.
+   */
+  function latest(): LearnerData {
+    if (!persistent || readOnly) return current
+    const raw = target.getItem(STORAGE_KEY)
+    if (raw === null) return current
+    try {
+      const migrated = migrate(JSON.parse(raw))
+      if (!migrated.ok) {
+        // A newer version of the app saved in another tab: stop writing, so its data stays safe.
+        if (migrated.reason === 'newer-version') readOnly = true
+        return current
+      }
+      const result = learnerDataSchema.safeParse(migrated.data)
+      if (result.success) current = result.data
+    } catch {
+      // Unreadable: keep this tab's copy.
+    }
+    return current
+  }
 
   function write(next: LearnerData): LearnerData {
     current = next
@@ -69,7 +113,17 @@ export function createLocalStorageRepository(storage: StorageLike | null): Learn
       return { data: current, problem: null }
     },
 
+    watch(onChange) {
+      if (!persistent) return () => {}
+      return listen(STORAGE_KEY, () => {
+        const before = current
+        const next = latest()
+        if (next !== before) onChange(next)
+      })
+    },
+
     async recordChapterVisit(chapterId, now) {
+      const current = latest()
       const at = now.toISOString()
       const previous = current.chapterVisits[chapterId]
       return write({
@@ -79,13 +133,15 @@ export function createLocalStorageRepository(storage: StorageLike | null): Learn
     },
 
     async saveActiveSession(session) {
-      // A late save must never bring back a quiz that was already submitted.
+      const current = latest()
+      // A late save must never bring back a quiz that was already submitted, here or in another tab.
       if (session && current.sessions.some((s) => s.id === session.id)) return current
       return write({ ...current, activeSession: session })
     },
 
     async submitSession(session, attempts) {
-      // Idempotent: a double click or a retry must not record the quiz twice.
+      const current = latest()
+      // Idempotent: a double click, a retry, or the same quiz submitted in two tabs is recorded once.
       if (current.sessions.some((s) => s.id === session.id)) return current
       return write({
         ...current,
@@ -96,6 +152,7 @@ export function createLocalStorageRepository(storage: StorageLike | null): Learn
     },
 
     async markBackedUp(now) {
+      const current = latest()
       return write({ ...current, lastBackupAt: now.toISOString() })
     },
 

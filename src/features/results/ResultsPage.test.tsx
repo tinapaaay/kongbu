@@ -56,8 +56,8 @@ describe('Results: score', () => {
     const score = screen.getByRole('region', { name: 'Score' })
     expect(score).toHaveTextContent('6/ 1060%')
     expect(within(score).getByText('Practiced')).toBeInTheDocument()
-    expect(score).toHaveTextContent('Mastery needs at least 80% on a 10-question exam and no open mistakes.')
-    expect(score).toHaveTextContent(/You have \d+ open mistakes in this chapter/)
+    expect(score).toHaveTextContent('Mastery needs at least 80% on a 10-question exam, a right answer in every concept, and no open mistakes.')
+    expect(score).toHaveTextContent(/Still to go: \d+ open mistakes to fix/)
   })
 
   it('offers to review mistakes and to return to the chapter', async () => {

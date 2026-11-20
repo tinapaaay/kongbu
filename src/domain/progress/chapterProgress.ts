@@ -1,9 +1,15 @@
+import { questions as allQuestions } from '../../content'
 import type { CompletedSession, LearnerData } from '../learnerData'
 import { weakConcepts } from './mistakes'
 
 export type ChapterStatus = 'not-started' | 'visited' | 'practiced' | 'mastered'
 
-/** Mastery needs at least 80% on a quiz of at least 10 questions, and no open mistakes in the chapter. */
+/**
+ * Mastery needs all of:
+ * - at least 80% on the latest quiz, which had at least 10 questions,
+ * - no open mistakes in the chapter,
+ * - every concept in the chapter answered correctly at least once, so nothing was skipped.
+ */
 export const MASTERY_ACCURACY = 0.8
 export const MASTERY_MIN_QUESTIONS = 10
 
@@ -18,41 +24,60 @@ export interface ChapterProgress {
   latestScore?: Score
   bestScore?: Score
   openMistakes: number
+  /** Concepts in the chapter answered correctly at least once, out of all its concepts that have questions. */
+  conceptsShown: number
+  conceptsTotal: number
 }
 
 /**
  * A chapter's status, calculated from saved facts only:
  * - not started: never opened, never quizzed
  * - visited: opened, but no quiz submitted
- * - practiced: at least one quiz submitted
- * - mastered: the latest quiz meets the mastery rule
+ * - practiced: at least one quiz submitted (a practice exam or a concept review)
+ * - mastered: the mastery rule above is met
  * An unfinished quiz never counts.
+ *
+ * `conceptIds` defaults to the chapter's concepts that have questions. Tests pass their own.
  */
-export function chapterProgress(chapterId: string, data: LearnerData): ChapterProgress {
-  const sessions = data.sessions
-    .filter((s) => s.chapterId === chapterId)
+export function chapterProgress(
+  chapterId: string,
+  data: LearnerData,
+  conceptIds: string[] = conceptsWithQuestions(chapterId),
+): ChapterProgress {
+  const allSessions = data.sessions.filter((s) => s.chapterId === chapterId)
+  // Scores and mastery come from full practice exams; short concept reviews count as practice only.
+  const sessions = allSessions
+    .filter((s) => s.type === 'chapter-practice')
     .sort((x, y) => x.submittedAt.localeCompare(y.submittedAt))
   const openMistakes = weakConcepts(data.attempts, chapterId).reduce((sum, c) => sum + c.openMistakes, 0)
+  const shown = new Set(data.attempts.filter((a) => a.isCorrect && a.chapterId === chapterId).map((a) => a.conceptId))
+  const conceptsShown = conceptIds.filter((id) => shown.has(id)).length
+  const coverage = { conceptsShown, conceptsTotal: conceptIds.length }
 
   if (sessions.length === 0) {
     return {
-      status: data.chapterVisits[chapterId] ? 'visited' : 'not-started',
-      sessionsCompleted: 0,
+      status: allSessions.length > 0 ? 'practiced' : data.chapterVisits[chapterId] ? 'visited' : 'not-started',
+      sessionsCompleted: allSessions.length,
       openMistakes,
+      ...coverage,
     }
   }
 
   const latest = sessions.at(-1)!
   const best = sessions.reduce((a, b) => (ratio(b) > ratio(a) ? b : a))
   const mastered =
-    latest.totalCount >= MASTERY_MIN_QUESTIONS && ratio(latest) >= MASTERY_ACCURACY && openMistakes === 0
+    latest.totalCount >= MASTERY_MIN_QUESTIONS &&
+    ratio(latest) >= MASTERY_ACCURACY &&
+    openMistakes === 0 &&
+    conceptsShown === conceptIds.length
 
   return {
     status: mastered ? 'mastered' : 'practiced',
-    sessionsCompleted: sessions.length,
+    sessionsCompleted: allSessions.length,
     latestScore: toScore(latest),
     bestScore: toScore(best),
     openMistakes,
+    ...coverage,
   }
 }
 
@@ -67,4 +92,9 @@ function ratio(session: CompletedSession): number {
 
 function toScore(session: CompletedSession): Score {
   return { correct: session.correctCount, total: session.totalCount }
+}
+
+/** The chapter's concepts that at least one question tests. A concept with no questions can't be shown. */
+function conceptsWithQuestions(chapterId: string): string[] {
+  return [...new Set(allQuestions.filter((q) => q.chapterId === chapterId).map((q) => q.conceptId))]
 }

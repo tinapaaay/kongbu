@@ -30,7 +30,7 @@ const READ_MATCH = '다음 글을 읽고 내용과 같은 것을 고르십시오
 export const chapter11Questions: Question[] = [
   q({
     id: 'ch11-q001',
-    conceptId: 'vocabulary.household-chores',
+    conceptId: 'vocabulary.cleaning',
     format: 'vocabulary',
     difficulty: 1,
     prompt: '다음 중 청소할 때 쓰는 물건을 고르십시오.',
@@ -41,7 +41,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q002',
-    conceptId: 'vocabulary.household-chores',
+    conceptId: 'vocabulary.laundry',
     format: 'sentence-completion',
     difficulty: 1,
     prompt: BLANK,
@@ -138,7 +138,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q010',
-    conceptId: 'vocabulary.household-chores',
+    conceptId: 'vocabulary.cooking',
     format: 'vocabulary',
     difficulty: 1,
     prompt: "'설거지를 하다'와 관계있는 것을 고르십시오.",
@@ -149,7 +149,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q011',
-    conceptId: 'vocabulary.household-chores',
+    conceptId: 'vocabulary.cleaning',
     format: 'vocabulary',
     difficulty: 2,
     prompt: '다음 중 맞는 표현을 고르십시오.',
@@ -203,7 +203,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q015',
-    conceptId: 'vocabulary.household-chores',
+    conceptId: 'vocabulary.cooking',
     format: 'reading',
     difficulty: 2,
     prompt: READ_MATCH,
@@ -223,7 +223,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q016',
-    conceptId: 'vocabulary.household-chores',
+    conceptId: 'vocabulary.cleaning',
     format: 'sentence-completion',
     difficulty: 1,
     prompt: BLANK,
@@ -247,7 +247,7 @@ export const chapter11Questions: Question[] = [
   }),
   q({
     id: 'ch11-q018',
-    conceptId: 'vocabulary.household-chores',
+    conceptId: 'vocabulary.laundry',
     format: 'vocabulary',
     difficulty: 1,
     prompt: "다음 중 '빨래'와 관계없는 것을 고르십시오.",

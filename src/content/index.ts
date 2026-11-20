@@ -35,3 +35,8 @@ export function getConcept(id: string): Concept | undefined {
 export function getQuestionsForChapter(chapterId: string): Question[] {
   return questions.filter((q) => q.chapterId === chapterId)
 }
+
+/** The id of the place in a chapter's lesson that teaches a concept, for links like /learn/11#study-grammar-eul-geyo. */
+export function studyAnchorId(conceptId: string): string {
+  return `study-${conceptId.replace(/[^a-z0-9]+/gi, '-')}`
+}

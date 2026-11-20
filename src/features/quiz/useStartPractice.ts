@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { getQuestionsForChapter } from '../../content'
+import { getQuestionsForChapter, questions } from '../../content'
 import { useLearnerData } from '../../data/learnerDataContext'
-import { buildChapterSession } from '../../domain/quiz/buildSession'
+import { buildChapterSession, buildConceptReview } from '../../domain/quiz/buildSession'
 
 /**
  * Starting a chapter practice exam. If a quiz is already unfinished, the learner
@@ -48,4 +48,32 @@ export function useStartPractice(chapterId: string) {
     /** An unfinished quiz in a different chapter, which must be finished first. */
     otherActive: active && active.chapterId !== chapterId ? active : null,
   }
+}
+
+/**
+ * Starting a short quiz on one concept, from Mistakes. Like a practice exam,
+ * an unfinished quiz is resumed instead of being replaced.
+ */
+export function useStartConceptReview() {
+  const { data, saveActiveSession } = useLearnerData()
+  const navigate = useNavigate()
+  const [starting, setStarting] = useState<string | null>(null)
+  const active = data.activeSession
+
+  async function start(conceptId: string) {
+    if (active) {
+      navigate(`/quiz/${active.id}`)
+      return
+    }
+    setStarting(conceptId)
+    const result = buildConceptReview({ conceptId, questions, attempts: data.attempts, now: new Date() })
+    if (!result.ok) {
+      setStarting(null)
+      return
+    }
+    await saveActiveSession(result.session)
+    navigate(`/quiz/${result.session.id}`)
+  }
+
+  return { start, starting, hasUnfinishedQuiz: active !== null }
 }

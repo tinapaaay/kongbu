@@ -1,4 +1,4 @@
-import type { GrammarPoint, Lesson } from '../../content'
+import { studyAnchorId, type GrammarPoint, type Lesson } from '../../content'
 import { SectionHeader } from '../../components/SectionHeader'
 import styles from './LessonContent.module.css'
 
@@ -24,8 +24,14 @@ export function LessonContent({ lesson }: { lesson: Lesson }) {
       <section className={styles.section} aria-labelledby="vocabulary">
         <SectionHeader kind="vocabulary" labelKo="어휘" labelEn="Vocabulary" id="vocabulary" />
         <div className={styles.vocabGrid}>
-          {lesson.vocabulary.map((group) => (
-            <article key={group.titleKo} className={styles.vocabCard}>
+          {lesson.vocabulary.map((group, i) => (
+            <article
+              key={group.titleKo}
+              className={styles.vocabCard}
+              // The first word group for each concept is where "Study this" links land.
+              id={lesson.vocabulary.findIndex((g) => g.conceptId === group.conceptId) === i ? studyAnchorId(group.conceptId) : undefined}
+              tabIndex={-1}
+            >
               <h3 className={styles.vocabTitle}>
                 <span lang="ko">{group.titleKo}</span>
                 <span className={styles.vocabTitleEn}>{group.titleEn}</span>
@@ -48,7 +54,7 @@ export function LessonContent({ lesson }: { lesson: Lesson }) {
         <GrammarSection key={point.conceptId} point={point} number={i + 1} />
       ))}
 
-      <section className={styles.section} aria-labelledby="culture">
+      <section className={styles.section} aria-labelledby="culture" id={studyAnchorId(lesson.culture.conceptId)} tabIndex={-1}>
         <SectionHeader kind="culture" labelKo="문화와 정보" labelEn="Culture & Information" id="culture" />
         <h3 className={styles.cultureTitle}>
           <span lang="ko">{lesson.culture.titleKo}</span>
@@ -70,7 +76,7 @@ export function LessonContent({ lesson }: { lesson: Lesson }) {
 function GrammarSection({ point, number }: { point: GrammarPoint; number: number }) {
   const id = `grammar-${number}`
   return (
-    <section className={styles.section} aria-labelledby={id}>
+    <section className={styles.section} aria-labelledby={id} id={studyAnchorId(point.conceptId)} tabIndex={-1}>
       <SectionHeader kind="grammar" labelKo="문법" labelEn="Grammar" number={number} id={id} />
       <div className={styles.grammarGrid}>
         <div>

@@ -1,6 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { getQuestionsForChapter, studyAnchorId } from '../../content'
 import { MemoryStorage } from '../../data/storage'
 import { makeSession } from '../../domain/testFixtures'
 import { renderApp } from '../../test/renderApp'
@@ -46,6 +47,22 @@ describe('Chapter 11 page', () => {
     await renderChapter()
     const highlight = screen.getByText('버릴게요', { selector: 'strong' })
     expect(highlight.closest('li')).toHaveTextContent('쓰레기는 제가 버릴게요.')
+  })
+
+  it('opens at the section a "Study this" link points to', async () => {
+    renderApp('/learn/11#study-grammar-s-irregular')
+    await screen.findByRole('heading', { level: 1 })
+    const section = document.getElementById('study-grammar-s-irregular')!
+    expect(section).toHaveFocus()
+    expect(section).toHaveTextContent("'ㅅ' 불규칙")
+  })
+
+  it('has a landing spot for every concept with questions', async () => {
+    renderApp('/learn/11')
+    await screen.findByRole('heading', { level: 1 })
+    for (const conceptId of new Set(getQuestionsForChapter('ch11').map((q) => q.conceptId))) {
+      expect(document.getElementById(studyAnchorId(conceptId)), conceptId).not.toBeNull()
+    }
   })
 
   it('marks the chapter as visited', async () => {

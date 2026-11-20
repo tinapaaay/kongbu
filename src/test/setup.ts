@@ -10,6 +10,7 @@ afterEach(() => {
 
 // jsdom doesn't implement scrolling; the app calls it after navigation.
 window.scrollTo = () => {}
+Element.prototype.scrollIntoView = () => {}
 
 // jsdom doesn't implement modal dialogs yet. Real browsers do; this minimal stand-in
 // opens and closes them so dialog behavior can be tested.

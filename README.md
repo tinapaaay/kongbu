@@ -8,6 +8,8 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 
 **Phase 1 (Functional MVP): complete and verified.** The full core workflow works in Chrome and Safari, on desktop and iPhone: Dashboard → Chapter 11 → Quiz → Results → Mistake Review.
 
+Milestone 11 acted on an outside review: progress is safe with several tabs open, "fixed" and "mastered" need real evidence, mistakes link straight to practice and to the right lesson section, and Settings fits a phone screen.
+
 | Milestone | Status |
 |---|---|
 | 1. Project setup | Done |
@@ -20,6 +22,7 @@ Practice questions are original EPS-TOPIK-style questions, not real exam questio
 | 8. Results | Done |
 | 9. Mistake Review | Done |
 | 10. Final verification | Done |
+| 11. Trust and polish (from an outside review) | Done |
 
 The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md).
 
@@ -102,7 +105,8 @@ All eight steps pass in the browser tests: open the dashboard, select Chapter 11
 
 **Known limits:**
 
-- The 22 Chapter 11 questions are drafts. They should be reviewed by a person against the textbook and marked `approved`.
+- The 22 Chapter 11 questions are drafts. They were checked against Book 1 (pages 150–159) and fixed where needed, but a person should still review them and mark them `approved`.
+- If the same quiz is open in two tabs, the tab that saves last keeps its answers for that quiz. Submitted quizzes are never lost.
 - Progress is stored per browser. Use Settings → Backup to move it between Chrome and Safari until Phase 2 adds a database.
 - Only Chapter 11 has content. Other chapters show their real titles with "Content coming later."
 
@@ -153,7 +157,7 @@ docs/             Plan, decisions, and design references
 All study material lives in `src/content/`, and screens read it only through `src/content/index.ts`.
 
 - `chapters.ts`: all 60 chapters from both books' contents pages.
-- `chapter-11/`: the lesson (vocabulary, grammar, culture), 6 concepts, and 22 original practice questions.
+- `chapter-11/`: the lesson (vocabulary, grammar, culture), 8 concepts, and 22 original practice questions. Household words are split into laundry, cleaning, and cooking, so one right answer about brooms can't fix a laundry mistake.
 - `schemas.ts`: the rules every chapter, concept, question, and lesson must follow.
 - `validate.ts`: cross-checks, such as every question pointing to a real concept and every answer key matching a choice.
 
@@ -165,12 +169,13 @@ The rules in `src/domain/` are plain TypeScript functions with no screens or sto
 
 | Rule | File |
 |---|---|
-| A quiz has 10 questions from one chapter. Missed questions come first, then other questions on concepts with open mistakes, then unseen questions, then the ones seen longest ago | `quiz/buildSession.ts` |
+| A practice exam has 10 questions from one chapter. Missed questions come first, then other questions on concepts with open mistakes. Then every concept gets at least one question, then unseen questions, then the ones seen longest ago | `quiz/buildSession.ts` |
+| A concept review is a short quiz (up to 5 questions) on one concept, started from Mistakes. It counts as practice and as evidence for fixing mistakes, but not toward mastery | `quiz/buildSession.ts` |
 | Each question's four choices get a saved shuffled order | `quiz/buildSession.ts` |
 | The quiz screen gets questions without the answer key or explanation | `quiz/playableQuestion.ts` |
 | Scoring compares answers with the stored key. Skipped questions count as wrong | `quiz/scoreSession.ts` |
-| A mistake is fixed only when the same concept is answered correctly in a later quiz | `progress/mistakes.ts` |
-| Mastered means the latest quiz had at least 10 questions, at least 80% correct, and no open mistakes | `progress/chapterProgress.ts` |
+| A mistake is fixed when, in a later quiz, the same question is answered correctly, or two different questions on the same concept are | `progress/mistakes.ts` |
+| Mastered means the latest practice exam had at least 10 questions and at least 80% correct, every concept in the chapter has a right answer, and there are no open mistakes | `progress/chapterProgress.ts` |
 | Weekly activity counts questions per local day, Monday to Sunday | `progress/activity.ts` |
 | The Dashboard's next step: unfinished quiz, then open mistakes, then the current chapter | `progress/nextStep.ts` |
 
@@ -179,6 +184,8 @@ The rules in `src/domain/` are plain TypeScript functions with no screens or sto
 Progress is saved in the browser's localStorage under one key, `hangul-lab:learner-data`, as a single JSON value. Each change rewrites the whole value in one step, so it is never half-saved.
 
 - **Reload safe:** chapter visits, unfinished quizzes, submitted quizzes, and answers survive refreshes.
+- **Several tabs:** every change starts from the latest saved copy, not the tab's own older copy, so a forgotten tab can't erase work from another tab. Tabs also update when another tab saves.
+- **Format versions:** saved data has a `schemaVersion` (now 2). Older saved data and backups are upgraded when loaded. Version 1 → 2 moved old household-word answers to the new laundry, cleaning, and cooking concepts.
 - **Damaged data:** if saved data can't be read, a copy is kept under `hangul-lab:damaged-copy:<time>` and every page shows a warning. Nothing is silently deleted.
 - **Newer data:** data saved by a newer app version is never overwritten.
 - **Blocked or full storage:** the app keeps working for the current visit and shows a warning.
@@ -188,7 +195,7 @@ Screens use progress only through `useLearnerData()`. Storage details stay in `s
 
 ## Taking a quiz
 
-- Start from a chapter page. A quiz in progress is resumed rather than replaced.
+- Start a practice exam from a chapter page, or a concept review with "Practice this concept" on Mistakes. A quiz in progress is resumed rather than replaced.
 - Choose with the mouse, by tapping, or with keys 1–4. Move with Previous and Next, the question numbers, or ← and →.
 - Every answer and move is saved immediately, so a refresh returns to the same question.
 - Submit at any time. The confirmation lists unanswered questions, which count as incorrect.
@@ -201,7 +208,7 @@ Screens use progress only through `useLearnerData()`. Storage details stay in `s
 |---|---|
 | `/` | Dashboard |
 | `/learn` | Chapter Library |
-| `/learn/11` | One chapter (1–60) |
+| `/learn/11` | One chapter (1–60). `#study-grammar-eul-geyo` and similar open the section that teaches a concept |
 | `/practice` | Redirects to `/practice/mistakes` |
 | `/practice/mistakes` | Mistake Review. Filters are in the address: `?chapter=ch11&concept=grammar.eul-geyo&range=7` |
 | `/quiz/:sessionId` | Quiz (no main navigation) |

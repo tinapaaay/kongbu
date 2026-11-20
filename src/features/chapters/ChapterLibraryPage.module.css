@@ -18,8 +18,11 @@
   transition: background-color 120ms;
 }
 
-.bookTab:hover {
-  background: var(--color-neutral);
+/* Hover only where there is a mouse, so a tap on a phone doesn't leave it highlighted. */
+@media (hover: hover) {
+  .bookTab:hover {
+    background: var(--color-neutral);
+  }
 }
 
 .bookTabActive,
@@ -27,6 +30,53 @@
   background: var(--color-primary-subtle);
   border-color: var(--color-primary-subtle);
   color: var(--color-primary-strong);
+}
+
+.ready {
+  background: var(--color-primary-subtle);
+  border-radius: var(--rounded-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.readyLabel {
+  font: 700 14px/1.2 var(--font-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary-strong);
+  margin-bottom: var(--spacing-xs);
+}
+
+.readyList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.readyLink {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--spacing-xs);
+  min-height: var(--spacing-touch-target);
+  align-content: center;
+  color: var(--color-primary-strong);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Only the chapter title is underlined, so the link reads as one clear target. */
+.readyTitle {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.readyGloss {
+  color: var(--color-secondary);
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .meta {

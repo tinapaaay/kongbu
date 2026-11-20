@@ -104,11 +104,13 @@ export function DashboardPage() {
                 ({percent(progress.latestScore)}%)
               </p>
             )}
+            {/* Each chapter is in exactly one group, so the four numbers add up to the total. */}
             <p className={styles.meta}>
-              <span className={styles.num}>{counts.visited}</span> visited ·{' '}
+              All <span className={styles.num}>{chapters.length}</span> chapters:{' '}
+              <span className={styles.num}>{counts.mastered}</span> mastered ·{' '}
               <span className={styles.num}>{counts.practiced}</span> practiced ·{' '}
-              <span className={styles.num}>{counts.mastered}</span> mastered of{' '}
-              <span className={styles.num}>{chapters.length}</span>
+              <span className={styles.num}>{counts.visited}</span> visited ·{' '}
+              <span className={styles.num}>{counts['not-started']}</span> not started
             </p>
           </section>
 
@@ -209,7 +211,7 @@ function describeStep(step: NextStep) {
       return {
         label: 'Next step',
         title: `Practice Chapter ${step.chapter.number} again`,
-        detail: `Last exam ${step.progress.latestScore?.correct}/${step.progress.latestScore?.total}. Mastery needs at least 80% and no open mistakes.`,
+        detail: `Last exam ${step.progress.latestScore?.correct}/${step.progress.latestScore?.total}. Mastery needs at least 80%, a right answer in every concept, and no open mistakes.`,
         action: `Open Chapter ${step.chapter.number}`,
         to: `/learn/${step.chapter.number}#practice`,
       }
@@ -224,12 +226,9 @@ function describeStep(step: NextStep) {
   }
 }
 
-function statusCounts(data: Parameters<typeof chapterProgress>[1]): Record<Exclude<ChapterStatus, 'not-started'>, number> {
-  const counts = { visited: 0, practiced: 0, mastered: 0 }
-  for (const chapter of chapters) {
-    const status = chapterProgress(chapter.id, data).status
-    if (status !== 'not-started') counts[status]++
-  }
+function statusCounts(data: Parameters<typeof chapterProgress>[1]): Record<ChapterStatus, number> {
+  const counts = { 'not-started': 0, visited: 0, practiced: 0, mastered: 0 }
+  for (const chapter of chapters) counts[chapterProgress(chapter.id, data).status]++
   return counts
 }
 

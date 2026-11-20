@@ -43,7 +43,7 @@ export const chapter11Lesson: Lesson = {
     {
       titleKo: '빨래',
       titleEn: 'Laundry',
-      conceptId: 'vocabulary.household-chores',
+      conceptId: 'vocabulary.laundry',
       textbookRef: { volume: 1, page: 154 },
       items: [
         { ko: '세탁기를 돌리다', en: 'to run the washing machine' },
@@ -58,7 +58,7 @@ export const chapter11Lesson: Lesson = {
     {
       titleKo: '청소',
       titleEn: 'Cleaning',
-      conceptId: 'vocabulary.household-chores',
+      conceptId: 'vocabulary.cleaning',
       textbookRef: { volume: 1, page: 154 },
       items: [
         { ko: '청소기를 돌리다', en: 'to vacuum' },
@@ -75,7 +75,7 @@ export const chapter11Lesson: Lesson = {
     {
       titleKo: '요리',
       titleEn: 'Cooking',
-      conceptId: 'vocabulary.household-chores',
+      conceptId: 'vocabulary.cooking',
       textbookRef: { volume: 1, page: 154 },
       items: [
         { ko: '밥을 하다 / 짓다', en: 'to cook rice' },
@@ -90,7 +90,8 @@ export const chapter11Lesson: Lesson = {
     {
       titleKo: '더 알아봐요',
       titleEn: 'More words',
-      conceptId: 'vocabulary.household-chores',
+      // These words come from the laundry conversation on page 156.
+      conceptId: 'vocabulary.laundry',
       textbookRef: { volume: 1, page: 154 },
       items: [
         { ko: '갑자기', en: 'suddenly' },

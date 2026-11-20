@@ -3,25 +3,25 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { makeAttempt, makeSession } from '../../domain/testFixtures'
 import { renderApp } from '../../test/renderApp'
-import { storageWith } from '../../test/seed'
+import { readSaved, storageWith } from '../../test/seed'
 
 const EUL = 'grammar.eul-geyo'
 const WASTE = 'vocabulary.waste-disposal'
-const CHORES = 'vocabulary.household-chores'
+const CLEANING = 'vocabulary.cleaning'
 
 const daysAgo = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString()
 
 /**
  * -(으)ㄹ게요: missed twice, both still open.
  * Waste words: missed once, still open.
- * Chore words: missed long ago, then fixed by a later correct answer.
+ * Cleaning words: missed long ago, then fixed by answering the same question correctly later.
  */
 function learnerWithMistakes() {
   return storageWith({
     sessions: [makeSession({ id: 'old', correctCount: 5, totalCount: 10 }), makeSession({ id: 'new', correctCount: 6, totalCount: 10 })],
     attempts: [
-      makeAttempt({ questionId: 'ch11-q001', conceptId: CHORES, isCorrect: false, sessionId: 'old', answeredAt: daysAgo(40), correctChoiceId: 'c', selectedChoiceId: 'a' }),
-      makeAttempt({ questionId: 'ch11-q010', conceptId: CHORES, isCorrect: true, sessionId: 'new', answeredAt: daysAgo(2), correctChoiceId: 'd', selectedChoiceId: 'd' }),
+      makeAttempt({ questionId: 'ch11-q001', conceptId: CLEANING, isCorrect: false, sessionId: 'old', answeredAt: daysAgo(40), correctChoiceId: 'c', selectedChoiceId: 'a' }),
+      makeAttempt({ questionId: 'ch11-q001', conceptId: CLEANING, isCorrect: true, sessionId: 'new', answeredAt: daysAgo(2), correctChoiceId: 'c', selectedChoiceId: 'c' }),
       makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, sessionId: 'new', answeredAt: daysAgo(2), correctChoiceId: 'b', selectedChoiceId: 'a' }),
       makeAttempt({ questionId: 'ch11-q006', conceptId: EUL, isCorrect: false, sessionId: 'new', answeredAt: daysAgo(2), correctChoiceId: 'd', selectedChoiceId: null }),
       makeAttempt({ questionId: 'ch11-q008', conceptId: WASTE, isCorrect: false, sessionId: 'new', answeredAt: daysAgo(2), correctChoiceId: 'b', selectedChoiceId: 'a' }),
@@ -47,7 +47,7 @@ function summary() {
 describe('Mistake Review: list', () => {
   it('groups mistakes by concept, most open mistakes first', async () => {
     await openMistakes()
-    expect(groupTitles()).toEqual(['-(으)ㄹ게요', '쓰레기 분리배출 어휘', '집안일 어휘'])
+    expect(groupTitles()).toEqual(['-(으)ㄹ게요', '쓰레기 분리배출 어휘', '청소 어휘'])
     expect(summary()).toHaveTextContent('3 open mistakes across 3 concepts · 1 fixed')
   })
 
@@ -62,7 +62,7 @@ describe('Mistake Review: list', () => {
 
   it('marks mistakes fixed by a later correct answer', async () => {
     await openMistakes()
-    const group = screen.getByRole('region', { name: '집안일 어휘' })
+    const group = screen.getByRole('region', { name: '청소 어휘' })
     expect(within(group).getByText('All fixed')).toBeInTheDocument()
     expect(within(group).getByText('Fixed')).toBeInTheDocument()
     expect(within(group).getByText(/fixed \d+ \w+ \d{4}/)).toBeInTheDocument()
@@ -72,7 +72,32 @@ describe('Mistake Review: list', () => {
     await openMistakes()
     const group = screen.getByRole('region', { name: '-(으)ㄹ게요' })
     expect(group).toHaveTextContent('Missed 2 times · 0/2 correct overall')
-    expect(within(group).getByRole('link', { name: 'Study in Chapter 11 (p.155)' })).toHaveAttribute('href', '/learn/11')
+    expect(within(group).getByRole('link', { name: 'Study in Chapter 11 (p.155)' })).toHaveAttribute(
+      'href',
+      '/learn/11#study-grammar-eul-geyo',
+    )
+  })
+
+  it('offers a review quiz only for concepts with open mistakes', async () => {
+    await openMistakes()
+    const open = screen.getByRole('region', { name: '-(으)ㄹ게요' })
+    const fixed = screen.getByRole('region', { name: '청소 어휘' })
+    expect(within(open).getByRole('button', { name: 'Practice this concept' })).toBeInTheDocument()
+    expect(within(fixed).queryByRole('button', { name: 'Practice this concept' })).not.toBeInTheDocument()
+  })
+
+  it('starts a short quiz on just that concept, missed questions included', async () => {
+    const storage = learnerWithMistakes()
+    const user = userEvent.setup()
+    renderApp('/practice/mistakes', { storage })
+    await screen.findByRole('heading', { level: 1, name: 'Mistakes' })
+    await user.click(within(screen.getByRole('region', { name: '-(으)ㄹ게요' })).getByRole('button', { name: 'Practice this concept' }))
+
+    expect(await screen.findByRole('heading', { level: 1, name: "Review: I'll (promise or offer)" })).toBeInTheDocument()
+    const quiz = readSaved(storage).activeSession!
+    expect(quiz).toMatchObject({ type: 'concept-review', conceptId: EUL })
+    expect(quiz.questionIds).toEqual(expect.arrayContaining(['ch11-q004', 'ch11-q006']))
+    expect(quiz.questionIds.length).toBeLessThanOrEqual(5)
   })
 
   it('keeps explanations folded until asked for', async () => {
@@ -112,7 +137,7 @@ describe('Mistake Review: filters', () => {
   })
 
   it('says when nothing matches, and clears filters', async () => {
-    const { user } = await openMistakes(`/practice/mistakes?concept=${CHORES}&range=7`)
+    const { user } = await openMistakes(`/practice/mistakes?concept=${CLEANING}&range=7`)
     expect(screen.getByText('Nothing matches these filters.')).toBeInTheDocument()
     await user.click(screen.getAllByRole('button', { name: 'Clear filters' })[0])
     expect(groupTitles()).toHaveLength(3)

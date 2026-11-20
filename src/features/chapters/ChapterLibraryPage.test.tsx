@@ -17,14 +17,14 @@ describe('Chapter Library', () => {
   it('lists Book 1 chapters 1–30 by default', async () => {
     await renderAt('/learn')
     expect(rows()).toHaveLength(30)
-    expect(screen.getByRole('link', { name: /Book 1/ })).toHaveAttribute('aria-current', 'page')
+    expect(within(screen.getByRole('navigation', { name: 'Textbook' })).getByRole('link', { name: /Book 1/ })).toHaveAttribute('aria-current', 'page')
   })
 
   it('lists Book 2 chapters 31–60 when Book 2 is chosen', async () => {
     await renderAt('/learn?book=2')
     expect(rows()).toHaveLength(30)
     expect(screen.getByText('근로자 보험')).toBeInTheDocument()
-    expect(screen.queryByText('집안일')).not.toBeInTheDocument()
+    expect(within(screen.getByRole('table')).queryByText('집안일')).not.toBeInTheDocument()
   })
 
   it('links only chapters that have content', async () => {
@@ -32,6 +32,15 @@ describe('Chapter Library', () => {
     expect(screen.getByRole('link', { name: '집안일' })).toHaveAttribute('href', '/learn/11')
     expect(screen.queryByRole('link', { name: '대중교통' })).not.toBeInTheDocument()
     expect(screen.getByText('대중교통')).toBeInTheDocument()
+  })
+
+  it('lists the chapters you can study first, on both book tabs', async () => {
+    for (const path of ['/learn', '/learn?book=2']) {
+      await renderAt(path)
+      const ready = screen.getByRole('region', { name: 'Available now' })
+      expect(within(ready).getByRole('link', { name: /11 집안일 Household Chores · Book 1/ })).toHaveAttribute('href', '/learn/11')
+      document.body.innerHTML = ''
+    }
   })
 
   it('shows every chapter as not started for a new learner', async () => {

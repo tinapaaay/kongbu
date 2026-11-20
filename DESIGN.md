@@ -336,6 +336,12 @@ components:
     typography: "{typography.gloss}"
     rounded: "{rounded.sm}"
     padding: "{spacing.sm}"
+  available-now:
+    backgroundColor: "{colors.primary-subtle}"
+    textColor: "{colors.primary-strong}"
+    typography: "{typography.tab-label}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.md}"
 ---
 
 # Hangul Lab
@@ -435,6 +441,10 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 **Status labels.** Not Started, Visited, Practiced, and Mastered are rounded pills that always contain the status word. Scores show their sample, such as `8/10`.
 
 **Draft label.** "Draft question" appears as a quiet outlined pill until a question is reviewed.
+
+**Available now.** A pale-blue box above the chapter table on Learn. Its caps label uses the tab-label style in Primary Strong, and it lists each chapter that has content as a link: number, underlined Korean title, then a plain English gloss. It appears on both book tabs, so a learner never has to scroll past chapters without content to find one.
+
+**Hover.** Hover colors apply only on devices with a mouse (`@media (hover: hover)`). On a phone, a tap would otherwise leave a button looking highlighted after the finger lifts.
 
 ## Do's and Don'ts
 

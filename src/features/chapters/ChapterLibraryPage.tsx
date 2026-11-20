@@ -18,6 +18,8 @@ export function ChapterLibraryPage() {
   const volume = searchParams.get('book') === '2' ? 2 : 1
   const book = books[volume - 1]
   const list = chapters.filter((c) => c.textbookRef.volume === volume)
+  // Most chapters have no content yet, so the ones you can study are listed first.
+  const ready = chapters.filter((c) => c.contentStatus === 'available')
 
   return (
     <>
@@ -38,6 +40,26 @@ export function ChapterLibraryPage() {
           </Link>
         ))}
       </nav>
+
+      <section className={styles.ready} aria-labelledby="ready-heading">
+        <h2 id="ready-heading" className={styles.readyLabel}>
+          Available now
+        </h2>
+        <ul className={styles.readyList}>
+          {ready.map((chapter) => (
+            <li key={chapter.id}>
+              <Link to={`/learn/${chapter.number}`} className={styles.readyLink}>
+                <span className={styles.number}>{chapter.number}</span> <span lang="ko" className={styles.readyTitle}>
+                  {chapter.titleKo}
+                </span>{' '}
+                <span className={styles.readyGloss}>
+                  {chapter.titleEn} · Book {chapter.textbookRef.volume}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <p className={styles.meta}>
         {book.label} covers chapters {book.range}. Content is added one chapter at a time.

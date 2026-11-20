@@ -2,10 +2,18 @@ import type { Attempt } from '../learnerData'
 
 export interface MistakeEntry {
   attempt: Attempt
-  /** "fixed" once the same concept is answered correctly in a later quiz. */
+  /** "fixed" once there is enough later evidence. See FIXED_BY. */
   status: 'open' | 'fixed'
   fixedAt?: string
 }
+
+/**
+ * How much later evidence fixes a mistake. Either:
+ * - the same question answered correctly in a later quiz, or
+ * - this many *different* questions on the same concept answered correctly in later quizzes.
+ * One lucky answer on a related question is not enough.
+ */
+export const FIXED_BY_OTHER_QUESTIONS = 2
 
 export interface MistakeFilter {
   chapterId?: string
@@ -16,7 +24,7 @@ export interface MistakeFilter {
 
 /**
  * Every wrong or skipped answer, newest first, with open/fixed status.
- * A correct answer in the same quiz does not fix a mistake; it has to come later.
+ * Only answers from a later quiz count as evidence; a right answer in the same quiz does not.
  */
 export function listMistakes(attempts: Attempt[], filter: MistakeFilter = {}): MistakeEntry[] {
   const sinceIso = filter.since?.toISOString()
@@ -31,15 +39,25 @@ export function listMistakes(attempts: Attempt[], filter: MistakeFilter = {}): M
     .filter((a) => !filter.conceptId || a.conceptId === filter.conceptId)
     .filter((a) => !sinceIso || a.answeredAt >= sinceIso)
     .map((attempt): MistakeEntry => {
-      const laterCorrect = (correctByConcept.get(attempt.conceptId) ?? [])
-        .filter((c) => c.answeredAt > attempt.answeredAt)
-        .map((c) => c.answeredAt)
-        .sort()
-      return laterCorrect.length > 0
-        ? { attempt, status: 'fixed', fixedAt: laterCorrect[0] }
-        : { attempt, status: 'open' }
+      const fixedAt = whenFixed(attempt, correctByConcept.get(attempt.conceptId) ?? [])
+      return fixedAt ? { attempt, status: 'fixed', fixedAt } : { attempt, status: 'open' }
     })
     .sort((x, y) => y.attempt.answeredAt.localeCompare(x.attempt.answeredAt))
+}
+
+/** The moment enough later evidence existed to fix this mistake, or undefined if it is still open. */
+function whenFixed(mistake: Attempt, correctOnConcept: Attempt[]): string | undefined {
+  const later = correctOnConcept
+    .filter((c) => c.sessionId !== mistake.sessionId && c.answeredAt > mistake.answeredAt)
+    .sort((x, y) => x.answeredAt.localeCompare(y.answeredAt))
+
+  const otherQuestions = new Set<string>()
+  for (const correct of later) {
+    if (correct.questionId === mistake.questionId) return correct.answeredAt
+    otherQuestions.add(correct.questionId)
+    if (otherQuestions.size >= FIXED_BY_OTHER_QUESTIONS) return correct.answeredAt
+  }
+  return undefined
 }
 
 export interface ConceptStats {

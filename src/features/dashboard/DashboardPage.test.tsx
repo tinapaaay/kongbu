@@ -26,7 +26,7 @@ describe('Dashboard for a new learner', () => {
     await renderDashboard()
     expect(within(section('Weak concepts')).getByText(/appear here after your first practice exam/)).toBeInTheDocument()
     expect(within(section('Chapter progress')).getByText('Not started')).toBeInTheDocument()
-    expect(section('Chapter progress')).toHaveTextContent('0 visited · 0 practiced · 0 mastered of 60')
+    expect(section('Chapter progress')).toHaveTextContent('All 60 chapters: 0 mastered · 0 practiced · 0 visited · 60 not started')
     expect(section('This week')).toHaveTextContent('0 questions answered · 0 study days')
     expect(screen.queryByRole('region', { name: 'Recently studied' })).not.toBeInTheDocument()
   })

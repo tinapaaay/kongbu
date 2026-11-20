@@ -64,9 +64,12 @@
   transition: background-color 120ms, color 120ms;
 }
 
-.topLink:hover {
-  color: var(--color-on-surface);
-  background: var(--color-neutral);
+/* Hover only where there is a mouse, so a tap on a phone doesn't leave it highlighted. */
+@media (hover: hover) {
+  .topLink:hover {
+    color: var(--color-on-surface);
+    background: var(--color-neutral);
+  }
 }
 
 .active,

@@ -3,6 +3,8 @@ import type { ActiveSession, Attempt } from '../learnerData'
 import { defaultMakeId, defaultRandom, shuffle, type MakeId, type Random } from '../random'
 
 export const QUIZ_SIZE = 10
+/** A concept review is short: at most this many questions, all on one concept. */
+export const REVIEW_SIZE = 5
 
 const CHOICE_IDS: ChoiceId[] = ['a', 'b', 'c', 'd']
 
@@ -28,6 +30,8 @@ export type BuildSessionResult =
  *   2. Other questions on a concept you still have an open mistake in.
  *   3. Questions you have never seen.
  *   4. Questions you got right, oldest first.
+ * After the missed material (1 and 2), every concept in the chapter gets at least one
+ * question while there is room, so a single quiz can show you know the whole chapter.
  * Ties are broken randomly, the final order is shuffled, and each question's
  * four choices get their own shuffled order.
  */
@@ -64,10 +68,7 @@ export function buildChapterSession(input: BuildSessionInput): BuildSessionResul
     }))
     .sort((x, y) => x.priority - y.priority || (x.priority === 3 ? x.lastSeen.localeCompare(y.lastSeen) : 0))
 
-  const chosen = shuffle(
-    ranked.slice(0, size).map((r) => r.question),
-    random,
-  )
+  const chosen = shuffle(pickWithCoverage(ranked, size), random)
 
   const choiceOrder: Record<string, ChoiceId[]> = {}
   for (const question of chosen) choiceOrder[question.id] = shuffle(CHOICE_IDS, random)
@@ -88,6 +89,23 @@ export function buildChapterSession(input: BuildSessionInput): BuildSessionResul
   }
 }
 
+/**
+ * Takes missed material first, then one question for each concept not yet in the quiz,
+ * then fills the rest in rank order.
+ */
+function pickWithCoverage(ranked: { question: Question; priority: number }[], size: number): Question[] {
+  const chosen: Question[] = []
+  const take = (question: Question) => {
+    if (chosen.length < size && !chosen.includes(question)) chosen.push(question)
+  }
+  for (const r of ranked) if (r.priority <= 1) take(r.question)
+  for (const r of ranked) {
+    if (!chosen.some((q) => q.conceptId === r.question.conceptId)) take(r.question)
+  }
+  for (const r of ranked) take(r.question)
+  return chosen
+}
+
 /** For each key, the attempt with the latest answeredAt. */
 function latestBy(attempts: Attempt[], keyOf: (a: Attempt) => string): Map<string, Attempt> {
   const latest = new Map<string, Attempt>()
@@ -97,4 +115,61 @@ function latestBy(attempts: Attempt[], keyOf: (a: Attempt) => string): Map<strin
     if (!current || attempt.answeredAt >= current.answeredAt) latest.set(key, attempt)
   }
   return latest
+}
+
+export interface BuildReviewInput {
+  conceptId: string
+  /** All questions available. Only this concept's questions are used. */
+  questions: Question[]
+  attempts: Attempt[]
+  now: Date
+  size?: number
+  random?: Random
+  makeId?: MakeId
+}
+
+/**
+ * A short quiz on one concept, to fix mistakes there.
+ * Questions you missed last time come first, then ones you haven't seen, then the rest.
+ */
+export function buildConceptReview(input: BuildReviewInput): BuildSessionResult {
+  const { conceptId, attempts, now } = input
+  const size = input.size ?? REVIEW_SIZE
+  const random = input.random ?? defaultRandom
+  const makeId = input.makeId ?? defaultMakeId
+
+  const pool = input.questions.filter((q) => q.conceptId === conceptId)
+  if (pool.length === 0) return { ok: false, reason: 'not-enough-questions', available: 0, needed: 1 }
+
+  const lastAttemptByQuestion = latestBy(attempts, (a) => a.questionId)
+  const priority = (q: Question) => {
+    const last = lastAttemptByQuestion.get(q.id)
+    if (last && !last.isCorrect) return 0
+    return last ? 2 : 1
+  }
+  const chosen = shuffle(
+    shuffle(pool, random)
+      .sort((x, y) => priority(x) - priority(y))
+      .slice(0, size),
+    random,
+  )
+
+  const choiceOrder: Record<string, ChoiceId[]> = {}
+  for (const question of chosen) choiceOrder[question.id] = shuffle(CHOICE_IDS, random)
+
+  return {
+    ok: true,
+    session: {
+      id: makeId(),
+      type: 'concept-review',
+      chapterId: chosen[0].chapterId,
+      conceptId,
+      startedAt: now.toISOString(),
+      questionIds: chosen.map((q) => q.id),
+      choiceOrder,
+      answers: {},
+      durationsMs: {},
+      currentIndex: 0,
+    },
+  }
 }

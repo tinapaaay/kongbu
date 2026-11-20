@@ -18,18 +18,37 @@ describe('listMistakes', () => {
     expect(listMistakes(attempts).map((m) => m.attempt.questionId)).toEqual(['ch11-q006', 'ch11-q004'])
   })
 
-  it('marks a mistake fixed when the concept is answered correctly later', () => {
+  it('marks a mistake fixed when the same question is answered correctly in a later quiz', () => {
     const attempts = [
-      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, answeredAt: minutes(1) }),
-      makeAttempt({ questionId: 'ch11-q017', conceptId: EUL, isCorrect: true, answeredAt: minutes(9) }),
+      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, answeredAt: minutes(1), sessionId: 'quiz-1' }),
+      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: true, answeredAt: minutes(9), sessionId: 'quiz-2' }),
     ]
     expect(listMistakes(attempts)[0]).toMatchObject({ status: 'fixed', fixedAt: minutes(9) })
   })
 
+  it('keeps a mistake open after only one right answer on a different question', () => {
+    const attempts = [
+      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, answeredAt: minutes(1), sessionId: 'quiz-1' }),
+      makeAttempt({ questionId: 'ch11-q017', conceptId: EUL, isCorrect: true, answeredAt: minutes(9), sessionId: 'quiz-2' }),
+      // The same other question again is still only one question's worth of evidence.
+      makeAttempt({ questionId: 'ch11-q017', conceptId: EUL, isCorrect: true, answeredAt: minutes(20), sessionId: 'quiz-3' }),
+    ]
+    expect(listMistakes(attempts)[0].status).toBe('open')
+  })
+
+  it('marks a mistake fixed after two different questions on the concept are answered correctly later', () => {
+    const attempts = [
+      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, answeredAt: minutes(1), sessionId: 'quiz-1' }),
+      makeAttempt({ questionId: 'ch11-q017', conceptId: EUL, isCorrect: true, answeredAt: minutes(9), sessionId: 'quiz-2' }),
+      makeAttempt({ questionId: 'ch11-q006', conceptId: EUL, isCorrect: true, answeredAt: minutes(10), sessionId: 'quiz-2' }),
+    ]
+    expect(listMistakes(attempts)[0]).toMatchObject({ status: 'fixed', fixedAt: minutes(10) })
+  })
+
   it('does not count a correct answer in the same quiz as a fix', () => {
     const attempts = [
-      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, answeredAt: minutes(1) }),
-      makeAttempt({ questionId: 'ch11-q017', conceptId: EUL, isCorrect: true, answeredAt: minutes(1) }),
+      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, answeredAt: minutes(1), sessionId: 'quiz-1' }),
+      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: true, answeredAt: minutes(2), sessionId: 'quiz-1' }),
     ]
     expect(listMistakes(attempts)[0].status).toBe('open')
   })
@@ -64,7 +83,7 @@ describe('conceptStats and weakConcepts', () => {
     makeAttempt({ questionId: 'ch11-q005', conceptId: EUL, isCorrect: false, answeredAt: minutes(1) }),
     makeAttempt({ questionId: 'ch11-q006', conceptId: EUL, isCorrect: true, answeredAt: minutes(1) }),
     makeAttempt({ questionId: 'ch11-q003', conceptId: MUST, isCorrect: false, answeredAt: minutes(4) }),
-    makeAttempt({ questionId: 'ch11-q001', conceptId: 'vocabulary.household-chores', isCorrect: true, answeredAt: minutes(4) }),
+    makeAttempt({ questionId: 'ch11-q001', conceptId: 'vocabulary.cleaning', isCorrect: true, answeredAt: minutes(4) }),
   ]
 
   it('counts correct answers out of total, so sample size is always visible', () => {
@@ -91,7 +110,13 @@ describe('chapterProgress', () => {
   }
 
   it('shows a new learner as not started', () => {
-    expect(chapterProgress('ch11', emptyLearnerData())).toEqual({ status: 'not-started', sessionsCompleted: 0, openMistakes: 0 })
+    expect(chapterProgress('ch11', emptyLearnerData())).toEqual({
+      status: 'not-started',
+      sessionsCompleted: 0,
+      openMistakes: 0,
+      conceptsShown: 0,
+      conceptsTotal: 8,
+    })
   })
 
   it('shows an opened chapter as visited', () => {
@@ -119,13 +144,44 @@ describe('chapterProgress', () => {
     expect(result).toMatchObject({ status: 'practiced', latestScore: { correct: 7, total: 10 } })
   })
 
-  it('shows 80% or better with no open mistakes as mastered', () => {
+  it('shows 80% or better, no open mistakes, and every concept shown as mastered', () => {
     const attempts = [
-      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, answeredAt: minutes(1) }),
-      makeAttempt({ questionId: 'ch11-q017', conceptId: EUL, isCorrect: true, answeredAt: minutes(9) }),
+      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: false, answeredAt: minutes(1), sessionId: 'quiz-1' }),
+      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: true, answeredAt: minutes(9), sessionId: 'quiz-2' }),
+      makeAttempt({ questionId: 'ch11-q003', conceptId: MUST, isCorrect: true, answeredAt: minutes(9), sessionId: 'quiz-2' }),
     ]
-    const result = chapterProgress('ch11', data({ sessions: [makeSession({ correctCount: 8, totalCount: 10 })], attempts }))
-    expect(result.status).toBe('mastered')
+    const result = chapterProgress('ch11', data({ sessions: [makeSession({ correctCount: 8, totalCount: 10 })], attempts }), [EUL, MUST])
+    expect(result).toMatchObject({ status: 'mastered', conceptsShown: 2, conceptsTotal: 2 })
+  })
+
+  it('withholds mastery until every concept in the chapter has been answered correctly', () => {
+    const attempts = [makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: true, answeredAt: minutes(1) })]
+    const result = chapterProgress('ch11', data({ sessions: [makeSession({ correctCount: 10, totalCount: 10 })], attempts }), [EUL, MUST])
+    expect(result).toMatchObject({ status: 'practiced', conceptsShown: 1, conceptsTotal: 2 })
+  })
+
+  it('bases mastery on full practice exams, not short concept reviews', () => {
+    const attempts = [
+      makeAttempt({ questionId: 'ch11-q004', conceptId: EUL, isCorrect: true, answeredAt: minutes(1), sessionId: 'exam' }),
+      makeAttempt({ questionId: 'ch11-q003', conceptId: MUST, isCorrect: true, answeredAt: minutes(1), sessionId: 'exam' }),
+    ]
+    const sessions = [
+      makeSession({ id: 'exam', correctCount: 9, totalCount: 10, submittedAt: minutes(1) }),
+      makeSession({ id: 'review', type: 'concept-review', conceptId: EUL, correctCount: 1, totalCount: 3, submittedAt: minutes(5) }),
+    ]
+    const result = chapterProgress('ch11', data({ sessions, attempts }), [EUL, MUST])
+    expect(result).toMatchObject({ status: 'mastered', latestScore: { correct: 9, total: 10 }, sessionsCompleted: 2 })
+  })
+
+  it('counts a concept review alone as practice', () => {
+    const sessions = [makeSession({ id: 'review', type: 'concept-review', conceptId: EUL, correctCount: 1, totalCount: 3 })]
+    const result = chapterProgress('ch11', data({ sessions }))
+    expect(result.status).toBe('practiced')
+    expect(result.latestScore).toBeUndefined()
+  })
+
+  it('counts only concepts that have questions', () => {
+    expect(chapterProgress('ch11', emptyLearnerData()).conceptsTotal).toBe(8)
   })
 
   it('withholds mastery while a missed concept is still open', () => {
@@ -197,7 +253,7 @@ describe('learner data', () => {
   it('starts empty for a new learner, and the empty state is valid', () => {
     const empty = emptyLearnerData()
     expect(empty).toEqual({
-      schemaVersion: 1,
+      schemaVersion: 2,
       chapterVisits: {},
       activeSession: null,
       sessions: [],

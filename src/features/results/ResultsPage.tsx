@@ -6,6 +6,7 @@ import { PageHeader } from '../../components/PageHeader'
 import { StatusBadge } from '../../components/StatusBadge'
 import { getChapter, getConcept } from '../../content'
 import { useLearnerData } from '../../data/learnerDataContext'
+import { quizKindLabel } from '../quiz/quizKindLabel'
 import { chapterProgress, MASTERY_ACCURACY, percent } from '../../domain/progress/chapterProgress'
 import { conceptStats } from '../../domain/progress/mistakes'
 import { AnswerReview } from './AnswerReview'
@@ -44,7 +45,7 @@ export function ResultsPage() {
     <>
       <PageHeader
         title="Results"
-        eyebrow={`Chapter ${chapter?.number} · Practice exam · ${formatDate(session.submittedAt)}`}
+        eyebrow={`Chapter ${chapter?.number} · ${quizKindLabel(session)} · ${formatDate(session.submittedAt)}`}
       />
 
       <div className={styles.top}>
@@ -60,7 +61,7 @@ export function ResultsPage() {
           <p className={styles.statusLine}>
             <span lang="ko">{chapter?.titleKo}</span> <StatusBadge status={progress.status} />
           </p>
-          <p className={styles.meta}>{statusExplanation(progress.status, progress.openMistakes)}</p>
+          <p className={styles.meta}>{statusExplanation(progress)}</p>
           <div className={styles.actions}>
             {missed > 0 && (
               <Link to={`/practice/mistakes?chapter=${session.chapterId}`} className={buttons.primary}>
@@ -123,12 +124,17 @@ export function ResultsPage() {
   )
 }
 
-function statusExplanation(status: ReturnType<typeof chapterProgress>['status'], openMistakes: number): string {
+function statusExplanation(progress: ReturnType<typeof chapterProgress>): string {
   const threshold = Math.round(MASTERY_ACCURACY * 100)
-  if (status === 'mastered') return 'Chapter mastered: your latest exam met the bar and every missed concept has since been answered correctly.'
-  const open =
-    openMistakes > 0
-      ? ` You have ${openMistakes} open ${openMistakes === 1 ? 'mistake' : 'mistakes'} in this chapter.`
-      : ''
-  return `Mastery needs at least ${threshold}% on a 10-question exam and no open mistakes.${open}`
+  if (progress.status === 'mastered') {
+    return 'Chapter mastered: your latest exam met the bar, every concept has a right answer, and every mistake has been fixed.'
+  }
+  const missing: string[] = []
+  if (progress.openMistakes > 0) {
+    missing.push(`${progress.openMistakes} open ${progress.openMistakes === 1 ? 'mistake' : 'mistakes'} to fix`)
+  }
+  const untested = progress.conceptsTotal - progress.conceptsShown
+  if (untested > 0) missing.push(`${untested} of ${progress.conceptsTotal} concepts still without a right answer`)
+  const left = missing.length > 0 ? ` Still to go: ${missing.join(', ')}.` : ''
+  return `Mastery needs at least ${threshold}% on a 10-question exam, a right answer in every concept, and no open mistakes.${left}`
 }

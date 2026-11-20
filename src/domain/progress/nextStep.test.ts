@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Chapter } from '../../content/schemas'
-import { chapters } from '../../content'
+import { chapters, getQuestionsForChapter } from '../../content'
 import { emptyLearnerData, type ActiveSession, type LearnerData } from '../learnerData'
 import { makeAttempt, makeSession, minutes } from '../testFixtures'
 import { currentChapter, nextStep } from './nextStep'
@@ -46,7 +46,11 @@ describe('nextStep', () => {
   })
 
   it('recognizes a mastered chapter', () => {
-    const step = nextStep(data({ sessions: [makeSession({ correctCount: 9, totalCount: 10 })] }), chapters)
+    // Mastery needs every concept answered correctly at least once.
+    const attempts = getQuestionsForChapter('ch11').map((q) =>
+      makeAttempt({ questionId: q.id, conceptId: q.conceptId, isCorrect: true }),
+    )
+    const step = nextStep(data({ sessions: [makeSession({ correctCount: 9, totalCount: 10 })], attempts }), chapters)
     expect(step.kind).toBe('chapter-mastered')
   })
 })

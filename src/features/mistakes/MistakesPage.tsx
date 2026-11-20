@@ -4,10 +4,11 @@ import buttons from '../../components/buttons.module.css'
 import { formatDate } from '../../components/formatDate'
 import { Notice } from '../../components/Notice'
 import { PageHeader } from '../../components/PageHeader'
-import { getChapter, getConcept, questions } from '../../content'
+import { getChapter, getConcept, questions, studyAnchorId } from '../../content'
 import { useLearnerData } from '../../data/learnerDataContext'
 import { keepBlanksTogether } from '../../domain/quiz/playableQuestion'
 import { conceptStats, listMistakes, type MistakeEntry } from '../../domain/progress/mistakes'
+import { useStartConceptReview } from '../quiz/useStartPractice'
 import { rangeStart, useMistakeFilters, type DateRange } from './useMistakeFilters'
 import styles from './MistakesPage.module.css'
 
@@ -16,6 +17,7 @@ const questionsById = new Map(questions.map((q) => [q.id, q]))
 export function MistakesPage() {
   const { data } = useLearnerData()
   const { filters, update, clear, isFiltered } = useMistakeFilters()
+  const review = useStartConceptReview()
   // Read the clock once per visit, not on every render.
   const [now] = useState(() => new Date())
   const chapterSelectId = useId()
@@ -163,8 +165,18 @@ export function MistakesPage() {
                         <span className={open > 0 ? styles.pillOpen : styles.pillFixed}>
                           {open > 0 ? `${open} open` : 'All fixed'}
                         </span>
+                        {open > 0 && (
+                          <button
+                            type="button"
+                            className={buttons.secondary}
+                            disabled={review.starting !== null}
+                            onClick={() => void review.start(conceptId)}
+                          >
+                            {review.hasUnfinishedQuiz ? 'Finish your unfinished quiz first' : 'Practice this concept'}
+                          </button>
+                        )}
                         {chapter && concept && (
-                          <Link to={`/learn/${chapter.number}`} className={styles.studyLink}>
+                          <Link to={`/learn/${chapter.number}#${studyAnchorId(conceptId)}`} className={styles.studyLink}>
                             Study in Chapter {chapter.number} (p.{concept.textbookRef.page})
                           </Link>
                         )}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { emptyLearnerData, type LearnerData } from '../domain/learnerData'
+import { emptyLearnerData, learnerDataSchema, type LearnerData } from '../domain/learnerData'
 import { makeAttempt, makeSession } from '../domain/testFixtures'
 import { backupFileName, createBackup, parseBackup } from './backup'
 import { SaveError } from './LearnerRepository'
@@ -62,7 +62,7 @@ describe('localStorage repository: loading', () => {
 
   it('refuses to overwrite data saved by a newer version', async () => {
     const storage = new MemoryStorage()
-    const newer = JSON.stringify({ schemaVersion: 2, everything: 'new' })
+    const newer = JSON.stringify({ schemaVersion: 3, everything: 'new' })
     storage.setItem(STORAGE_KEY, newer)
     const repository = createLocalStorageRepository(storage)
 
@@ -163,6 +163,63 @@ describe('localStorage repository: saving', () => {
   })
 })
 
+describe('localStorage repository: several open tabs', () => {
+  /** Two tabs of the same site share one storage but each keeps its own copy in memory. */
+  async function twoTabs() {
+    const storage = new MemoryStorage()
+    let notifyA = () => {}
+    const tabA = createLocalStorageRepository(storage, {
+      listen: (_key, onChange) => {
+        notifyA = onChange
+        return () => {}
+      },
+    })
+    const tabB = createLocalStorageRepository(storage)
+    await tabA.load()
+    await tabB.load()
+    return { storage, tabA, tabB, otherTabSaved: () => notifyA() }
+  }
+
+  it('an old tab does not erase a quiz finished in another tab', async () => {
+    const { storage, tabA, tabB } = await twoTabs()
+    await tabB.submitSession(makeSession({ id: 'quiz-b', correctCount: 1, totalCount: 1 }), [makeAttempt({ sessionId: 'quiz-b', questionId: 'ch11-q001', isCorrect: true })])
+
+    // Tab A loaded before the quiz existed, then the learner opens a chapter there.
+    const data = await tabA.recordChapterVisit('ch11', NOW)
+
+    expect(data.sessions.map((s) => s.id)).toEqual(['quiz-b'])
+    expect(JSON.parse(storage.getItem(STORAGE_KEY)!).attempts).toHaveLength(1)
+    expect(data.chapterVisits.ch11).toBeDefined()
+  })
+
+  it('records a quiz once when it is submitted in two tabs', async () => {
+    const { tabA, tabB } = await twoTabs()
+    const session = makeSession({ id: 'quiz-1', correctCount: 1, totalCount: 1 })
+    const attempt = () => makeAttempt({ sessionId: 'quiz-1', questionId: 'ch11-q001', isCorrect: true })
+    await tabA.submitSession(session, [attempt()])
+    const data = await tabB.submitSession(session, [attempt()])
+    expect(data.sessions).toHaveLength(1)
+    expect(data.attempts).toHaveLength(1)
+  })
+
+  it('tells the screen when another tab saves', async () => {
+    const { tabA, tabB, otherTabSaved } = await twoTabs()
+    const seen: LearnerData[] = []
+    tabA.watch((data) => seen.push(data))
+    await tabB.recordChapterVisit('ch11', NOW)
+    otherTabSaved()
+    expect(seen).toHaveLength(1)
+    expect(seen[0].chapterVisits.ch11).toBeDefined()
+  })
+
+  it('stops writing when a newer app version saved in another tab', async () => {
+    const { storage, tabA } = await twoTabs()
+    storage.setItem(STORAGE_KEY, JSON.stringify({ ...emptyLearnerData(), schemaVersion: 999 }))
+    await expect(tabA.recordChapterVisit('ch11', NOW)).rejects.toMatchObject({ kind: 'read-only' })
+    expect(JSON.parse(storage.getItem(STORAGE_KEY)!).schemaVersion).toBe(999)
+  })
+})
+
 describe('backups', () => {
   it('round-trips: a downloaded backup restores to the same data', () => {
     const original = sampleData()
@@ -192,7 +249,37 @@ describe('backups', () => {
 
 describe('migrations', () => {
   it('accepts the current version unchanged', () => {
-    expect(migrate({ schemaVersion: 1, a: 1 })).toEqual({ ok: true, data: { schemaVersion: 1, a: 1 } })
+    expect(migrate({ schemaVersion: 2, a: 1 })).toEqual({ ok: true, data: { schemaVersion: 2, a: 1 } })
+  })
+
+  it('version 1 → 2 moves old "household chores" answers to laundry, cleaning, or cooking', () => {
+    const v1 = {
+      ...emptyLearnerData(),
+      schemaVersion: 1,
+      attempts: [
+        makeAttempt({ questionId: 'ch11-q001', conceptId: 'vocabulary.household-chores', isCorrect: true }),
+        makeAttempt({ questionId: 'ch11-q002', conceptId: 'vocabulary.household-chores', isCorrect: false }),
+        makeAttempt({ questionId: 'ch11-q010', conceptId: 'vocabulary.household-chores', isCorrect: true }),
+        makeAttempt({ questionId: 'ch11-q004', conceptId: 'grammar.eul-geyo', isCorrect: true }),
+      ],
+    }
+    const result = migrate(v1)
+    expect(result.ok).toBe(true)
+    const data = learnerDataSchema.parse(result.ok && result.data)
+    expect(data.schemaVersion).toBe(2)
+    expect(data.attempts.map((a) => a.conceptId)).toEqual([
+      'vocabulary.cleaning',
+      'vocabulary.laundry',
+      'vocabulary.cooking',
+      'grammar.eul-geyo',
+    ])
+  })
+
+  it('a saved version 1 backup still restores', () => {
+    const v1 = { ...emptyLearnerData(), schemaVersion: 1 }
+    const text = JSON.stringify({ app: 'hangul-lab', kind: 'backup', exportedAt: NOW.toISOString(), data: v1 })
+    const result = parseBackup(text)
+    expect(result).toMatchObject({ ok: true })
   })
 
   it('rejects non-objects and unknown versions', () => {

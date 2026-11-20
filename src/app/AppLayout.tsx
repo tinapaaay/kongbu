@@ -10,18 +10,29 @@ import styles from './AppLayout.module.css'
  */
 export function AppLayout() {
   const mainRef = useRef<HTMLElement>(null)
-  const { pathname } = useLocation()
-  const previousPath = useRef(pathname)
+  const { pathname, hash } = useLocation()
+  /** null until the first page has been shown. */
+  const previousPath = useRef<string | null>(null)
 
   // After moving to a different page, start at the top and move keyboard and
   // screen reader focus to the new content, like a full page load would.
+  // A link with #section (like /learn/11#study-grammar-eul-geyo) goes to that section instead,
+  // including when the page is first opened from such a link.
   // Comparing paths (not counting renders) also works when React runs effects twice in development.
   useEffect(() => {
     if (previousPath.current === pathname) return
+    const firstPage = previousPath.current === null
     previousPath.current = pathname
+    const target = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null
+    if (target) {
+      target.scrollIntoView({ block: 'start' })
+      target.focus({ preventScroll: true })
+      return
+    }
+    if (firstPage) return
     window.scrollTo(0, 0)
     mainRef.current?.focus({ preventScroll: true })
-  }, [pathname])
+  }, [pathname, hash])
 
   return (
     <div className={styles.shell}>

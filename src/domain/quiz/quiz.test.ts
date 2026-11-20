@@ -4,7 +4,7 @@ import type { Question } from '../../content/schemas'
 import type { ActiveSession } from '../learnerData'
 import { seededRandom, sequentialIds } from '../random'
 import { makeAttempt, minutes } from '../testFixtures'
-import { buildChapterSession, QUIZ_SIZE, type BuildSessionInput } from './buildSession'
+import { buildChapterSession, buildConceptReview, QUIZ_SIZE, type BuildSessionInput } from './buildSession'
 import { keepBlanksTogether, toPlayableQuestion } from './playableQuestion'
 import { quizReducer, unansweredQuestionIds } from './quizReducer'
 import { scoreSession } from './scoreSession'
@@ -99,11 +99,58 @@ describe('buildChapterSession', () => {
   })
 
   it('then prefers the questions seen longest ago', () => {
+    // The 10 oldest cover only 6 of the 8 concepts, so 2 newer questions are swapped in for coverage.
     const older = chapter11.slice(0, 10).map((q) => q.id)
     const attempts = chapter11.map((q, i) =>
       makeAttempt({ questionId: q.id, conceptId: q.conceptId, isCorrect: true, answeredAt: minutes(i < 10 ? 1 : 30) }),
     )
-    expect(build({ attempts }).questionIds.sort()).toEqual(older.sort())
+    for (const seed of SEEDS) {
+      const ids = build({ attempts }, seed).questionIds
+      expect(ids.filter((id) => older.includes(id))).toHaveLength(8)
+    }
+  })
+
+  it('includes every concept in the chapter when there is room', () => {
+    const allConcepts = new Set(chapter11.map((q) => q.conceptId))
+    for (const seed of SEEDS) {
+      const concepts = new Set(build({}, seed).questionIds.map((id) => questionsById.get(id)!.conceptId))
+      expect(concepts).toEqual(allConcepts)
+    }
+  })
+
+  it('never drops missed questions to make room for coverage', () => {
+    const missed = chapter11.filter((q) => q.conceptId === 'grammar.eul-geyo' || q.conceptId === 'vocabulary.waste-disposal')
+    const attempts = missed.map((q) => makeAttempt({ questionId: q.id, conceptId: q.conceptId, isCorrect: false }))
+    for (const seed of SEEDS) {
+      expect(build({ attempts }, seed).questionIds).toEqual(expect.arrayContaining(missed.map((q) => q.id)))
+    }
+  })
+})
+
+describe('buildConceptReview', () => {
+  it('uses only the chosen concept, missed questions first, at most 5', () => {
+    const attempts = [makeAttempt({ questionId: 'ch11-q005', conceptId: 'grammar.eul-geyo', isCorrect: false })]
+    for (const seed of SEEDS) {
+      const result = buildConceptReview({
+        conceptId: 'grammar.eul-geyo',
+        questions,
+        attempts,
+        now: NOW,
+        size: 2,
+        random: seededRandom(seed),
+        makeId: sequentialIds('review'),
+      })
+      if (!result.ok) throw new Error('expected a review')
+      expect(result.session).toMatchObject({ type: 'concept-review', conceptId: 'grammar.eul-geyo', chapterId: 'ch11' })
+      expect(result.session.questionIds).toHaveLength(2)
+      expect(result.session.questionIds).toContain('ch11-q005')
+      for (const id of result.session.questionIds) expect(questionsById.get(id)?.conceptId).toBe('grammar.eul-geyo')
+    }
+  })
+
+  it('refuses a concept with no questions', () => {
+    const result = buildConceptReview({ conceptId: 'grammar.unknown', questions, attempts: [], now: NOW })
+    expect(result.ok).toBe(false)
   })
 })
 

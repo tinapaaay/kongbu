@@ -25,9 +25,12 @@
   cursor: pointer;
 }
 
-.exit:hover {
-  background: var(--color-neutral);
-  color: var(--color-on-surface);
+/* Hover only where there is a mouse, so a tap on a phone doesn't leave it highlighted. */
+@media (hover: hover) {
+  .exit:hover {
+    background: var(--color-neutral);
+    color: var(--color-on-surface);
+  }
 }
 
 .barTitle {

@@ -10,11 +10,20 @@ import { chapterIdSchema, choiceIdSchema } from '../content/schemas'
 
 const isoDateTime = z.iso.datetime()
 
+/**
+ * chapter-practice: the 10-question practice exam; the only kind that counts toward mastery.
+ * concept-review: a short quiz on one concept, started from Mistakes to fix what you missed.
+ */
+export const sessionTypeSchema = z.enum(['chapter-practice', 'concept-review'])
+export type SessionType = z.infer<typeof sessionTypeSchema>
+
 /** A quiz in progress. Saved after every answer so a refresh resumes exactly here. */
 export const activeSessionSchema = z.object({
   id: z.string().min(1),
-  type: z.literal('chapter-practice'),
+  type: sessionTypeSchema,
   chapterId: chapterIdSchema,
+  /** For a concept review: the concept it practices. */
+  conceptId: z.string().min(1).optional(),
   startedAt: isoDateTime,
   questionIds: z.array(z.string()).min(1),
   /** The shuffled display order of choices for each question, fixed for this quiz. */
@@ -28,8 +37,10 @@ export type ActiveSession = z.infer<typeof activeSessionSchema>
 /** A submitted quiz. The score is stored as a convenience; attempts remain the source of truth. */
 export const completedSessionSchema = z.object({
   id: z.string().min(1),
-  type: z.literal('chapter-practice'),
+  type: sessionTypeSchema,
   chapterId: chapterIdSchema,
+  /** For a concept review: the concept it practices. */
+  conceptId: z.string().min(1).optional(),
   startedAt: isoDateTime,
   submittedAt: isoDateTime,
   questionIds: z.array(z.string()).min(1),
@@ -63,7 +74,7 @@ export const chapterVisitSchema = z.object({
 export type ChapterVisit = z.infer<typeof chapterVisitSchema>
 
 export const learnerDataSchema = z.object({
-  schemaVersion: z.literal(1),
+  schemaVersion: z.literal(2),
   chapterVisits: z.record(z.string(), chapterVisitSchema),
   activeSession: activeSessionSchema.nullable(),
   sessions: z.array(completedSessionSchema),
@@ -75,5 +86,5 @@ export type LearnerData = z.infer<typeof learnerDataSchema>
 
 /** A brand-new learner: no visits, no quizzes, no attempts. */
 export function emptyLearnerData(): LearnerData {
-  return { schemaVersion: 1, chapterVisits: {}, activeSession: null, sessions: [], attempts: [], lastBackupAt: null }
+  return { schemaVersion: 2, chapterVisits: {}, activeSession: null, sessions: [], attempts: [], lastBackupAt: null }
 }

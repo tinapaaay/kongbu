@@ -4,6 +4,7 @@ import buttons from '../../components/buttons.module.css'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { SectionHeader } from '../../components/SectionHeader'
 import { useDocumentTitle } from '../../components/useDocumentTitle'
+import { quizKindLabel } from './quizKindLabel'
 import { getChapter, questions } from '../../content'
 import { StorageNotice } from '../../app/StorageNotice'
 import { useLearnerData } from '../../data/learnerDataContext'
@@ -30,7 +31,8 @@ export function QuizPlayer({ initial }: { initial: ActiveSession }) {
   const firstQuestionShown = useRef(true)
 
   const chapter = getChapter(session.chapterId)
-  useDocumentTitle(`Practice exam · ${chapter?.titleKo ?? ''}`)
+  const kind = quizKindLabel(session)
+  useDocumentTitle(`${kind} · ${chapter?.titleKo ?? ''}`)
 
   const total = session.questionIds.length
   const index = session.currentIndex
@@ -114,13 +116,13 @@ export function QuizPlayer({ initial }: { initial: ActiveSession }) {
         </button>
         <p className={styles.barTitle}>
           <span className={styles.num}>{chapter?.number}</span> <span lang="ko">{chapter?.titleKo}</span>
-          <span className={styles.barSub}> · Practice exam</span>
+          <span className={styles.barSub}> · {kind}</span>
         </p>
       </header>
 
       <main id="main" className={styles.main}>
         <StorageNotice />
-        <h1 className={styles.visuallyHidden}>Practice exam</h1>
+        <h1 className={styles.visuallyHidden}>{kind}</h1>
 
         <div className={styles.progressRow}>
           <nav aria-label="Questions">
