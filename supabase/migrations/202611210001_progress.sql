@@ -4,6 +4,8 @@ create table public.learner_quizzes (
   user_id uuid not null references auth.users(id) on delete cascade,
   id text not null check (length(id) between 1 and 512),
   payload jsonb not null check (jsonb_typeof(payload) = 'object' and payload ? 'id' and payload->>'id' = id),
+  -- A finished quiz is about 1-2 KB. 16 KB leaves room to grow and stops one account filling the database.
+  constraint payload_size check (pg_column_size(payload) <= 16384),
   received_at timestamptz not null default clock_timestamp(),
   primary key (user_id, id)
 );

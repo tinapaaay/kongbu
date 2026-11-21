@@ -73,6 +73,15 @@ describe('durable sync queue', () => {
     expect(d.getStatus().pending).toBe(0)
   })
 
+  it('finishes syncing and says how many unreadable cloud records were skipped', async () => {
+    const cloud = server()
+    const d = device({ async exchange(user, pending) { return { ...(await cloud.exchange(user, pending)), skipped: 2 } } })
+    await d.repository.submitSession(session('one'), [attempt('one')])
+    d.setUser('learner'); await d.sync()
+    expect(d.getStatus()).toMatchObject({ state: 'synced', pending: 0 })
+    expect(d.getStatus().message).toMatch(/2 saved records .* skipped/)
+  })
+
   it('never sends one learner’s records to a different account', async () => {
     const cloud = server()
     const d = device(cloud)

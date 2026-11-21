@@ -36,6 +36,14 @@ for (const table of ['learner_quizzes', 'learner_attempts', 'learner_visits']) {
     expect((await db.query(`select * from public.${table}`)).rows).toEqual([])
     await db.query(`insert into public.${table} (user_id,id,payload) values ($1,'one','{"id":"one"}')`, [bob])
     expect((await db.query(`select * from public.${table}`)).rows).toHaveLength(1)
+    // Size limit: one account can't fill the database with huge rows.
+    // Varied text (not one repeated letter) so the size can't hide behind compression.
+    const filler = (n: number) => Array.from({ length: n }, (_, i) => (i * 7919).toString(36)).join('')
+    await expect(db.query(`insert into public.${table} (user_id,id,payload) values ($1,'big',$2::jsonb)`,
+      [bob, JSON.stringify({ id: 'big', filler: filler(6_000) })])).rejects.toThrow(/payload_size/)
+    // A record about 5x a real finished quiz is still accepted.
+    await db.query(`insert into public.${table} (user_id,id,payload) values ($1,'normal',$2::jsonb)`,
+      [bob, JSON.stringify({ id: 'normal', filler: filler(1_500) })])
     await db.exec('set role anon;')
     await expect(db.exec(`select * from public.${table}`)).rejects.toThrow(/permission denied/)
     await db.exec('reset role;')

@@ -2,9 +2,11 @@ import type { LearnerData } from '../domain/learnerData'
 import { SaveError, type LearnerRepository } from '../data/LearnerRepository'
 import type { StorageLike } from '../data/storage'
 
+/** What the cloud returned, plus how many stored rows this app version couldn't read. */
+export type ExchangeResult = LearnerData & { skipped?: number }
 export interface SyncTransport {
   /** Upload is insert-only. Duplicate IDs must keep the first payload and receipt. */
-  exchange(userId: string, pending: LearnerData): Promise<LearnerData>
+  exchange(userId: string, pending: LearnerData): Promise<ExchangeResult>
 }
 export interface SyncStatus {
   state: 'signed-out' | 'syncing' | 'synced' | 'offline' | 'error'
@@ -60,12 +62,16 @@ export function createSyncRepository(local: LearnerRepository, transport: SyncTr
             break
           }
           emit({ state: 'syncing', pending: count(pending) })
-          const remote = await transport.exchange(owner, pending)
+          const { skipped = 0, ...remote } = await transport.exchange(owner, pending)
           if (turn !== generation || owner !== userId) return
           const next = await local.mergeRecords({ ...remote, activeSession: null })
           publish(next)
           const remaining = count(pendingData(next))
-          emit({ state: remaining ? 'syncing' : 'synced', pending: remaining })
+          // Unreadable cloud rows are skipped, never fatal: rows are immutable, so failing on them
+          // would block this learner's sync for good. Everything else still syncs.
+          emit({ state: remaining ? 'syncing' : 'synced', pending: remaining, ...(skipped ? {
+            message: `${skipped} saved ${skipped === 1 ? 'record' : 'records'} from another app version couldn't be read and ${skipped === 1 ? 'was' : 'were'} skipped. Everything else is synced.`,
+          } : {}) })
           const missingReceipt = (['attempts', 'sessions', 'visitRecords'] as const).some((key) => {
             const waiting = new Set(next[key].filter((record) => !record.serverReceivedAt).map((record) => record.id))
             return pending[key].some((record) => waiting.has(record.id))
