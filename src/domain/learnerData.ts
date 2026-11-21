@@ -43,6 +43,7 @@ export const completedSessionSchema = z.object({
   conceptId: z.string().min(1).optional(),
   startedAt: isoDateTime,
   submittedAt: isoDateTime,
+  serverReceivedAt: isoDateTime.optional(),
   questionIds: z.array(z.string()).min(1),
   choiceOrder: z.record(z.string(), z.array(choiceIdSchema).length(4)),
   correctCount: z.number().int().nonnegative(),
@@ -63,6 +64,7 @@ export const attemptSchema = z.object({
   chapterId: chapterIdSchema,
   conceptId: z.string().min(1),
   answeredAt: isoDateTime,
+  serverReceivedAt: isoDateTime.optional(),
   durationMs: z.number().nonnegative().optional(),
 })
 export type Attempt = z.infer<typeof attemptSchema>
@@ -73,10 +75,21 @@ export const chapterVisitSchema = z.object({
 })
 export type ChapterVisit = z.infer<typeof chapterVisitSchema>
 
+export const visitRecordSchema = z.object({
+  id: z.string().min(1),
+  chapterId: chapterIdSchema,
+  firstAt: isoDateTime,
+  lastAt: isoDateTime,
+  serverReceivedAt: isoDateTime.optional(),
+})
+export type VisitRecord = z.infer<typeof visitRecordSchema>
+
 export const learnerDataSchema = z.object({
-  schemaVersion: z.literal(2),
+  schemaVersion: z.literal(3),
   chapterVisits: z.record(z.string(), chapterVisitSchema),
+  /** Device-local only: never uploaded or replaced by another device’s unfinished quiz. */
   activeSession: activeSessionSchema.nullable(),
+  visitRecords: z.array(visitRecordSchema),
   sessions: z.array(completedSessionSchema),
   attempts: z.array(attemptSchema),
   /** When a backup file was last downloaded. null means never. */
@@ -86,5 +99,5 @@ export type LearnerData = z.infer<typeof learnerDataSchema>
 
 /** A brand-new learner: no visits, no quizzes, no attempts. */
 export function emptyLearnerData(): LearnerData {
-  return { schemaVersion: 2, chapterVisits: {}, activeSession: null, sessions: [], attempts: [], lastBackupAt: null }
+  return { schemaVersion: 3, visitRecords: [], chapterVisits: {}, activeSession: null, sessions: [], attempts: [], lastBackupAt: null }
 }

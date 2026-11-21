@@ -30,7 +30,7 @@ Milestone 11 acted on an outside review: progress is safe with several tabs open
 | 12. Design critique fixes | Done |
 | Polish: smaller critique items | Done |
 
-The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md). The proposed approach for Phase 2 (save locally first, then sync to Supabase) is in [docs/ADR-002-local-first-sync.md](docs/ADR-002-local-first-sync.md).
+The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md). The accepted approach for Phase 2 (save locally first, then sync to Supabase) is in [docs/ADR-002-local-first-sync.md](docs/ADR-002-local-first-sync.md).
 
 ## Local setup
 
@@ -117,7 +117,7 @@ All eight steps pass in the browser tests: open the dashboard, select Chapter 11
 
 - The 22 Chapter 11 questions are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 150–159, authorized by the product owner. The quiz shows “Reviewed by AI · not teacher-checked”; `approved` is reserved for a subsequent human review. See the [per-question review](docs/content/chapter-11-review.md) for changes, answer rationales, and limits.
 - If the same quiz is open in two tabs, the tab that saves last keeps its answers for that quiz. Submitted quizzes are never lost.
-- Progress is stored per browser. Use Settings → Backup to move it between Chrome and Safari until Phase 2 adds a database.
+- Progress is stored per browser. Use optional Supabase sign-in to sync completed progress, or Settings → Backup to transfer it manually. Hosted sync requires project setup.
 - Only Chapter 11 has content. Other chapters show their real titles with "Content coming later."
 
 **Pending by phase:**
@@ -203,13 +203,13 @@ Progress is saved in the browser's localStorage under one key, `hangul-lab:learn
 
 - **Reload safe:** chapter visits, unfinished quizzes, submitted quizzes, and answers survive refreshes.
 - **Several tabs:** every change starts from the latest saved copy, not the tab's own older copy, so a forgotten tab can't erase work from another tab. Tabs also update when another tab saves.
-- **Format versions:** saved data has a `schemaVersion` (now 2). Older saved data and backups are upgraded when loaded. Version 1 → 2 moved old household-word answers to the new laundry, cleaning, and cooking concepts.
+- **Format versions:** saved data has a `schemaVersion` (now 3). Older saved data and backups are upgraded when loaded. Version 1 → 2 moved old household-word answers to the new laundry, cleaning, and cooking concepts.
 - **Damaged data:** if saved data can't be read, a copy is kept under `hangul-lab:damaged-copy:<time>` and every page shows a warning. Nothing is silently deleted.
 - **Newer data:** data saved by a newer app version is never overwritten.
 - **Blocked or full storage:** the app keeps working for the current visit and shows a warning.
-- **Backups:** Settings downloads a `kongbu-backup-YYYY-MM-DD.json` file and restores one (backups made under the app's earlier names, `hangul-lab-backup-…` and `gongbu-backup-…`, still restore). A restore file is fully checked and summarized, and nothing is replaced until you confirm.
+- **Backups:** Settings downloads a `kongbu-backup-YYYY-MM-DD.json` file and restores one (backups made under the app's earlier names, `hangul-lab-backup-…` and `gongbu-backup-…`, still restore). A restore file is fully checked and summarized, and missing records are added after you confirm; existing progress is kept.
 
-Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, so Phase 2 can switch to a database by adding a new `LearnerRepository`.
+Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, with an optional sync repository around the local repository.
 
 ## Taking a quiz
 
@@ -232,3 +232,11 @@ Screens use progress only through `useLearnerData()`. Storage details stay in `s
 | `/quiz/:sessionId` | Quiz (no main navigation) |
 | `/quiz/:sessionId/results` | Results |
 | `/settings` | Settings |
+
+
+## Optional Supabase sync (Phase 2)
+
+See [the setup and verification guide](docs/SUPABASE-SETUP.md). Core quizzes work without
+configuration or sign-in. Configured builds offer email-link sign-in in Settings and show sync
+status. Only completed quizzes, attempts, and chapter visit records sync; unfinished quizzes
+remain on their own device. Version 1/2 saves and backups migrate to version 3 automatically.

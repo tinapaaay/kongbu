@@ -41,3 +41,9 @@ kongbu-backup*.json
 # Playwright output
 test-results/
 playwright-report/
+
+# Local cloud configuration
+.env
+.env.*
+!.env.example
+.impeccable/review/

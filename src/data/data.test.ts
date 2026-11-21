@@ -62,7 +62,7 @@ describe('localStorage repository: loading', () => {
 
   it('refuses to overwrite data saved by a newer version', async () => {
     const storage = new MemoryStorage()
-    const newer = JSON.stringify({ schemaVersion: 3, everything: 'new' })
+    const newer = JSON.stringify({ schemaVersion: 4, everything: 'new' })
     storage.setItem(STORAGE_KEY, newer)
     const repository = createLocalStorageRepository(storage)
 
@@ -151,15 +151,15 @@ describe('localStorage repository: saving', () => {
     expect(error.data.chapterVisits.ch11).toBeDefined()
   })
 
-  it('replaces everything with checked data', async () => {
+  it('merges checked records', async () => {
     const repository = await ready()
-    const data = await repository.replaceAll(sampleData())
+    const data = await repository.mergeRecords(sampleData())
     expect(data.attempts).toHaveLength(1)
   })
 
-  it('refuses to replace with invalid data', async () => {
+  it('refuses to merge invalid data', async () => {
     const repository = await ready()
-    await expect(repository.replaceAll({ ...sampleData(), attempts: [{}] } as unknown as LearnerData)).rejects.toThrow()
+    await expect(repository.mergeRecords({ ...sampleData(), attempts: [{}] } as unknown as LearnerData)).rejects.toThrow()
   })
 })
 
@@ -249,7 +249,7 @@ describe('backups', () => {
 
 describe('migrations', () => {
   it('accepts the current version unchanged', () => {
-    expect(migrate({ schemaVersion: 2, a: 1 })).toEqual({ ok: true, data: { schemaVersion: 2, a: 1 } })
+    expect(migrate({ schemaVersion: 3, a: 1 })).toEqual({ ok: true, data: { schemaVersion: 3, a: 1 } })
   })
 
   it('version 1 → 2 moves old "household chores" answers to laundry, cleaning, or cooking', () => {
@@ -266,7 +266,7 @@ describe('migrations', () => {
     const result = migrate(v1)
     expect(result.ok).toBe(true)
     const data = learnerDataSchema.parse(result.ok && result.data)
-    expect(data.schemaVersion).toBe(2)
+    expect(data.schemaVersion).toBe(3)
     expect(data.attempts.map((a) => a.conceptId)).toEqual([
       'vocabulary.cleaning',
       'vocabulary.laundry',
@@ -290,6 +290,6 @@ describe('migrations', () => {
   it('rejects non-objects and unknown versions', () => {
     expect(migrate([])).toMatchObject({ ok: false, reason: 'not-an-object' })
     expect(migrate({ schemaVersion: 0 })).toMatchObject({ ok: false, reason: 'missing-version' })
-    expect(migrate({ schemaVersion: 3 })).toMatchObject({ ok: false, reason: 'newer-version' })
+    expect(migrate({ schemaVersion: 4 })).toMatchObject({ ok: false, reason: 'newer-version' })
   })
 })

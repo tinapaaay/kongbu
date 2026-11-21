@@ -1,5 +1,6 @@
 import { emptyLearnerData, learnerDataSchema, type LearnerData } from '../domain/learnerData'
 import { SaveError, type LearnerRepository, type LoadResult } from './LearnerRepository'
+import { mergeLearnerData } from './mergeLearnerData'
 import { migrate } from './migrations'
 import { MemoryStorage, type StorageLike } from './storage'
 
@@ -131,6 +132,7 @@ export function createLocalStorageRepository(
       return write({
         ...current,
         chapterVisits: { ...current.chapterVisits, [chapterId]: { firstAt: previous?.firstAt ?? at, lastAt: at } },
+        visitRecords: [...current.visitRecords, { id: crypto.randomUUID(), chapterId, firstAt: at, lastAt: at }],
       })
     },
 
@@ -158,10 +160,13 @@ export function createLocalStorageRepository(
       return write({ ...current, lastBackupAt: now.toISOString() })
     },
 
-    async replaceAll(data) {
+    async mergeRecords(data) {
       const checked = learnerDataSchema.parse(data)
-      readOnly = false
-      return write(checked)
+      const current = latest()
+      const merged = mergeLearnerData(current, checked)
+      // A no-op pull must not fire a storage event and cause two tabs to sync forever.
+      if (JSON.stringify(merged) === JSON.stringify(current)) return current
+      return write(merged)
     },
   }
 

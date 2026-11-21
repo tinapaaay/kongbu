@@ -13,7 +13,7 @@ export interface LearnerDataContextValue {
   submitSession(session: CompletedSession, attempts: Attempt[]): Promise<void>
   /** Marks the backup time and returns the backup file's name and contents. */
   exportBackup(): Promise<{ fileName: string; text: string }>
-  replaceAll(data: LearnerData): Promise<void>
+  mergeRecords(data: LearnerData): Promise<boolean>
 }
 
 export const LearnerDataContext = createContext<LearnerDataContextValue | null>(null)

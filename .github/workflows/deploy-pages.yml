@@ -32,6 +32,8 @@ jobs:
       - run: npm run build
         env:
           KONGBU_BASE: /kongbu/
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
       - run: npm run check:content-split
       # GitHub Pages has no server-side routing: serve the app for any unknown path,
       # so refreshing /kongbu/learn/11 still opens the app.
