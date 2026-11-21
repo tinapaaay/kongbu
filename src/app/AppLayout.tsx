@@ -68,6 +68,14 @@ export function AppLayout() {
         </ContentBoundary>
       </main>
 
+      {/* Always visible, so nobody mistakes Kongbu for an official HRD Korea or textbook product. */}
+      <footer className={styles.footer}>
+        <p>
+          Unofficial study app, not affiliated with HRD Korea. No accounts, no tracking: your progress stays in this
+          browser. <Link to="/settings#about-heading">About Kongbu</Link>
+        </p>
+      </footer>
+
       <nav aria-label="Main" className={styles.tabBar}>
         {navItems.map((item) => (
           <NavLink

@@ -20,7 +20,7 @@ describe('Chapter 11 page', () => {
     expect(screen.getByText('Household Chores')).toBeInTheDocument()
     expect(screen.getByText(/Book 1 · p.150/)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /학습 목표/ })).toBeInTheDocument()
-    expect(screen.getByText('쓰레기 버리는 방법을 묻고 대답할 수 있다.')).toBeInTheDocument()
+    expect(screen.getByText('쓰레기를 어떻게 나눠서 버리는지 묻고 설명할 수 있다.')).toBeInTheDocument()
   })
 
   it('shows every lesson section, in book order', async () => {
@@ -40,7 +40,7 @@ describe('Chapter 11 page', () => {
   it('lists vocabulary with English glosses', async () => {
     await renderChapter()
     expect(screen.getByText('빨래를 걷다')).toBeInTheDocument()
-    expect(screen.getByText('to take in dry laundry')).toBeInTheDocument()
+    expect(screen.getByText('to bring dry clothes back in')).toBeInTheDocument()
   })
 
   it('highlights the target grammar inside examples', async () => {

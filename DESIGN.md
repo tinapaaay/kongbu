@@ -363,6 +363,11 @@ components:
     typography: "{typography.tab-label}"
     rounded: "{rounded.sm}"
     size: "{spacing.touch-target}"
+  footer:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.secondary}"
+    typography: "{typography.gloss}"
+    padding: "{spacing.md}"
   available-now:
     backgroundColor: "{colors.primary-subtle}"
     textColor: "{colors.primary-strong}"
@@ -379,7 +384,7 @@ Kongbu (공부, "study") should feel like the **NEW EPS-TOPIK Standard Korean Te
 
 This was a deliberate choice to match the learner's material instead of inventing a separate style. Moving between the book and the app should feel continuous. When the app says **문법 GRAMMAR** on an orange tab, the learner should recognize it at once.
 
-The app copies the book's **colors, section system, and page structure**. It does not copy the book's photographs, illustrations, cartoon characters, cover, logos, or text. All lesson explanations and questions are original. This is appropriate for a private study tool. If Kongbu ever becomes public, this direction must be reviewed so the app is not mistaken for an official publication.
+The app copies the book's **colors, section system, and page structure**. It does not copy the book's photographs, illustrations, cartoon characters, cover, logos, or text. All lesson explanations and questions are original. Kongbu became public on GitHub Pages on 2026-11-20 and was reviewed for that on 2026-11-21: the footer on every page says it is unofficial and not affiliated with HRD Korea, the English glosses and objectives are written in our own words, and only the Korean word lists follow the book (cited by page). Any new chapter must follow the same rules.
 
 Where the printed book conflicts with screen accessibility, accessibility wins. The book uses white text on light orange, teal, and rose, and uses bright cyan text for examples. Those pairs are too faint on screens, so Kongbu keeps the exact book colors for fills and uses near-black text on them, or uses slightly darker versions of the colors for text.
 
@@ -468,6 +473,8 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 **Quiz buttons.** One main button at a time. Next is primary while you work through the quiz; Submit becomes primary on the last question or once everything is answered. Question number buttons are 44px squares: white when unanswered, filled Primary with white numbers when answered, and outlined when current.
 
 **Mastery checklist.** Results lists the three mastery conditions with ✓ (Success) or ○ (Secondary) and a hidden "Done"/"Not yet" for screen readers, instead of a paragraph of rules.
+
+**Footer.** Every page except the quiz ends with one quiet line above a 1px Border rule: "Unofficial study app, not affiliated with HRD Korea. No accounts, no tracking," with a link to About Kongbu. The app looks like the textbook on purpose, so this line must always be visible to prevent it being mistaken for an official product. The quiz leaves it out to stay distraction-free.
 
 **Chapter list.** Chapters with content have a linked title and a status pill. Chapters without content are quieter: regular-weight secondary title and the words "Coming later" in the status column, so gray is never the only signal.
 

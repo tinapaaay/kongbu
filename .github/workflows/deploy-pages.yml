@@ -24,10 +24,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm test
+      # Every check, including the browser tests in Chrome and Safari's engine, must pass
+      # before anything goes live. A failing check stops the deploy.
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run verify
+      # Rebuild for GitHub Pages, which serves the app from /kongbu/ (verify built it for /).
       - run: npm run build
         env:
           KONGBU_BASE: /kongbu/
+      - run: npm run check:content-split
       # GitHub Pages has no server-side routing: serve the app for any unknown path,
       # so refreshing /kongbu/learn/11 still opens the app.
       - run: cp dist/index.html dist/404.html

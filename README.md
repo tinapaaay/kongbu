@@ -6,7 +6,7 @@ A personal Korean study workspace for EPS-TOPIK preparation, organized around th
 
 Practice questions are original EPS-TOPIK-style questions, not real exam questions. Textbook PDFs and audio are private study material and are never committed to this repository.
 
-**Live app:** https://tinapaaay.github.io/kongbu/ (deployed by GitHub Actions on every push to `main`; progress is saved only in your browser)
+**Live app:** https://tinapaaay.github.io/kongbu/ (deployed by GitHub Actions on every push to `main`, only after every check passes; progress is saved only in your browser)
 
 ## Status
 
@@ -74,7 +74,7 @@ npx playwright install chromium webkit
 
 There are two kinds of tests.
 
-- **Unit and component tests** (Vitest, 178 tests in `src/**/*.test.ts(x)`): rules, content validation, storage, and every screen, run in a simulated browser. They run in React StrictMode, like the dev server.
+- **Unit and component tests** (Vitest, `src/**/*.test.ts(x)`): rules, content validation, storage, and every screen, run in a simulated browser. They run in React StrictMode, like the dev server.
 - **Browser tests** (Playwright, `tests/e2e/`): the real production build in three setups, Chrome on desktop, Safari on desktop, and Safari on iPhone. WebKit, Safari's engine, stands in for Safari.
 
 | Browser test file | What it proves |
@@ -83,6 +83,8 @@ There are two kinds of tests.
 | `offline-and-privacy.spec.ts` | Quizzes work with the network switched off, and the app never contacts another website |
 | `backup.spec.ts` | A backup made in one browser profile restores in a completely separate one, and wrong files are rejected |
 | `accessibility.spec.ts` | Every screen passes automated WCAG 2.1 AA checks (axe), a quiz can be taken by keyboard alone, and focus is visible |
+
+**On GitHub:** pull requests run `npm run verify` (the Checks workflow), and the deploy to GitHub Pages runs it again before publishing. A failing check stops the deploy.
 
 Keyboard note for Safari: Safari on a Mac moves Tab only between text fields by default. Press Option+Tab to reach links and buttons, or turn on **Settings → Advanced → Press Tab to highlight each item**.
 

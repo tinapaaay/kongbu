@@ -57,7 +57,8 @@ test.describe('automated accessibility checks', () => {
  * or turns on "Press Tab to highlight each item" in Safari's settings. WebKit tests do the same.
  */
 function tabKey(browserName: string) {
-  return browserName === 'webkit' ? 'Alt+Tab' : 'Tab'
+  // Only Safari on a Mac has this setting; WebKit on Linux (as in GitHub Actions) tabs to every item.
+  return browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab'
 }
 
 test('a quiz can be taken with the keyboard alone', async ({ page, isMobile, browserName }) => {
