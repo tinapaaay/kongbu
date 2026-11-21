@@ -49,3 +49,9 @@ for (const table of ['learner_quizzes', 'learner_attempts', 'learner_visits']) {
     await db.exec('reset role;')
   })
 }
+
+it('every table has an index for "rows received since", so incremental downloads stay fast', async () => {
+  const { rows } = await db.query<{ tablename: string; indexdef: string }>(
+    `select tablename, indexdef from pg_indexes where schemaname = 'public' and indexdef like '%(user_id, received_at, id)%' order by tablename`)
+  expect(rows.map((r) => r.tablename)).toEqual(['learner_attempts', 'learner_quizzes', 'learner_visits'])
+})

@@ -29,7 +29,7 @@ export function CloudProvider({ client, controller, children }: {
   }, [client, controller])
 
   return <CloudContext.Provider value={{
-    configured: true, email, status, sync: controller.sync,
+    configured: true, email, status, sync: controller.sync, forgetDevice: controller.forgetDevice,
     async signIn(address) {
       const { error } = await client.auth.signInWithOtp({ email: address, options: {
         emailRedirectTo: new URL(`${import.meta.env.BASE_URL}settings`, window.location.origin).href,

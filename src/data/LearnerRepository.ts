@@ -23,6 +23,8 @@ export interface LearnerRepository {
   markBackedUp(now: Date): Promise<LearnerData>
   /** Adds missing records by ID; preserves this device’s unfinished quiz and backup time. */
   mergeRecords(data: LearnerData): Promise<LearnerData>
+  /** Removes every quiz, answer, and visit saved on this device. Used by "Forget this device's progress". */
+  forgetAll(): Promise<LearnerData>
 }
 
 export type LoadProblem =

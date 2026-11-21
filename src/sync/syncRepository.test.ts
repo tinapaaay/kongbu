@@ -4,7 +4,7 @@ import { makeAttempt, makeSession } from '../domain/testFixtures'
 import { createLocalStorageRepository } from '../data/localStorageRepository'
 import { MemoryStorage } from '../data/storage'
 import { mergeLearnerData } from '../data/mergeLearnerData'
-import { createSyncRepository, type SyncTransport } from './syncRepository'
+import { createSyncRepository, OWNER_KEY, syncCursor, type SyncTransport } from './syncRepository'
 
 function server() {
   const users = new Map<string, LearnerData>()
@@ -111,6 +111,61 @@ describe('durable sync queue', () => {
     d.setUser('learner'); await d.sync()
     expect(d.getStatus().state).toBe('error')
     expect(exchange).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps one visit record per chapter per day, and never changes one the server already has', async () => {
+    const cloud = server()
+    const d = device(cloud)
+    const morning = new Date('2026-11-21T01:00:00.000Z')
+    await d.repository.recordChapterVisit('ch11', morning)
+    await d.repository.recordChapterVisit('ch11', new Date('2026-11-21T02:00:00.000Z'))
+    let { data } = await d.repository.load()
+    expect(data.visitRecords).toEqual([{ id: 'visit:ch11:2026-11-21', chapterId: 'ch11', firstAt: morning.toISOString(), lastAt: '2026-11-21T02:00:00.000Z' }])
+    d.setUser('learner'); await d.sync()
+    await d.repository.recordChapterVisit('ch11', new Date('2026-11-21T03:00:00.000Z'))
+    data = (await d.repository.load()).data
+    expect(data.visitRecords).toHaveLength(1)
+    expect(data.visitRecords[0].lastAt).toBe('2026-11-21T02:00:00.000Z')
+    // The chapter's own "last visited" time still moves on this device.
+    expect(data.chapterVisits.ch11.lastAt).toBe('2026-11-21T03:00:00.000Z')
+    await d.repository.recordChapterVisit('ch11', new Date('2026-11-22T01:00:00.000Z'))
+    expect((await d.repository.load()).data.visitRecords.map((v) => v.id)).toEqual(['visit:ch11:2026-11-21', 'visit:ch11:2026-11-22'])
+  })
+
+  it('asks only for records received since the newest one on this device, minus an overlap', async () => {
+    const cloud = server()
+    const d = device(cloud)
+    d.setUser('learner'); await d.sync()
+    expect(cloud.exchange.mock.lastCall?.[2]).toEqual({})
+    await d.repository.submitSession(session('one'), [attempt('one')]); await d.sync()
+    const { data } = await d.repository.load()
+    const received = Date.parse(data.attempts[0].serverReceivedAt!)
+    await d.sync()
+    const since = cloud.exchange.mock.lastCall?.[2]
+    expect(Date.parse(since!.attempts!)).toBe(received - 10 * 60_000)
+    expect(since?.visitRecords).toBeUndefined()
+  })
+
+  it('downloads everything again when this device has nothing from the server', () => {
+    expect(syncCursor({ ...emptyLearnerData(), attempts: [attempt('local-only')] })).toEqual({})
+  })
+
+  it('forgets this device after sign-out, so the next learner can use their own account', async () => {
+    const cloud = server()
+    const d = device(cloud)
+    d.setUser('learner-a'); await d.sync()
+    await d.repository.submitSession(session('private'), [attempt('private')]); await d.sync()
+    await d.repository.saveActiveSession(active('unfinished'))
+    await expect(d.forgetDevice()).rejects.toThrow(/Sign out/)
+    d.setUser(null)
+    await d.forgetDevice()
+    expect((await d.repository.load()).data).toEqual(emptyLearnerData())
+    expect(d.storage.getItem(OWNER_KEY)).toBeNull()
+    d.setUser('learner-b'); await d.sync()
+    expect(d.getStatus().state).toBe('synced')
+    expect(cloud.users.get('learner-b')?.sessions).toEqual([])
+    // learner-a's progress is still in their account.
+    expect(cloud.users.get('learner-a')?.sessions.map((s) => s.id)).toEqual(['private'])
   })
 
   it('keeps edits made during an exchange queued for the next pass', async () => {

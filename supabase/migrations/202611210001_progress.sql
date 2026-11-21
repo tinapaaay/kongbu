@@ -9,6 +9,8 @@ create table public.learner_quizzes (
   received_at timestamptz not null default clock_timestamp(),
   primary key (user_id, id)
 );
+-- Each sync downloads only rows received since the device's last download. "including all" below copies this index.
+create index learner_quizzes_received on public.learner_quizzes (user_id, received_at, id);
 create table public.learner_attempts (like public.learner_quizzes including all);
 alter table public.learner_attempts add foreign key (user_id) references auth.users(id) on delete cascade;
 create table public.learner_visits (like public.learner_quizzes including all);

@@ -490,6 +490,8 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 
 **Available now.** A pale-blue box above the chapter table on Learn. Its caps label uses the tab-label style in Primary Strong, and it lists each chapter that has content as a link: number, underlined Korean title, then a plain English gloss. It appears on both book tabs, so a learner never has to scroll past chapters without content to find one.
 
+**Confirm steps.** An action that adds to or removes saved progress (restoring a backup, forgetting this device's progress) never happens on the first tap. The first button opens a pale-blue confirm box in place: a bold question, a plain sentence saying exactly what changes (with counts), Cancel as a secondary button, and the action as the primary button. A risk such as records that haven't synced yet goes in a word-bank reminder inside the box. There is no red "danger" button: the counts and the reminder carry the warning, so the color system stays the book's.
+
 **Hover.** Hover colors apply only on devices with a mouse (`@media (hover: hover)`). On a phone, a tap would otherwise leave a button looking highlighted after the finger lifts.
 
 ## Do's and Don'ts

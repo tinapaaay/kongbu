@@ -36,6 +36,8 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
   // Read the clock once when the page opens, not on every render.
   const [openedAt] = useState(now)
 
+  const records = [...data.sessions, ...data.attempts, ...data.visitRecords]
+  const deviceProgress = { records: records.length, unsynced: records.filter((record) => !record.serverReceivedAt).length }
   const hasProgress = data.attempts.length > 0 || Object.keys(data.chapterVisits).length > 0
   const daysSinceBackup = data.lastBackupAt === null ? null : daysBetween(data.lastBackupAt, openedAt)
   // Say exactly what is true: "never" and "8 days ago" are different situations.
@@ -99,7 +101,7 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
       </div>
 
       <div className={styles.grid}>
-        <SyncSettings />
+        <SyncSettings progress={deviceProgress} />
         <section className={styles.panel} aria-labelledby="backup-heading">
           <h2 id="backup-heading" className={styles.panelTitle}>
             Download backup

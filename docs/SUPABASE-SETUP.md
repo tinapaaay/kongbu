@@ -20,9 +20,11 @@ without configuration the app continues to store progress locally and offers fil
 6. Open Settings, enter your email, and follow the link on that device. Repeat on another
    device with the same email. Signing in adds that browser's existing records to the account.
 
-The browser profile is bound to the first learner who syncs. Signing out keeps local progress;
-use a separate browser profile for a different learner. On shared computers, use a private
-profile and download a backup before closing it. There is no account deletion UI yet.
+The browser profile is bound to the first learner who syncs. Signing out keeps local progress.
+To hand the browser to someone else (for example a shared computer), sign out, then choose
+**Forget this device's progress** in Settings. It deletes this browser's records and its link to
+the account; progress already synced stays in the account. The confirm step warns if any records
+haven't synced yet. There is no account deletion UI yet.
 
 ## Data and security
 
@@ -35,8 +37,16 @@ DO NOTHING and preserve the first payload and receipt. No service key is needed 
 The durable queue is the set of local records lacking `serverReceivedAt`. Only a validated,
 complete exchange acknowledges records. Partial failure leaves the queue intact for retry.
 Sync runs after local saves, at sign-in, on reconnect/focus, every 30 seconds, and on Sync now.
-Reads are paginated in stable ID order; a full read avoids timestamp cursor gaps. This is intended
-for a personal learner history; consider a server cursor before scaling to very large histories.
+Each sync downloads only rows received since the newest server receipt on this device, minus a
+10-minute overlap. The overlap covers rows stamped just before a download but saved a moment
+later; rows read twice are combined by ID. Records being sent whose first copy reached the server
+before that point (a retry after a lost reply) are fetched by ID, so every sent record is confirmed.
+A device with no receipts yet (new, or just forgotten) downloads everything. An index on
+`(user_id, received_at, id)` keeps these reads fast.
+
+Chapter visits are stored as one record per chapter per UTC day (`visit:<chapter>:<date>`), not
+one per visit. A visit record still waiting to sync is updated in place; once the server has it,
+later visits that day only update the device's own "last visited" time.
 
 Unfinished quizzes are never uploaded. Backup restore unions IDs, preserves current records,
 and combines visit ranges. Imported receipts are discarded so this account acknowledges the

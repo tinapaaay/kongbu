@@ -3,9 +3,10 @@ import { emptyLearnerData, attemptSchema, completedSessionSchema, visitRecordSch
 import type { ExchangeResult, SyncTransport } from './syncRepository'
 
 const PAGE_SIZE = 500
+type Row = { id: string; payload: Record<string, unknown>; received_at: string }
 export function createSupabaseTransport(client: SupabaseClient): SyncTransport {
   return {
-    async exchange(userId, pending) {
+    async exchange(userId, pending, since = {}) {
       const result: ExchangeResult = { ...emptyLearnerData(), skipped: 0 }
       const groups = [
         { table: 'learner_quizzes', key: 'sessions', schema: completedSessionSchema },
@@ -26,16 +27,17 @@ export function createSupabaseTransport(client: SupabaseClient): SyncTransport {
               : 'Could not send progress. Check your connection and try Sync now.')
           }
         }
-        // Full, paginated reads avoid missed ties and late commits in timestamp cursors.
-        // Stable ID ordering makes the next poll recover inserts that fall behind a page boundary.
-        for (let start = 0; ; start += PAGE_SIZE) {
-          const { data, error } = await client.from(table).select('id,payload,received_at').eq('user_id', userId)
-            .order('id').range(start, start + PAGE_SIZE - 1).abortSignal(AbortSignal.timeout(15_000))
-          if (error || !data) {
+        // Download only rows received since the cursor (the syncRepository already subtracted an overlap
+        // for late-visible rows), oldest first. New rows land at the end, so paging never skips one.
+        const seen = new Set<string>()
+        const read = async (rows: Row[] | null, error: unknown) => {
+          if (error || !rows) {
             console.error('Kongbu sync: download failed', error)
             throw new Error('Could not receive progress. Check your connection and try Sync now.')
           }
-          for (const row of data) {
+          for (const row of rows) {
+            if (seen.has(row.id)) continue
+            seen.add(row.id)
             const receivedAt = serverTimestamp(row.received_at)
             const parsed = schema.safeParse({ ...row.payload, serverReceivedAt: receivedAt })
             let record: { id: string; serverReceivedAt?: string } | undefined = parsed.success && parsed.data.id === row.id ? parsed.data : undefined
@@ -54,7 +56,23 @@ export function createSupabaseTransport(client: SupabaseClient): SyncTransport {
             // The groups above pair each key with its corresponding schema.
             if (record) (result[key] as { id: string }[]).push(record)
           }
-          if (data.length < PAGE_SIZE) break
+        }
+        for (let start = 0; ; start += PAGE_SIZE) {
+          let query = client.from(table).select('id,payload,received_at').eq('user_id', userId)
+          if (since[key]) query = query.gte('received_at', since[key])
+          const { data, error } = await query.order('received_at').order('id')
+            .range(start, start + PAGE_SIZE - 1).abortSignal(AbortSignal.timeout(15_000))
+          await read(data as Row[] | null, error)
+          if (data && data.length < PAGE_SIZE) break
+        }
+        // A record sent now that was already on the server from an earlier try (its reply was lost) keeps its
+        // first, older receipt, which may be before the cursor. Ask for those by ID so every sent record is confirmed.
+        const unconfirmed = records.map((record) => record.id).filter((id) => !seen.has(id))
+        // IDs go in the web address, so ask for at most 100 at a time to keep it short.
+        for (let start = 0; start < unconfirmed.length; start += 100) {
+          const { data, error } = await client.from(table).select('id,payload,received_at').eq('user_id', userId)
+            .in('id', unconfirmed.slice(start, start + 100)).abortSignal(AbortSignal.timeout(15_000))
+          await read(data as Row[] | null, error)
         }
       }
       for (const visit of result.visitRecords) {

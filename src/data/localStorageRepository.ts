@@ -129,10 +129,19 @@ export function createLocalStorageRepository(
       const current = latest()
       const at = now.toISOString()
       const previous = current.chapterVisits[chapterId]
+      // One record per chapter per day (UTC), not one per visit, so the synced history stays small.
+      // The ID is the same on every device, so two devices visiting on the same day share one cloud row.
+      const id = `visit:${chapterId}:${at.slice(0, 10)}`
+      const today = current.visitRecords.find((record) => record.id === id)
+      const visitRecords = !today
+        ? [...current.visitRecords, { id, chapterId, firstAt: at, lastAt: at }]
+        : today.serverReceivedAt
+          ? current.visitRecords // Already sent: cloud rows never change. chapterVisits below still updates.
+          : current.visitRecords.map((record) => (record.id === id ? { ...record, lastAt: at } : record))
       return write({
         ...current,
         chapterVisits: { ...current.chapterVisits, [chapterId]: { firstAt: previous?.firstAt ?? at, lastAt: at } },
-        visitRecords: [...current.visitRecords, { id: crypto.randomUUID(), chapterId, firstAt: at, lastAt: at }],
+        visitRecords,
       })
     },
 
@@ -158,6 +167,11 @@ export function createLocalStorageRepository(
     async markBackedUp(now) {
       const current = latest()
       return write({ ...current, lastBackupAt: now.toISOString() })
+    },
+
+    async forgetAll() {
+      latest()
+      return write(emptyLearnerData())
     },
 
     async mergeRecords(data) {

@@ -117,3 +117,11 @@ answers keep using local timestamps until receipts arrive.
 Cloud sync binds a browser profile to its first signed-in learner. Signing out retains local data;
 a different account must use a separate browser profile. This deliberately prevents accidentally
 uploading one learner's cached history into another account.
+
+Review follow-ups (2026-11-21, PR #12):
+
+- **Visit records and full downloads.** Visits are one record per chapter per day, and each sync
+  downloads only rows received since this device's newest receipt (with a 10-minute overlap), so
+  cost no longer grows with every sync.
+- **Forget this device.** After sign-out, Settings can delete the browser's progress and its
+  account link, so a shared computer can be handed to the next learner.
