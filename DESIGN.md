@@ -474,7 +474,7 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 
 **Mastery checklist.** Results lists the three mastery conditions with ✓ (Success) or ○ (Secondary) and a hidden "Done"/"Not yet" for screen readers, instead of a paragraph of rules.
 
-**Footer.** Every page except the quiz ends with one quiet line above a 1px Border rule: "Unofficial study app, not affiliated with HRD Korea. No accounts, no tracking," with a link to About Kongbu. The app looks like the textbook on purpose, so this line must always be visible to prevent it being mistaken for an official product. The quiz leaves it out to stay distraction-free.
+**Footer.** Every page except the quiz ends with one quiet line above a 1px Border rule: "Unofficial study app, not affiliated with HRD Korea. Your progress is saved on this device, with optional account sync." with a link to About Kongbu. The app looks like the textbook on purpose, so this line must always be visible to prevent it being mistaken for an official product. The quiz leaves it out to stay distraction-free.
 
 **Chapter list.** Chapters with content have a linked title and a status pill. Chapters without content are quieter: regular-weight secondary title and the words "Coming later" in the status column, so gray is never the only signal.
 

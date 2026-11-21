@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { ContentBoundary } from '../components/ContentBoundary'
 import { navItems } from './navItems'
+import { SyncIndicator } from '../sync/SyncSettings'
 import { StorageNotice } from './StorageNotice'
 import styles from './AppLayout.module.css'
 
@@ -63,6 +64,7 @@ export function AppLayout() {
 
       <main id="main" ref={mainRef} tabIndex={-1} className={styles.main}>
         <StorageNotice />
+        <SyncIndicator />
         <ContentBoundary resetKey={pathname}>
           <Outlet />
         </ContentBoundary>
@@ -71,8 +73,8 @@ export function AppLayout() {
       {/* Always visible, so nobody mistakes Kongbu for an official HRD Korea or textbook product. */}
       <footer className={styles.footer}>
         <p>
-          Unofficial study app, not affiliated with HRD Korea. No accounts, no tracking: your progress stays in this
-          browser. <Link to="/settings#about-heading">About Kongbu</Link>
+          Unofficial study app, not affiliated with HRD Korea. Your progress is saved on this device, with optional
+          account sync. <Link to="/settings#about-heading">About Kongbu</Link>
         </p>
       </footer>
 

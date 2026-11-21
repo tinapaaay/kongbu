@@ -28,9 +28,9 @@ test('a backup downloaded in one browser restores in another', async ({ browser,
   await expect(other.getByText(/This browser has 0 quizzes and 0 answers saved/)).toBeVisible()
 
   await other.getByLabel('Backup file').setInputFiles(file)
-  await expect(other.getByText('Replace progress in this browser?')).toBeVisible()
+  await expect(other.getByText('Add progress from this backup?')).toBeVisible()
   await expect(other.getByText(/contains 1 quiz, 10 answers/)).toBeVisible()
-  await other.getByRole('button', { name: 'Replace progress' }).click()
+  await other.getByRole('button', { name: 'Add progress' }).click()
   await expect(other.getByRole('status')).toContainText('Progress restored: 1 quiz and 10 answers')
 
   await other.goto('/')

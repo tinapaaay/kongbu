@@ -2,8 +2,8 @@ import type { ActiveSession, Attempt, CompletedSession, LearnerData } from '../d
 
 /**
  * Every way the app is allowed to read or change saved learner data.
- * Screens never touch storage directly. Phase 2 can add a Supabase version of this
- * interface without changing any screen.
+ * Screens never touch storage directly. The optional sync repository wraps this
+ * interface while local storage remains the source used by the screens.
  *
  * Methods are async (they return Promises) even though localStorage is instant,
  * because a database is not. Each change returns the full updated data.
@@ -21,8 +21,8 @@ export interface LearnerRepository {
   /** Saves a submitted quiz and its attempts together. Submitting the same quiz twice changes nothing. */
   submitSession(session: CompletedSession, attempts: Attempt[]): Promise<LearnerData>
   markBackedUp(now: Date): Promise<LearnerData>
-  /** Replaces all progress, e.g. from a checked backup. */
-  replaceAll(data: LearnerData): Promise<LearnerData>
+  /** Adds missing records by ID; preserves this device’s unfinished quiz and backup time. */
+  mergeRecords(data: LearnerData): Promise<LearnerData>
 }
 
 export type LoadProblem =

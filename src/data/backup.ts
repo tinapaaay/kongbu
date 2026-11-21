@@ -44,7 +44,7 @@ export type ParseBackupResult =
   | { ok: false; message: string }
 
 /**
- * Checks a backup file completely before anything is replaced.
+ * Checks a backup file completely before anything is merged.
  * Every failure returns a plain-language message; nothing here changes saved progress.
  */
 export function parseBackup(text: string): ParseBackupResult {

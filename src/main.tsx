@@ -1,4 +1,8 @@
 import { StrictMode } from 'react'
+import { createClient } from '@supabase/supabase-js'
+import { CloudProvider } from './sync/CloudProvider'
+import { createSyncRepository } from './sync/syncRepository'
+import { createSupabaseTransport } from './sync/supabaseTransport'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 
@@ -14,15 +18,19 @@ import { LearnerDataProvider } from './data/LearnerDataProvider'
 import { createLocalStorageRepository } from './data/localStorageRepository'
 import { getBrowserStorage } from './data/storage'
 
-// Created once for the whole app. Phase 2 swaps this line for a database repository.
-const repository = createLocalStorageRepository(getBrowserStorage())
+const storage = getBrowserStorage()
+const local = createLocalStorageRepository(storage)
+const url = import.meta.env.VITE_SUPABASE_URL
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY
+const client = url && key ? createClient(url, key) : null
+const controller = client ? createSyncRepository(local, createSupabaseTransport(client), storage) : null
+const repository = controller?.repository ?? local
+const app = <LearnerDataProvider repository={repository}><AppRoutes /></LearnerDataProvider>
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/+$/, '') || '/'}>
-      <LearnerDataProvider repository={repository}>
-        <AppRoutes />
-      </LearnerDataProvider>
+      {client && controller ? <CloudProvider client={client} controller={controller}>{app}</CloudProvider> : app}
     </BrowserRouter>
   </StrictMode>,
 )
