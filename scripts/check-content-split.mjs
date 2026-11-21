@@ -5,7 +5,8 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
 const html = await readFile('dist/index.html', 'utf8')
-const entry = html.match(/<script[^>]+src="\/([^"]+\.js)"/)?.[1]
+// The address may start with a base path (GitHub Pages serves from /kongbu/), so keep only assets/...
+const entry = html.match(/<script[^>]+src="[^"]*?(assets\/[^"]+\.js)"/)?.[1]
 if (!entry) {
   console.error('Could not find the main script in dist/index.html. Run `npm run build` first.')
   process.exit(1)
