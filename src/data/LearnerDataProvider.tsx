@@ -3,6 +3,7 @@ import type { LearnerData } from '../domain/learnerData'
 import { backupFileName, createBackup } from './backup'
 import { LearnerDataContext, type LearnerDataContextValue } from './learnerDataContext'
 import { SaveError, type LearnerRepository, type LoadProblem } from './LearnerRepository'
+import { requestPersistentStorage } from './storageSafety'
 
 const systemNow = () => new Date()
 
@@ -65,6 +66,8 @@ export function LearnerDataProvider({ repository, now = systemNow, children }: L
       },
       submitSession: async (...args: Parameters<LearnerRepository['submitSession']>) => {
         await run(() => repository.submitSession(...args))
+        // Now there is progress worth keeping, ask the browser not to clear it. Fine if it says no.
+        void requestPersistentStorage()
       },
       exportBackup: async () => {
         const at = now()
