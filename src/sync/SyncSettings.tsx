@@ -26,6 +26,9 @@ export function SyncSettings({ progress = { records: 0, unsynced: 0 } }: { progr
   const cloud = useCloud()
   const id = useId()
   const [email, setEmail] = useState('')
+  const [code, setCode] = useState('')
+  /** The address a code was sent to. Set means the form asks for the code next. */
+  const [sentTo, setSentTo] = useState<string | null>(null)
   const [confirmingForget, setConfirmingForget] = useState(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
@@ -36,9 +39,22 @@ export function SyncSettings({ progress = { records: 0, unsynced: 0 } }: { progr
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Please try again.') }
     finally { setBusy(false) }
   }
-  function submit(event: FormEvent) {
+  function sendCode(event: FormEvent) {
     event.preventDefault()
-    void run(() => cloud.signIn(email.trim()), 'Check your email for a sign-in link. Open it on this device.')
+    const address = email.trim()
+    void run(async () => {
+      await cloud.signIn(address)
+      setSentTo(address)
+      setCode('')
+    }, `We emailed a sign-in code to ${address}. Enter it below.`)
+  }
+  function verify(event: FormEvent) {
+    event.preventDefault()
+    if (!sentTo) return
+    void run(async () => {
+      await cloud.verifyCode(sentTo, code.replace(/\s/g, ''))
+      setSentTo(null)
+    }, 'Signed in. Syncing your progress.')
   }
   return <section className={styles.panel} aria-labelledby={`${id}-heading`}>
     <h2 id={`${id}-heading`} className={styles.panelTitle}>Sync across devices</h2>
@@ -52,11 +68,20 @@ export function SyncSettings({ progress = { records: 0, unsynced: 0 } }: { progr
           <button className={buttons.secondary} disabled={busy} onClick={() => void run(cloud.signOut, 'Signed out. Progress stays on this device.')}>Sign out</button>
         </div>
         <p className={styles.meta}>This browser keeps your progress after sign-out. To clear it, sign out, then choose “Forget this device’s progress”.</p>
-      </> : <form onSubmit={submit} className={styles.field}>
+      </> : sentTo ? <form onSubmit={verify} className={styles.field}>
+        <p className={styles.meta}>Enter the code from the email sent to {sentTo}. Type it here, in the app you want to sync.</p>
+        <label htmlFor={`${id}-code`} className={styles.label}>Sign-in code</label>
+        <input id={`${id}-code`} className={styles.email} type="text" inputMode="numeric" autoComplete="one-time-code"
+          pattern="[0-9 ]{6,12}" required value={code} onChange={(event) => setCode(event.target.value)} />
+        <div className={styles.row}>
+          <button type="submit" className={buttons.primary} disabled={busy}>{busy ? 'Checking…' : 'Sign in'}</button>
+          <button type="button" className={buttons.secondary} disabled={busy} onClick={() => { setSentTo(null); setMessage(''); setError('') }}>Use a different email</button>
+        </div>
+      </form> : <form onSubmit={sendCode} className={styles.field}>
         <p className={styles.meta}>Sign in to add this browser’s progress to your account and receive progress from your other devices. Unfinished quizzes stay on each device.</p>
         <label htmlFor={`${id}-email`} className={styles.label}>Email address</label>
         <input id={`${id}-email`} className={styles.email} type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} />
-        <button type="submit" className={buttons.primary} disabled={busy}>{busy ? 'Sending…' : 'Email me a sign-in link'}</button>
+        <button type="submit" className={buttons.primary} disabled={busy}>{busy ? 'Sending…' : 'Email me a sign-in code'}</button>
       </form>}
     {cloud.configured && !cloud.email && progress.records > 0 && (confirmingForget ? (
       <div className={styles.confirm}>

@@ -34,7 +34,11 @@ export function CloudProvider({ client, controller, children }: {
       const { error } = await client.auth.signInWithOtp({ email: address, options: {
         emailRedirectTo: new URL(`${import.meta.env.BASE_URL}settings`, window.location.origin).href,
       } })
-      if (error) throw new Error('Could not send a sign-in link. Check your email address and connection, then try again.')
+      if (error) throw new Error('Could not send a sign-in code. Check your email address and connection, then try again.')
+    },
+    async verifyCode(address, code) {
+      const { error } = await client.auth.verifyOtp({ email: address, token: code, type: 'email' })
+      if (error) throw new Error('That code didn’t work. It may be mistyped or expired. Check it, or send a new code.')
     },
     async signOut() {
       controller.setUser(null)

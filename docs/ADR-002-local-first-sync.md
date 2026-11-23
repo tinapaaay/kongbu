@@ -68,7 +68,7 @@ Option B costs a little more than Option A but keeps a hard PRD requirement (off
 
 - **Easier:** progress across devices. Backups become a safety net instead of the only way to move between browsers. Offline quizzes keep working.
 - **Harder:**
-  - Sign-in is needed. The PRD deferred it until the MVP was verified, which is now done.
+  - Sign-in is needed. The PRD deferred it until the MVP was verified, which is now done. Sign-in uses a code typed into the app rather than an emailed link: on iPhone, a link opens Safari, whose storage is separate from the Home Screen app's, so the wrong app would be signed in.
   - Every table needs row-level security, so each learner can read and write only their own rows. Only the public anon key is ever used in the browser; the service role key never is (`npm run check:secrets` already fails a build that contains it).
   - Sync status needs a visible place on screen.
 - **Changes the data model** (saved data version 3, with a migration):

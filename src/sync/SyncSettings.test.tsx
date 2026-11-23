@@ -9,24 +9,45 @@ function show(overrides: Partial<CloudContextValue> = {}, progress?: DeviceProgr
   const signIn = vi.fn(async () => {})
   render(<MemoryRouter><CloudContext.Provider value={{
     configured: true, email: null, status: { state: 'signed-out', pending: 0 },
-    signIn, signOut: async () => {}, sync: async () => {}, forgetDevice: async () => {}, ...overrides,
+    signIn, verifyCode: async () => {}, signOut: async () => {}, sync: async () => {}, forgetDevice: async () => {}, ...overrides,
   }}><SyncSettings progress={progress} /></CloudContext.Provider></MemoryRouter>)
   return signIn
 }
-it('sends a link only after an explicit email submission and shows delivery instructions', async () => {
+it('sends a code only after an explicit email submission, then asks for the code', async () => {
   const signIn = show()
   expect(signIn).not.toHaveBeenCalled()
   await userEvent.type(screen.getByLabelText('Email address'), 'learner@example.test')
-  await userEvent.click(screen.getByRole('button', { name: 'Email me a sign-in link' }))
+  await userEvent.click(screen.getByRole('button', { name: 'Email me a sign-in code' }))
   expect(signIn).toHaveBeenCalledWith('learner@example.test')
-  expect(await screen.findByRole('status')).toHaveTextContent('Check your email')
+  expect(await screen.findByRole('status')).toHaveTextContent('We emailed a sign-in code to learner@example.test')
+  expect(screen.getByLabelText('Sign-in code')).toHaveAttribute('autocomplete', 'one-time-code')
+})
+it('signs in with the typed code, ignoring spaces, in this app rather than through a link', async () => {
+  const verifyCode = vi.fn(async () => {})
+  show({ verifyCode })
+  await userEvent.type(screen.getByLabelText('Email address'), 'learner@example.test')
+  await userEvent.click(screen.getByRole('button', { name: 'Email me a sign-in code' }))
+  await userEvent.type(await screen.findByLabelText('Sign-in code'), '123 456')
+  await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
+  expect(verifyCode).toHaveBeenCalledWith('learner@example.test', '123456')
+})
+it('keeps the code form open with an explanation when the code is wrong', async () => {
+  show({ verifyCode: async () => { throw new Error('That code didn’t work.') } })
+  await userEvent.type(screen.getByLabelText('Email address'), 'learner@example.test')
+  await userEvent.click(screen.getByRole('button', { name: 'Email me a sign-in code' }))
+  await userEvent.type(await screen.findByLabelText('Sign-in code'), '000000')
+  await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('That code didn’t work')
+  expect(screen.getByLabelText('Sign-in code')).toBeEnabled()
+  await userEvent.click(screen.getByRole('button', { name: 'Use a different email' }))
+  expect(screen.getByLabelText('Email address')).toHaveValue('learner@example.test')
 })
 it('shows authentication errors and permits retry', async () => {
-  show({ signIn: async () => { throw new Error('Could not send a sign-in link.') } })
+  show({ signIn: async () => { throw new Error('Could not send a sign-in code.') } })
   await userEvent.type(screen.getByLabelText('Email address'), 'learner@example.test')
-  await userEvent.click(screen.getByRole('button', { name: 'Email me a sign-in link' }))
+  await userEvent.click(screen.getByRole('button', { name: 'Email me a sign-in code' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('Could not send')
-  expect(screen.getByRole('button', { name: 'Email me a sign-in link' })).toBeEnabled()
+  expect(screen.getByRole('button', { name: 'Email me a sign-in code' })).toBeEnabled()
 })
 it('explains the local fallback when cloud configuration is absent', () => {
   show({ configured: false })

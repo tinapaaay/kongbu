@@ -12,13 +12,17 @@ without configuration the app continues to store progress locally and offers fil
    `https://tinapaaay.github.io/kongbu/` and add
    `https://tinapaaay.github.io/kongbu/settings` to the redirect allow list.
    For local development also allow `http://localhost:5173/settings`.
+   Then, under **Authentication → Emails**, edit the **Magic Link** and **Confirm signup**
+   templates so they show the code: add a line such as `Your Kongbu sign-in code: {{ .Token }}`.
+   Kongbu signs in with this typed code, not the link, because on iPhone a link opens Safari,
+   which keeps separate storage from the Home Screen app. Keep the default code length.
 4. Copy `.env.example` to `.env.local`. Fill in the project URL and its **public publishable
    key** (`sb_publishable_...`, recommended) or legacy **anon** key. Never use a secret or
    service-role key. These public values are intentionally included in the browser bundle.
 5. For GitHub Pages, add repository Actions **variables** `VITE_SUPABASE_URL` and
    `VITE_SUPABASE_ANON_KEY`. The existing deploy workflow passes them to the production build.
-6. Open Settings, enter your email, and follow the link on that device. Repeat on another
-   device with the same email. Signing in adds that browser's existing records to the account.
+6. Open Settings, enter your email, and type the code from the email into the same app.
+   Repeat on another device with the same email. Signing in adds that browser's existing records to the account.
 
 The browser profile is bound to the first learner who syncs. Signing out keeps local progress.
 To hand the browser to someone else (for example a shared computer), sign out, then choose
@@ -67,12 +71,18 @@ Before enabling production sync, verify with the actual configured project:
 - Interrupt a response after upload and retry: the record and its original receipt must appear once.
 - Two different users: each can read only their own records; spoofing another `user_id` must fail.
 - Anonymous reads, client timestamp injection, UPDATE, and DELETE must fail on all three tables.
-- Confirm email redirects land on `/kongbu/settings`, sign-out retains local data, and switching
-  accounts is blocked in an already bound profile.
+- On an iPhone with Kongbu added to the Home Screen, sign in by typing the emailed code in the
+  Home Screen app, and confirm that app (not Safari) is the one signed in.
+- A wrong or expired code shows an error and keeps the code form open.
+- Confirm sign-out retains local data, and switching accounts is blocked in an already bound profile.
+- Built-in email sending allows only a few sign-in emails per hour. That is enough for one learner;
+  set up custom SMTP (Authentication → Emails) before inviting others.
+- A free project pauses after about a week with no activity. The app keeps working offline and
+  sync shows that it needs attention; resume the project in the dashboard to continue.
 
 Hosted authentication, SQL migration application, and live cross-device checks remain pending
 until the owner provisions a project. Keep issue #5 open until those checks pass.
 
-API behavior follows the official [email-link sign-in](https://supabase.com/docs/reference/javascript/auth-signinwithotp),
+API behavior follows the official [email code sign-in](https://supabase.com/docs/guides/auth/auth-email-passwordless), [verifyOtp](https://supabase.com/docs/reference/javascript/auth-verifyotp),
 [insert-on-conflict](https://supabase.com/docs/reference/javascript/upsert), and
 [row-level security](https://supabase.com/docs/guides/database/postgres/row-level-security) documentation.
