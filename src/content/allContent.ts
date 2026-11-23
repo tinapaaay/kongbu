@@ -3,12 +3,13 @@
  * For tests and content validation only: the app itself must use loadChapterContent(),
  * or every chapter would end up back in the main download. The architecture test enforces this.
  */
-import { chapterContent as chapter1 } from './chapter-01/index'
-import { chapterContent as chapter11 } from './chapter-11/index'
-import { chapterContent as chapter12 } from './chapter-12/index'
-import type { Lesson, Question } from './schemas'
+import type { ChapterContent, Lesson, Question } from './schemas'
 
-const all = [chapter1, chapter11, chapter12]
+/** Every chapter folder's content, found the same way index.ts finds them, in chapter order. */
+const modules = import.meta.glob<ChapterContent>('./chapter-*/index.ts', { eager: true, import: 'chapterContent' })
+const all = Object.entries(modules)
+  .sort(([a], [b]) => a.localeCompare(b, 'en', { numeric: true }))
+  .map(([, content]) => content)
 
 export * from './index'
 export const questions: Question[] = all.flatMap((c) => c.questions)

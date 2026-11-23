@@ -3,7 +3,8 @@ import type { Chapter } from './schemas'
 /**
  * All 60 chapters of the NEW EPS-TOPIK Standard Korean Textbook.
  * Titles and start pages come from each book's contents page (목차, pages 8–9).
- * Only chapters with contentStatus "available" have lessons and questions in the app.
+ * Which chapters have lessons and questions is not listed here: index.ts finds the chapter-NN
+ * folders and passes their numbers to buildChapters().
  *
  * Fields: [number, Korean title, English title, start page]
  */
@@ -73,19 +74,19 @@ const book2: Array<[number, string, string, number]> = [
   [60, '근로자 보험', 'Employment Insurance', 306],
 ]
 
-/** Chapters that have lessons and questions in the app. */
-const AVAILABLE = new Set([1, 11, 12])
-
-function toChapter(volume: 1 | 2) {
+function toChapter(volume: 1 | 2, available: ReadonlySet<number>) {
   return ([number, titleKo, titleEn, page]: [number, string, string, number]): Chapter => ({
     id: `ch${number}`,
     number,
     titleKo,
     titleEn,
-    contentStatus: AVAILABLE.has(number) ? 'available' : 'planned',
+    contentStatus: available.has(number) ? 'available' : 'planned',
     textbookRef: { volume, page },
     verification: 'verified',
   })
 }
 
-export const chapters: Chapter[] = [...book1.map(toChapter(1)), ...book2.map(toChapter(2))]
+/** All 60 chapters, marking as "available" the chapter numbers that have a content folder. */
+export function buildChapters(available: ReadonlySet<number>): Chapter[] {
+  return [...book1.map(toChapter(1, available)), ...book2.map(toChapter(2, available))]
+}

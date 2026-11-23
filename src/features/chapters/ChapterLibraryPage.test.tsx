@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { chapters } from '../../content'
 import { renderApp } from '../../test/renderApp'
 
 /** Renders the library and waits for saved progress to load. */
@@ -48,8 +49,10 @@ describe('Chapter Library', () => {
 
   it('shows every chapter as not started for a new learner', async () => {
     await renderAt('/learn')
-    expect(screen.getAllByText('Not started')).toHaveLength(3)
-    expect(screen.getAllByText('Coming later')).toHaveLength(27)
+    const book1 = chapters.filter((c) => c.textbookRef.volume === 1)
+    const ready = book1.filter((c) => c.contentStatus === 'available').length
+    expect(screen.getAllByText('Not started')).toHaveLength(ready)
+    expect(screen.getAllByText('Coming later')).toHaveLength(book1.length - ready)
     expect(screen.queryByText(/Practiced|Mastered|Visited/)).not.toBeInTheDocument()
   })
 })

@@ -6,26 +6,41 @@
  * What loads on demand (large): each chapter's lesson and questions, one file per chapter,
  * through loadChapterContent() or the hooks in useChapterContent.ts.
  */
-import { chapters } from './chapters'
-import { chapter1Concepts } from './chapter-01/concepts'
-import { chapter11Concepts } from './chapter-11/concepts'
-import { chapter12Concepts } from './chapter-12/concepts'
+import { buildChapters } from './chapters'
 import type { Chapter, ChapterContent, ChapterId, Concept } from './schemas'
 
 export * from './schemas'
-export { chapters }
 
-export const concepts: Concept[] = [...chapter1Concepts, ...chapter11Concepts, ...chapter12Concepts]
+/*
+  Chapters are found by folder: adding src/content/chapter-NN/ (with concepts.ts and index.ts)
+  is all it takes to add a chapter. Nothing else needs a list of chapters.
+*/
+
+/** The chapter number in a path like "./chapter-07/index.ts". */
+function chapterNumberOf(path: string): number {
+  const match = path.match(/\/chapter-(\d+)\//)
+  if (!match) throw new Error(`Not a chapter folder: ${path}`)
+  return Number(match[1])
+}
+
+/** Every chapter's concept names, loaded with the app (small, and every screen shows them). */
+const conceptModules = import.meta.glob<Concept[]>('./chapter-*/concepts.ts', { eager: true, import: 'concepts' })
 
 /**
- * How to fetch each chapter that has content. `import()` tells the build tool to put
- * that chapter in its own file, downloaded the first time it's needed.
+ * How to fetch each chapter's lesson and questions. Not `eager`, so the build tool puts each
+ * chapter in its own file, downloaded the first time it's needed.
  */
-const loaders: Record<string, () => Promise<ChapterContent>> = {
-  ch1: () => import('./chapter-01/index').then((m) => m.chapterContent),
-  ch11: () => import('./chapter-11/index').then((m) => m.chapterContent),
-  ch12: () => import('./chapter-12/index').then((m) => m.chapterContent),
-}
+const contentModules = import.meta.glob<ChapterContent>('./chapter-*/index.ts', { import: 'chapterContent' })
+
+const loaders: Record<string, () => Promise<ChapterContent>> = Object.fromEntries(
+  Object.entries(contentModules).map(([path, load]) => [`ch${chapterNumberOf(path)}`, load]),
+)
+
+export const chapters: Chapter[] = buildChapters(new Set(Object.keys(contentModules).map(chapterNumberOf)))
+
+export const concepts: Concept[] = Object.entries(conceptModules)
+  .sort(([a], [b]) => chapterNumberOf(a) - chapterNumberOf(b))
+  .flatMap(([, list]) => list)
 
 const NO_CONTENT: ChapterContent = { questions: [] }
 const loaded = new Map<string, Promise<ChapterContent>>()

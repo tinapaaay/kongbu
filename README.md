@@ -176,10 +176,12 @@ docs/             Plan, decision records (ADR-002), and design references
 All study material lives in `src/content/`, and screens read it only through `src/content/index.ts`.
 
 - `chapters.ts`: all 60 chapters from both books' contents pages.
+- `chapter-01/`: the lesson, 6 concepts, and 24 original practice questions that use only Chapter 1 grammar.
 - `chapter-11/`: the lesson (vocabulary, grammar, culture), 8 concepts, and 22 original practice questions. Household words are split into laundry, cleaning, and cooking, so one right answer about brooms can't fix a laundry mistake.
 - `chapter-12/`: the lesson, 8 concepts, and 26 original practice questions, at least two per concept, so a mistake can be fixed by a different question. `(으)로` and `~에서 ~까지` are separate concepts, even though the book teaches them on one page.
 - `schemas.ts`: the rules every chapter, concept, question, and lesson must follow.
-- **What loads when:** chapter titles and concept names load with the app. Each chapter's lesson and questions (`chapter-11/index.ts`) are a separate file, downloaded the first time a screen needs them through `loadChapterContent()` or `useChapterContent()`. The app also downloads your current chapter in the background, so it keeps working if the connection drops after the app opens. To add a chapter, add one line to the `loaders` list in `index.ts`.
+- **What loads when:** chapter titles and concept names load with the app. Each chapter's lesson and questions (`chapter-11/index.ts`) are a separate file, downloaded the first time a screen needs them through `loadChapterContent()` or `useChapterContent()`. The app also downloads your current chapter in the background, so it keeps working if the connection drops after the app opens. `index.ts` finds chapters by their `chapter-NN/` folders, so adding a folder is all it takes: see [Adding a chapter](docs/content/adding-a-chapter.md), which also has the concept ID naming rule.
+- `questionBuilder.ts`: the shared `questionMaker()` and standard instructions that every chapter's `questions.ts` uses.
 - `allContent.ts`: every chapter at once, for tests and validation only.
 - `validate.ts`: cross-checks, such as every question pointing to a real concept and every answer key matching a choice.
 

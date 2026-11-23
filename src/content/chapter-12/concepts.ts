@@ -1,7 +1,7 @@
 import type { Concept } from '../schemas'
 
 /** The things a learner can get right or wrong in Chapter 12. Each question blames exactly one. */
-export const chapter12Concepts: Concept[] = [
+export const concepts: Concept[] = [
   {
     id: 'vocabulary.transportation',
     kind: 'vocabulary',

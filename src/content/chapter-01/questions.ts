@@ -1,4 +1,5 @@
-import type { ChoiceId, Question } from '../schemas'
+import { PROMPTS, questionMaker } from '../questionBuilder'
+import type { Question } from '../schemas'
 
 /**
  * Original EPS-TOPIK-style practice questions for Chapter 1.
@@ -9,27 +10,10 @@ import type { ChoiceId, Question } from '../schemas'
  * See docs/content/chapter-01-review.md; new questions default to draft.
  */
 
-type QuestionInput = Omit<Question, 'choices' | 'source' | 'reviewStatus' | 'chapterId'> & {
-  reviewStatus?: Question['reviewStatus']
-  choices: [string, string, string, string]
-}
-
-const ids: ChoiceId[] = ['a', 'b', 'c', 'd']
-
-/** Fills in the fields every Chapter 1 question shares, and turns four strings into choices a–d. */
-function q(input: QuestionInput): Question {
-  return {
-    ...input,
-    chapterId: 'ch1',
-    choices: input.choices.map((text, i) => ({ id: ids[i], text })),
-    source: 'original',
-    reviewStatus: input.reviewStatus ?? 'draft',
-  }
-}
-
-const BLANK = '빈칸에 들어갈 가장 알맞은 것을 고르십시오.'
-const CORRECT_SENTENCE = '다음 중 맞는 문장을 고르십시오.'
-const READ_MATCH = '다음 글을 읽고 내용과 같은 것을 고르십시오.'
+const q = questionMaker('ch1')
+const BLANK = PROMPTS.blank
+const CORRECT_SENTENCE = PROMPTS.correctSentence
+const READ_MATCH = PROMPTS.readMatch
 
 export const chapter1Questions: Question[] = [
   // ---------- Countries ----------
