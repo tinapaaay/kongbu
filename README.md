@@ -118,7 +118,8 @@ All eight steps pass in the browser tests: open the dashboard, select Chapter 11
 - The 22 Chapter 11 questions are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 150–159, authorized by the product owner. The quiz shows “Reviewed by AI · not teacher-checked”; `approved` is reserved for a subsequent human review. See the [per-question review](docs/content/chapter-11-review.md) for changes, answer rationales, and limits.
 - If the same quiz is open in two tabs, the tab that saves last keeps its answers for that quiz. Submitted quizzes are never lost.
 - Progress is stored per browser. Use Settings → Backup to move it between Chrome and Safari until Phase 2 adds a database.
-- Only Chapter 11 has content. Other chapters show their real titles with "Content coming later."
+- The 26 Chapter 12 questions (Public Transportation) are `draft`: written for Kongbu, not yet reviewed, and labeled "Draft question · not yet reviewed" in the quiz.
+- Chapters 11 and 12 have content. Other chapters show their real titles with "Content coming later."
 
 **Pending by phase:**
 
@@ -174,6 +175,7 @@ All study material lives in `src/content/`, and screens read it only through `sr
 
 - `chapters.ts`: all 60 chapters from both books' contents pages.
 - `chapter-11/`: the lesson (vocabulary, grammar, culture), 8 concepts, and 22 original practice questions. Household words are split into laundry, cleaning, and cooking, so one right answer about brooms can't fix a laundry mistake.
+- `chapter-12/`: the lesson, 8 concepts, and 26 original practice questions, at least two per concept, so a mistake can be fixed by a different question. `(으)로` and `~에서 ~까지` are separate concepts, even though the book teaches them on one page.
 - `schemas.ts`: the rules every chapter, concept, question, and lesson must follow.
 - **What loads when:** chapter titles and concept names load with the app. Each chapter's lesson and questions (`chapter-11/index.ts`) are a separate file, downloaded the first time a screen needs them through `loadChapterContent()` or `useChapterContent()`. The app also downloads your current chapter in the background, so it keeps working if the connection drops after the app opens. To add a chapter, add one line to the `loaders` list in `index.ts`.
 - `allContent.ts`: every chapter at once, for tests and validation only.

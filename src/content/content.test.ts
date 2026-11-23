@@ -34,20 +34,22 @@ describe('real content', () => {
     expect(getChapterByNumber(60)?.titleEn).toBe('Employment Insurance')
   })
 
-  it('makes only Chapter 11 available for now', () => {
-    expect(chapters.filter((c) => c.contentStatus === 'available').map((c) => c.number)).toEqual([11])
+  it('makes Chapters 11 and 12 available for now', () => {
+    expect(chapters.filter((c) => c.contentStatus === 'available').map((c) => c.number)).toEqual([11, 12])
   })
 
-  it('has at least 20 Chapter 11 questions, so a 10-question quiz can vary', () => {
-    expect(getQuestionsForChapter('ch11').length).toBeGreaterThanOrEqual(20)
-  })
+  for (const chapterId of ['ch11', 'ch12']) {
+    it(`has at least 20 ${chapterId} questions, so a 10-question quiz can vary`, () => {
+      expect(getQuestionsForChapter(chapterId).length).toBeGreaterThanOrEqual(20)
+    })
 
-  it('tests every Chapter 11 concept at least once', () => {
-    const tested = new Set(getQuestionsForChapter('ch11').map((q) => q.conceptId))
-    for (const concept of concepts.filter((c) => c.chapterId === 'ch11')) {
-      expect(tested, `${concept.id} has no questions`).toContain(concept.id)
-    }
-  })
+    it(`tests every ${chapterId} concept at least twice, so a mistake can be fixed by a different question`, () => {
+      const questionsFor = getQuestionsForChapter(chapterId)
+      for (const concept of concepts.filter((c) => c.chapterId === chapterId)) {
+        expect(questionsFor.filter((q) => q.conceptId === concept.id).length, `${concept.id} needs two questions`).toBeGreaterThanOrEqual(2)
+      }
+    })
+  }
 
   it('spreads correct answers across all four positions', () => {
     const counts = { a: 0, b: 0, c: 0, d: 0 }
@@ -63,7 +65,7 @@ describe('real content', () => {
   })
 
   it('filters questions by chapter without mixing in others', () => {
-    expect(getQuestionsForChapter('ch12')).toEqual([])
+    expect(getQuestionsForChapter('ch13')).toEqual([])
     expect(getQuestionsForChapter('ch11').every((q) => q.chapterId === 'ch11')).toBe(true)
   })
 
@@ -121,9 +123,9 @@ describe('validation catches broken content', () => {
   it('rejects questions for chapters that are not available', () => {
     const bundle = copy()
     const question = firstQuestion(bundle)
-    question.chapterId = 'ch12'
-    question.id = 'ch12-q001'
-    expect(validateContent(bundle).join('\n')).toMatch(/chapter 12, which is not available/)
+    question.chapterId = 'ch13'
+    question.id = 'ch13-q001'
+    expect(validateContent(bundle).join('\n')).toMatch(/chapter 13, which is not available/)
   })
 
   it('rejects an available chapter with too few questions', () => {
@@ -158,7 +160,7 @@ describe('on-demand chapter content', () => {
 
   it('gives chapters without content an empty result, with nothing to download', async () => {
     const { loadChapterContent, hasContent } = await import('./index')
-    expect(hasContent('ch12')).toBe(false)
-    expect(await loadChapterContent('ch12')).toEqual({ questions: [] })
+    expect(hasContent('ch13')).toBe(false)
+    expect(await loadChapterContent('ch13')).toEqual({ questions: [] })
   })
 })

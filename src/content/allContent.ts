@@ -4,9 +4,10 @@
  * or every chapter would end up back in the main download. The architecture test enforces this.
  */
 import { chapterContent as chapter11 } from './chapter-11/index'
+import { chapterContent as chapter12 } from './chapter-12/index'
 import type { Lesson, Question } from './schemas'
 
-const all = [chapter11]
+const all = [chapter11, chapter12]
 
 export * from './index'
 export const questions: Question[] = all.flatMap((c) => c.questions)

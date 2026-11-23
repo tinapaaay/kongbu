@@ -118,8 +118,8 @@ describe('Starting the practice exam', () => {
 
 describe('Chapters without content', () => {
   it('shows the real title and says content is coming later', async () => {
-    await renderChapter('/learn/12')
-    expect(screen.getByRole('heading', { level: 1, name: '대중교통' })).toBeInTheDocument()
+    await renderChapter('/learn/13')
+    expect(screen.getByRole('heading', { level: 1, name: '주말 활동' })).toBeInTheDocument()
     expect(screen.getByText(/coming later/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /practice exam/ })).not.toBeInTheDocument()
   })

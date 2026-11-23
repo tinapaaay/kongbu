@@ -30,8 +30,9 @@ describe('Chapter Library', () => {
   it('links only chapters that have content', async () => {
     await renderAt('/learn')
     expect(screen.getByRole('link', { name: '집안일' })).toHaveAttribute('href', '/learn/11')
-    expect(screen.queryByRole('link', { name: '대중교통' })).not.toBeInTheDocument()
-    expect(screen.getByText('대중교통')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '대중교통' })).toHaveAttribute('href', '/learn/12')
+    expect(screen.queryByRole('link', { name: '주말 활동' })).not.toBeInTheDocument()
+    expect(screen.getByText('주말 활동')).toBeInTheDocument()
   })
 
   it('lists the chapters you can study first, on both book tabs', async () => {
@@ -39,14 +40,15 @@ describe('Chapter Library', () => {
       await renderAt(path)
       const ready = screen.getByRole('region', { name: 'Available now' })
       expect(within(ready).getByRole('link', { name: /11 집안일 Household Chores · Book 1/ })).toHaveAttribute('href', '/learn/11')
+      expect(within(ready).getByRole('link', { name: /12 대중교통 Public Transportation · Book 1/ })).toHaveAttribute('href', '/learn/12')
       document.body.innerHTML = ''
     }
   })
 
   it('shows every chapter as not started for a new learner', async () => {
     await renderAt('/learn')
-    expect(screen.getAllByText('Not started')).toHaveLength(1)
-    expect(screen.getAllByText('Coming later')).toHaveLength(29)
+    expect(screen.getAllByText('Not started')).toHaveLength(2)
+    expect(screen.getAllByText('Coming later')).toHaveLength(28)
     expect(screen.queryByText(/Practiced|Mastered|Visited/)).not.toBeInTheDocument()
   })
 })

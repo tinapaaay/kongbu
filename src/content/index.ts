@@ -8,12 +8,13 @@
  */
 import { chapters } from './chapters'
 import { chapter11Concepts } from './chapter-11/concepts'
+import { chapter12Concepts } from './chapter-12/concepts'
 import type { Chapter, ChapterContent, ChapterId, Concept } from './schemas'
 
 export * from './schemas'
 export { chapters }
 
-export const concepts: Concept[] = [...chapter11Concepts]
+export const concepts: Concept[] = [...chapter11Concepts, ...chapter12Concepts]
 
 /**
  * How to fetch each chapter that has content. `import()` tells the build tool to put
@@ -21,6 +22,7 @@ export const concepts: Concept[] = [...chapter11Concepts]
  */
 const loaders: Record<string, () => Promise<ChapterContent>> = {
   ch11: () => import('./chapter-11/index').then((m) => m.chapterContent),
+  ch12: () => import('./chapter-12/index').then((m) => m.chapterContent),
 }
 
 const NO_CONTENT: ChapterContent = { questions: [] }

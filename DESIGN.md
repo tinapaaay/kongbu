@@ -432,7 +432,7 @@ Korean content follows the book's hierarchy:
 
 **Only the sizes listed above are used, and nothing is smaller than 14px.** Hangul is dense, so it gets hard to read below 14px. `npm run design:check-type` fails if any stylesheet uses a size that isn't one of these levels, so new sizes have to be added here on purpose instead of creeping in.
 
-Use `lang="ko"` and `word-break: keep-all` for Korean text. Keep paragraphs near 68 characters wide.
+Use `lang="ko"` for Korean text. `word-break: keep-all` applies to the whole page, so Korean words quoted inside English sentences (tips, explanations) also stay whole; `overflow-wrap: break-word` lets an over-long word wrap instead of overflowing. Keep paragraphs near 68 characters wide.
 
 ## Layout
 

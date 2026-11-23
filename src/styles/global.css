@@ -27,9 +27,15 @@ body {
   font: 400 16px/1.7 var(--font-ko);
 }
 
-/* Korean line breaking: keep words whole instead of splitting syllables. */
-:lang(ko) {
+/*
+  Korean line breaking: keep words whole instead of splitting syllables. Applied to every element,
+  not only :lang(ko), because English tips and explanations quote Korean words (늦었어서 must not
+  split into 늦 / 었어서). English already breaks at spaces, so it is unaffected. overflow-wrap is the
+  safety net: a word too long for its box (a URL, a long file name) may still wrap instead of overflowing.
+*/
+html {
   word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 p,
