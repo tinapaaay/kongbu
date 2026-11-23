@@ -14,6 +14,9 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4174',
     trace: 'retain-on-failure',
+    // The service worker would answer requests that tests block on purpose (a failed chapter download),
+    // so it's off by default. tests/e2e/installable-offline.spec.ts turns it on.
+    serviceWorkers: 'block',
   },
   webServer: {
     command: 'npm run build && npx vite preview --port 4174 --strictPort',

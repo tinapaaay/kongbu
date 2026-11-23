@@ -374,6 +374,14 @@ components:
     typography: "{typography.tab-label}"
     rounded: "{rounded.md}"
     padding: "{spacing.md}"
+  update-notice:
+    backgroundColor: "{colors.primary-subtle}"
+    textColor: "{colors.primary-strong}"
+    typography: "{typography.body-strong}"
+    padding: "{spacing.sm}"
+  app-icon:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.surface}"
 ---
 
 # Kongbu
@@ -489,6 +497,10 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 **Review labels.** "Draft question · not yet reviewed" and "Reviewed by AI · not teacher-checked" appear as quiet outlined pills for draft and AI-reviewed questions, respectively.
 
 **Available now.** A pale-blue box above the chapter table on Learn. Its caps label uses the tab-label style in Primary Strong, and it lists each chapter that has content as a link: number, underlined Korean title, then a plain English gloss. It appears on both book tabs, so a learner never has to scroll past chapters without content to find one.
+
+**Update notice.** A pale-blue strip above the navigation, in the page flow (not floating, no shadow), with a 1px Border rule below. "A new version of Kongbu is ready. Your progress is saved." with a primary Reload and a secondary Later. A new version never loads by itself, so a deploy can't interrupt a quiz. The first time the app is saved for offline use, the same strip says "Kongbu now works offline on this device." with OK.
+
+**App icon.** 공 in Surface on a Primary square, in Apple SD Gothic Neo Bold. The favicon and the 192/512px icons have the favicon's rounded corners (6 of 32). The maskable and Apple touch icons are full squares, because the phone cuts its own shape, and the maskable glyph stays inside the middle 80% so a circle crop never clips it. `scripts/make-icons.swift` draws them. The installed app's title bar and splash screen use Surface, to match the white navigation bar.
 
 **Hover.** Hover colors apply only on devices with a mouse (`@media (hover: hover)`). On a phone, a tap would otherwise leave a button looking highlighted after the finger lifts.
 

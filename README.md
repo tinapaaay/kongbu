@@ -81,6 +81,7 @@ There are two kinds of tests.
 |---|---|
 | `definition-of-done.spec.ts` | The PRD's Definition of Done end to end, including a refresh mid-quiz and returning later. Also proves chapter filtering and double-submit safety |
 | `offline-and-privacy.spec.ts` | Quizzes work with the network switched off, and the app never contacts another website |
+| `installable-offline.spec.ts` | The manifest and icons make the app installable; after one visit, every page and chapter opens with no internet, even after a reload (Chrome only: Playwright's service worker support is reliable only there) |
 | `backup.spec.ts` | A backup made in one browser profile restores in a completely separate one, and wrong files are rejected |
 | `accessibility.spec.ts` | Every screen passes automated WCAG 2.1 AA checks (axe), a quiz can be taken by keyboard alone, and focus is visible |
 
@@ -210,6 +211,14 @@ Progress is saved in the browser's localStorage under one key, `hangul-lab:learn
 - **Newer data:** data saved by a newer app version is never overwritten.
 - **Blocked or full storage:** the app keeps working for the current visit and shows a warning.
 - **Backups:** Settings downloads a `kongbu-backup-YYYY-MM-DD.json` file and restores one (backups made under the app's earlier names, `hangul-lab-backup-…` and `gongbu-backup-…`, still restore). A restore file is fully checked and summarized, and nothing is replaced until you confirm.
+
+## Installable and offline
+
+Kongbu is a **Progressive Web App**: on Android and desktop Chrome, use **Install app**; on iPhone, Safari's **Share → Add to Home Screen**. It then opens full screen with its own icon.
+
+A **service worker** (`vite-plugin-pwa`) saves every built file the first time the app opens, including each chapter, so after one visit every page opens offline. The update notice appears when a new version has been downloaded. The new version loads only when you tap Reload, so a deploy never interrupts a quiz. Browser tests turn the service worker off (`serviceWorkers: 'block'` in `playwright.config.ts`) except in `installable-offline.spec.ts`, because it would answer requests that tests block on purpose.
+
+The icons in `public/` are drawn by `swift scripts/make-icons.swift` (macOS, with the system Korean font). Run it again only if the icon design changes.
 
 Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, so Phase 2 can switch to a database by adding a new `LearnerRepository`.
 

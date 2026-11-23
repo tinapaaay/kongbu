@@ -10,6 +10,7 @@ import '@fontsource/titillium-web/900.css'
 import './styles/tokens.css'
 import './styles/global.css'
 import { AppRoutes } from './app/AppRoutes'
+import { ServiceWorkerUpdates } from './app/ServiceWorkerUpdates'
 import { LearnerDataProvider } from './data/LearnerDataProvider'
 import { createLocalStorageRepository } from './data/localStorageRepository'
 import { getBrowserStorage } from './data/storage'
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/+$/, '') || '/'}>
       <LearnerDataProvider repository={repository}>
+        <ServiceWorkerUpdates />
         <AppRoutes />
       </LearnerDataProvider>
     </BrowserRouter>
