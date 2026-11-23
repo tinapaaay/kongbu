@@ -3,7 +3,9 @@ import type { ChoiceId, Question } from '../schemas'
 /**
  * Original EPS-TOPIK-style practice questions for Chapter 12.
  * They are written for this app and are NOT real or leaked exam questions,
- * and none copies the textbook's exercises. All start as drafts until reviewed.
+ * and none copies the textbook's exercises.
+ * Review statuses record the AI-assisted textbook review authorized by the product owner.
+ * See docs/content/chapter-12-review.md; new questions default to draft.
  */
 
 type QuestionInput = Omit<Question, 'choices' | 'source' | 'reviewStatus' | 'chapterId'> & {
@@ -32,17 +34,19 @@ export const chapter12Questions: Question[] = [
   // ---------- Ways to travel ----------
   q({
     id: 'ch12-q001',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.transportation',
     format: 'vocabulary',
     difficulty: 1,
-    prompt: '다음 중 하늘로 다니는 교통수단을 고르십시오.',
+    prompt: '다음 중 공항에서 타는 것을 고르십시오.',
     choices: ['배', '비행기', '지하철', '자전거'],
     correctChoiceId: 'b',
     explanation:
-      '비행기 (plane) travels through the sky. 배 (boat) goes on water, 지하철 (metro) runs on rails, and 자전거 (bike) is pedaled along the road.',
+      'You board a 비행기 (plane) at an airport. A 배 (boat) leaves from a port, the 지하철 (metro) from a metro station, and a 자전거 (bike) needs no station at all.',
   }),
   q({
     id: 'ch12-q002',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.transportation',
     format: 'sentence-completion',
     difficulty: 1,
@@ -55,6 +59,7 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q003',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.transportation',
     format: 'dialogue-completion',
     difficulty: 2,
@@ -67,6 +72,7 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q004',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.transportation',
     format: 'vocabulary',
     difficulty: 2,
@@ -79,6 +85,7 @@ export const chapter12Questions: Question[] = [
   // ---------- Stops and stations ----------
   q({
     id: 'ch12-q005',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.stations',
     format: 'dialogue-completion',
     difficulty: 1,
@@ -90,6 +97,7 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q006',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.stations',
     format: 'sentence-completion',
     difficulty: 1,
@@ -102,23 +110,25 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q007',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.stations',
     format: 'reading',
     difficulty: 2,
     prompt: READ_MATCH,
     context: {
       kind: 'passage',
-      text: '저는 회사 앞 버스 정류장에서 마을버스를 타요. 지하철역에서 내려요. 그리고 지하철로 갈아타요. 지하철역까지는 5분쯤 걸려요.',
+      text: '저는 기숙사 앞 버스 정류장에서 마을버스를 타요. 지하철역에서 내려요. 그리고 지하철로 갈아타요. 지하철역까지는 5분쯤 걸려요.',
     },
-    choices: ['회사 앞에 지하철역이 있어요.', '마을버스를 타고 지하철역까지 가요.', '지하철역에서 마을버스로 갈아타요.', '버스 정류장까지 5분쯤 걸려요.'],
+    choices: ['기숙사 앞에 지하철역이 있어요.', '마을버스를 타고 지하철역까지 가요.', '지하철역에서 마을버스로 갈아타요.', '버스 정류장까지 5분쯤 걸려요.'],
     correctChoiceId: 'b',
     explanation:
-      'The writer takes the neighborhood bus from the stop in front of the office to the metro station, then changes to the metro. The 5 minutes is the bus ride to the station, and the stop in front of the office is a bus stop, not a station.',
+      'The writer takes the neighborhood bus from the stop in front of the dorm to the metro station, then changes to the metro. The 5 minutes is the bus ride to the station, and the stop in front of the dorm is a bus stop, not a station.',
   }),
 
   // ---------- (으)로: by ----------
   q({
     id: 'ch12-q008',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.euro-means',
     format: 'grammar',
     difficulty: 1,
@@ -130,6 +140,7 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q009',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.euro-means',
     format: 'dialogue-completion',
     difficulty: 1,
@@ -142,6 +153,7 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q010',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.euro-means',
     format: 'sentence-completion',
     difficulty: 2,
@@ -154,6 +166,7 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q011',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.euro-means',
     format: 'dialogue-completion',
     difficulty: 2,
@@ -168,6 +181,7 @@ export const chapter12Questions: Question[] = [
   // ---------- ~에서 ~까지: from … to … ----------
   q({
     id: 'ch12-q012',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eseo-kkaji',
     format: 'sentence-completion',
     difficulty: 1,
@@ -179,6 +193,7 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q013',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eseo-kkaji',
     format: 'grammar',
     difficulty: 1,
@@ -190,6 +205,7 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q014',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.eseo-kkaji',
     format: 'dialogue-completion',
     difficulty: 2,
@@ -203,6 +219,7 @@ export const chapter12Questions: Question[] = [
   // ---------- Getting around ----------
   q({
     id: 'ch12-q015',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.getting-around',
     format: 'sentence-completion',
     difficulty: 1,
@@ -214,6 +231,7 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q016',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.getting-around',
     format: 'sentence-completion',
     difficulty: 2,
@@ -226,70 +244,77 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q017',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.getting-around',
     format: 'dialogue-completion',
-    difficulty: 1,
+    difficulty: 2,
     prompt: BLANK,
-    context: { kind: 'dialogue', text: '가: 집에서 공원까지 가까워요?\n나: 네, 아주 가까워요. 그래서 매일 (          ).' },
-    choices: ['갈아타요', '내려요', '지나요', '걸어가요'],
-    correctChoiceId: 'd',
-    explanation: 'The park is very close, so you go on foot: 걸어가요. 갈아타요 (change buses) and 내려요 (get off) only make sense on a bus or train.',
+    context: { kind: 'dialogue', text: '가: 이 버스가 서울역에 가요?\n나: 네, 서울역 앞을 (          ). 거기에서 내리세요.' },
+    choices: ['갈아타요', '지나요', '걸어가요', '막혀요'],
+    correctChoiceId: 'b',
+    explanation:
+      '지나다 means going past a place: the bus passes in front of Seoul Station, so you can get off there. 갈아타요 (change buses) and 걸어가요 (go on foot) describe the passenger, not the bus, and 막혀요 is for jammed roads.',
   }),
 
   // ---------- Travel time and traffic ----------
   q({
     id: 'ch12-q018',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.travel-time',
     format: 'sentence-completion',
     difficulty: 1,
     prompt: BLANK,
-    context: { kind: 'sentence', text: '아침 8시에는 출근하는 사람이 많아요. 그래서 길에 차가 (          ).' },
+    context: { kind: 'sentence', text: '아침 8시는 출근 시간이에요. 그래서 길에 차가 많이 (          ).' },
     choices: ['막혀요', '멀어요', '걸려요', '늦어요'],
     correctChoiceId: 'a',
-    explanation: '차가 막히다 means the roads are jammed. When many people drive to work at once, traffic slows down.',
+    explanation: '차가 막히다 means the roads are jammed. When everyone drives to work at the same time, traffic slows down.',
   }),
   q({
     id: 'ch12-q019',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.travel-time',
     format: 'dialogue-completion',
     difficulty: 1,
     prompt: BLANK,
-    context: { kind: 'dialogue', text: '가: 집에서 회사까지 얼마나 (          )?\n나: 버스로 20분쯤 걸려요.' },
-    choices: ['막혀요', '걸려요', '멀어요', '가까워요'],
-    correctChoiceId: 'b',
+    context: { kind: 'dialogue', text: '가: 집에서 회사까지 얼마나 걸려요?\n나: 버스로 20분(          ) 걸려요.' },
+    choices: ['쯤', '번', '까지', '에서'],
+    correctChoiceId: 'a',
     explanation:
-      '얼마나 걸려요? asks how long it takes, and the answer repeats 걸려요. 막혀요, 멀어요, and 가까워요 describe traffic or distance, not time.',
+      '쯤 after a number means roughly: 20분쯤, about 20 minutes. 번 numbers a bus route (100번 버스), and 까지 and 에서 mark places, not an amount of time.',
   }),
   q({
     id: 'ch12-q020',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'vocabulary.travel-time',
     format: 'reading',
     difficulty: 2,
     prompt: READ_MATCH,
     context: {
       kind: 'passage',
-      text: '저는 회사 기숙사에 살아요. 기숙사에서 회사까지 아주 가까워요. 걸어서 5분쯤 걸려요. 그래서 출근 시간에 안 늦어요.',
+      text: '출근 시간에는 길이 많이 막혀요. 그래서 저는 버스를 안 타요. 지하철을 타요. 기숙사에서 회사까지 지하철로 30분쯤 걸려요.',
     },
-    choices: ['기숙사가 회사에서 멀어요.', '회사까지 버스를 타고 가요.', '출근 시간에 자주 늦어요.', '회사까지 걸어서 5분쯤 걸려요.'],
-    correctChoiceId: 'd',
+    choices: ['출근 시간에는 길이 안 막혀요.', '저는 버스를 타고 출근해요.', '회사까지 지하철로 30분쯤 걸려요.', '회사까지 걸어서 30분쯤 걸려요.'],
+    correctChoiceId: 'c',
     explanation:
-      'The dorm is very close to the office: a 5-minute walk, so the writer is never late. They walk rather than take a bus, and the dorm is close, not far.',
+      'The roads are jammed at rush hour, so the writer skips the bus and takes the metro, which takes about 30 minutes. They do not walk, and the roads are jammed, not clear.',
   }),
 
   // ---------- -아서/어서: because, so ----------
   q({
     id: 'ch12-q021',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eoseo-reason',
     format: 'grammar',
     difficulty: 1,
     prompt: CORRECT_SENTENCE,
-    choices: ['길이 막혔어서 늦었어요.', '피곤하어서 일찍 잤어요.', '날씨가 좋아서 공원에 걸어갔어요.', '배가 고프어서 밥을 먹었어요.'],
+    choices: ['길이 막혔어서 늦었어요.', '운동하어서 피곤해요.', '오늘은 바빠서 점심을 늦게 먹었어요.', '표가 싸어서 기차를 탔어요.'],
     correctChoiceId: 'c',
     explanation:
-      '좋다 has ㅗ, so it takes -아서: 좋아서. The others should be 막혀서 (no past tense before -아서/어서), 피곤해서, and 고파서 (the ㅡ drops).',
+      '바쁘다 drops its ㅡ, and the vowel before it is ㅏ, so it becomes 바빠서. The others should be 막혀서 (no past tense before -아서/어서), 운동해서 (-하다 becomes -해서), and 싸서 (싸 + 아 merge into one ㅏ).',
   }),
   q({
     id: 'ch12-q022',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eoseo-reason',
     format: 'sentence-completion',
     difficulty: 2,
@@ -302,18 +327,20 @@ export const chapter12Questions: Question[] = [
   }),
   q({
     id: 'ch12-q023',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eoseo-reason',
     format: 'dialogue-completion',
     difficulty: 2,
     prompt: BLANK,
-    context: { kind: 'dialogue', text: '가: 왜 늦었어요?\n나: (          ) 늦었어요. 미안해요.' },
-    choices: ['집이 가까워서', '날씨가 좋아서', '지하철이 빨라서', '차가 많이 막혀서'],
-    correctChoiceId: 'd',
+    context: { kind: 'dialogue', text: '가: 왜 KTX를 안 탔어요?\n나: (          ) 고속버스를 탔어요.' },
+    choices: ['KTX가 빨라서', '시간이 없어서', 'KTX 표가 비싸서', '고속버스가 느려서'],
+    correctChoiceId: 'c',
     explanation:
-      'Only a traffic jam explains being late. A close home, good weather, or a fast metro would help you arrive on time, not late.',
+      'Only an expensive KTX ticket explains choosing the bus over the KTX. A fast KTX or having no time are reasons to take the KTX, and a slow bus is a reason not to take the bus.',
   }),
   q({
     id: 'ch12-q024',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'grammar.a-eoseo-reason',
     format: 'grammar',
     difficulty: 3,
@@ -327,28 +354,30 @@ export const chapter12Questions: Question[] = [
   // ---------- Public transport in Korea ----------
   q({
     id: 'ch12-q025',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'culture.public-transport',
     format: 'reading',
     difficulty: 2,
     prompt: READ_MATCH,
     context: {
       kind: 'passage',
-      text: '한국에서 도시와 도시 사이를 갈 때 사람들은 고속버스를 많이 타요. 기차도 있어요. KTX는 조금 비싸요. 하지만 아주 빨라요.',
+      text: '서울에는 지하철과 시내버스가 있어요. 출퇴근 시간에는 길이 많이 막혀요. 그래서 많은 사람들이 지하철로 출근해요. 택시는 밤에도 다녀요.',
     },
-    choices: ['KTX는 아주 느려요.', '고속버스는 도시 안에서만 다녀요.', 'KTX는 비싸고 빨라요.', '도시와 도시 사이에는 기차가 없어요.'],
-    correctChoiceId: 'c',
+    choices: ['서울에는 지하철이 없어요.', '출퇴근 시간에는 사람들이 지하철을 많이 타요.', '출퇴근 시간에는 길이 안 막혀요.', '택시는 밤에 안 다녀요.'],
+    correctChoiceId: 'b',
     explanation:
-      'The passage says the KTX costs a little more but is very fast. Express buses go between cities, not only inside one, and there are trains between cities too.',
+      'Roads are jammed at rush hour, so many people go to work by metro: 지하철로 출근해요 means the same as taking the metro. Seoul does have a metro, the roads are jammed, and taxis also run at night.',
   }),
   q({
     id: 'ch12-q026',
+    reviewStatus: 'ai-reviewed',
     conceptId: 'culture.public-transport',
     format: 'reading',
     difficulty: 2,
     prompt: '한국의 대중교통에 대한 설명으로 맞는 것을 고르십시오.',
-    choices: ['고속버스 표는 인터넷으로도 사요.', '택시는 밤에 안 다녀요.', '지하철은 작은 도시에도 다 있어요.', '서울에서 부산까지 KTX로 10시간쯤 걸려요.'],
+    choices: ['택시는 앱으로도 불러요.', '고속버스는 밤에는 안 다녀요.', '지하철은 작은 도시에도 다 있어요.', '마을버스는 도시와 도시 사이를 다녀요.'],
     correctChoiceId: 'a',
     explanation:
-      'Express bus and train tickets can be bought ahead of time online or in an app. Taxis run day and night, only big cities have a metro, and the KTX takes about two and a half hours from Seoul to Busan.',
+      'You can wave a taxi down on the street or call one with an app. Busy express-bus routes run late at night, only big cities have a metro, and a 마을버스 stays inside one neighborhood.',
   }),
 ]

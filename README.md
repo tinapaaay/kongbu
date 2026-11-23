@@ -119,7 +119,7 @@ All eight steps pass in the browser tests: open the dashboard, select Chapter 11
 - The 22 Chapter 11 questions are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 150–159, authorized by the product owner. The quiz shows “Reviewed by AI · not teacher-checked”; `approved` is reserved for a subsequent human review. See the [per-question review](docs/content/chapter-11-review.md) for changes, answer rationales, and limits.
 - If the same quiz is open in two tabs, the tab that saves last keeps its answers for that quiz. Submitted quizzes are never lost.
 - Progress is stored per browser. Use Settings → Backup to move it between Chrome and Safari until Phase 2 adds a database.
-- The 26 Chapter 12 questions (Public Transportation) are `draft`: written for Kongbu, not yet reviewed, and labeled "Draft question · not yet reviewed" in the quiz.
+- The 26 Chapter 12 questions (Public Transportation) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 160–169. Ten were rewritten or edited, mostly so they no longer mirror the book's own test items. See the [Chapter 12 review](docs/content/chapter-12-review.md).
 - Chapters 11 and 12 have content. Other chapters show their real titles with "Content coming later."
 
 **Pending by phase:**
