@@ -7,6 +7,7 @@
  * through loadChapterContent() or the hooks in useChapterContent.ts.
  */
 import { chapters } from './chapters'
+import { chapter1Concepts } from './chapter-01/concepts'
 import { chapter11Concepts } from './chapter-11/concepts'
 import { chapter12Concepts } from './chapter-12/concepts'
 import type { Chapter, ChapterContent, ChapterId, Concept } from './schemas'
@@ -14,13 +15,14 @@ import type { Chapter, ChapterContent, ChapterId, Concept } from './schemas'
 export * from './schemas'
 export { chapters }
 
-export const concepts: Concept[] = [...chapter11Concepts, ...chapter12Concepts]
+export const concepts: Concept[] = [...chapter1Concepts, ...chapter11Concepts, ...chapter12Concepts]
 
 /**
  * How to fetch each chapter that has content. `import()` tells the build tool to put
  * that chapter in its own file, downloaded the first time it's needed.
  */
 const loaders: Record<string, () => Promise<ChapterContent>> = {
+  ch1: () => import('./chapter-01/index').then((m) => m.chapterContent),
   ch11: () => import('./chapter-11/index').then((m) => m.chapterContent),
   ch12: () => import('./chapter-12/index').then((m) => m.chapterContent),
 }

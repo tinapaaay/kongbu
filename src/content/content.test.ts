@@ -34,11 +34,11 @@ describe('real content', () => {
     expect(getChapterByNumber(60)?.titleEn).toBe('Employment Insurance')
   })
 
-  it('makes Chapters 11 and 12 available for now', () => {
-    expect(chapters.filter((c) => c.contentStatus === 'available').map((c) => c.number)).toEqual([11, 12])
+  it('makes Chapters 1, 11, and 12 available for now', () => {
+    expect(chapters.filter((c) => c.contentStatus === 'available').map((c) => c.number)).toEqual([1, 11, 12])
   })
 
-  for (const chapterId of ['ch11', 'ch12']) {
+  for (const chapterId of ['ch1', 'ch11', 'ch12']) {
     it(`has at least 20 ${chapterId} questions, so a 10-question quiz can vary`, () => {
       expect(getQuestionsForChapter(chapterId).length).toBeGreaterThanOrEqual(20)
     })

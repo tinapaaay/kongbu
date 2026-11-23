@@ -39,6 +39,7 @@ describe('Chapter Library', () => {
     for (const path of ['/learn', '/learn?book=2']) {
       await renderAt(path)
       const ready = screen.getByRole('region', { name: 'Available now' })
+      expect(within(ready).getByRole('link', { name: /1 자기소개 Self Introduction · Book 1/ })).toHaveAttribute('href', '/learn/1')
       expect(within(ready).getByRole('link', { name: /11 집안일 Household Chores · Book 1/ })).toHaveAttribute('href', '/learn/11')
       expect(within(ready).getByRole('link', { name: /12 대중교통 Public Transportation · Book 1/ })).toHaveAttribute('href', '/learn/12')
       document.body.innerHTML = ''
@@ -47,8 +48,8 @@ describe('Chapter Library', () => {
 
   it('shows every chapter as not started for a new learner', async () => {
     await renderAt('/learn')
-    expect(screen.getAllByText('Not started')).toHaveLength(2)
-    expect(screen.getAllByText('Coming later')).toHaveLength(28)
+    expect(screen.getAllByText('Not started')).toHaveLength(3)
+    expect(screen.getAllByText('Coming later')).toHaveLength(27)
     expect(screen.queryByText(/Practiced|Mastered|Visited/)).not.toBeInTheDocument()
   })
 })

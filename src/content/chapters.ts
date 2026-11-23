@@ -74,7 +74,7 @@ const book2: Array<[number, string, string, number]> = [
 ]
 
 /** Chapters that have lessons and questions in the app. */
-const AVAILABLE = new Set([11, 12])
+const AVAILABLE = new Set([1, 11, 12])
 
 function toChapter(volume: 1 | 2) {
   return ([number, titleKo, titleEn, page]: [number, string, string, number]): Chapter => ({
