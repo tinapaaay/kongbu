@@ -138,3 +138,15 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.email {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--spacing-touch-target);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--rounded-sm);
+  padding: var(--spacing-sm);
+  font: inherit;
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+}

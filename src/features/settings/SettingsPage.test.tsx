@@ -38,7 +38,7 @@ const backupWithProgress = createBackup(
 describe('Settings: backup', () => {
   it('explains that progress lives in this browser only', async () => {
     await renderSettings()
-    expect(screen.getByText(/saved in this browser only/)).toBeInTheDocument()
+    expect(screen.getByText(/saved on this device first/)).toBeInTheDocument()
     expect(screen.getByText('Last backup: never')).toBeInTheDocument()
   })
 
@@ -70,19 +70,19 @@ describe('Settings: backup', () => {
 })
 
 describe('Settings: restore', () => {
-  it('shows what a backup contains and asks before replacing anything', async () => {
+  it('shows what a backup contains and asks before adding anything', async () => {
     const { storage } = await renderSettings()
     await userEvent.upload(screen.getByLabelText('Backup file'), backupFile(backupWithProgress))
 
-    expect(await screen.findByText('Replace progress in this browser?')).toBeInTheDocument()
+    expect(await screen.findByText('Add progress from this backup?')).toBeInTheDocument()
     expect(screen.getByText(/contains 1 quiz, 2 answers/)).toBeInTheDocument()
     expect(storage.getItem(STORAGE_KEY)).toBeNull()
   })
 
-  it('replaces progress after confirmation', async () => {
+  it('adds progress after confirmation', async () => {
     const { storage } = await renderSettings()
     await userEvent.upload(screen.getByLabelText('Backup file'), backupFile(backupWithProgress))
-    await userEvent.click(await screen.findByRole('button', { name: 'Replace progress' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Add progress' }))
 
     expect(await screen.findByRole('status')).toHaveTextContent('Progress restored: 1 quiz and 2 answers')
     expect(savedData(storage).attempts).toHaveLength(2)

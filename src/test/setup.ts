@@ -9,6 +9,7 @@ afterEach(() => {
 })
 
 // jsdom doesn't implement scrolling; the app calls it after navigation.
+if (typeof window !== 'undefined') {
 window.scrollTo = () => {}
 Element.prototype.scrollIntoView = () => {}
 
@@ -21,4 +22,6 @@ if (!HTMLDialogElement.prototype.showModal) {
   HTMLDialogElement.prototype.close = function close(this: HTMLDialogElement) {
     this.open = false
   }
+}
+
 }

@@ -48,8 +48,12 @@ export function listMistakes(attempts: Attempt[], filter: MistakeFilter = {}): M
 /** The moment enough later evidence existed to fix this mistake, or undefined if it is still open. */
 function whenFixed(mistake: Attempt, correctOnConcept: Attempt[]): string | undefined {
   const later = correctOnConcept
-    .filter((c) => c.sessionId !== mistake.sessionId && c.answeredAt > mistake.answeredAt)
-    .sort((x, y) => x.answeredAt.localeCompare(y.answeredAt))
+    .filter((c) => c.sessionId !== mistake.sessionId && (
+      c.serverReceivedAt && mistake.serverReceivedAt
+        ? c.serverReceivedAt > mistake.serverReceivedAt
+        : c.answeredAt > mistake.answeredAt
+    ))
+    .sort((x, y) => (x.serverReceivedAt ?? x.answeredAt).localeCompare(y.serverReceivedAt ?? y.answeredAt))
 
   const otherQuestions = new Set<string>()
   for (const correct of later) {

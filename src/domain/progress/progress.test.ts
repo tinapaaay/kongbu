@@ -258,7 +258,8 @@ describe('learner data', () => {
   it('starts empty for a new learner, and the empty state is valid', () => {
     const empty = emptyLearnerData()
     expect(empty).toEqual({
-      schemaVersion: 2,
+      schemaVersion: 3,
+      visitRecords: [],
       chapterVisits: {},
       activeSession: null,
       sessions: [],

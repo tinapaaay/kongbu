@@ -482,7 +482,7 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 
 **Mastery checklist.** Results lists the three mastery conditions with ✓ (Success) or ○ (Secondary) and a hidden "Done"/"Not yet" for screen readers, instead of a paragraph of rules.
 
-**Footer.** Every page except the quiz ends with one quiet line above a 1px Border rule: "Unofficial study app, not affiliated with HRD Korea. No accounts, no tracking," with a link to About Kongbu. The app looks like the textbook on purpose, so this line must always be visible to prevent it being mistaken for an official product. The quiz leaves it out to stay distraction-free.
+**Footer.** Every page except the quiz ends with one quiet line above a 1px Border rule: "Unofficial study app, not affiliated with HRD Korea. Your progress is saved on this device, with optional account sync." with a link to About Kongbu. The app looks like the textbook on purpose, so this line must always be visible to prevent it being mistaken for an official product. The quiz leaves it out to stay distraction-free.
 
 **Chapter list.** Chapters with content have a linked title and a status pill. Chapters without content are quieter: regular-weight secondary title and the words "Coming later" in the status column, so gray is never the only signal.
 
@@ -497,6 +497,8 @@ Boxes have a 1px Border rule. Answer choices and inputs use a 1px Outline rule. 
 **Review labels.** "Draft question · not yet reviewed" and "Reviewed by AI · not teacher-checked" appear as quiet outlined pills for draft and AI-reviewed questions, respectively.
 
 **Available now.** A pale-blue box above the chapter table on Learn. Its caps label uses the tab-label style in Primary Strong, and it lists each chapter that has content as a link: number, underlined Korean title, then a plain English gloss. It appears on both book tabs, so a learner never has to scroll past chapters without content to find one.
+
+**Confirm steps.** An action that adds to or removes saved progress (restoring a backup, forgetting this device's progress) never happens on the first tap. The first button opens a pale-blue confirm box in place: a bold question, a plain sentence saying exactly what changes (with counts), Cancel as a secondary button, and the action as the primary button. A risk such as records that haven't synced yet goes in a word-bank reminder inside the box. There is no red "danger" button: the counts and the reminder carry the warning, so the color system stays the book's.
 
 **Update notice.** A pale-blue strip above the navigation, in the page flow (not floating, no shadow), with a 1px Border rule below. "A new version of Kongbu is ready. Your progress is saved." with a primary Reload and a secondary Later. A new version never loads by itself, so a deploy can't interrupt a quiz. The first time the app is saved for offline use, the same strip says "Kongbu now works offline on this device." with OK.
 

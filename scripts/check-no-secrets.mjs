@@ -10,7 +10,7 @@ const patterns = [
   ['OpenAI-style key', /sk-[A-Za-z0-9_-]{20,}/],
   ['Supabase service key name', /SUPABASE_SERVICE_ROLE/i],
   ['OpenAI key name', /OPENAI_API_KEY/i],
-  ['JWT-looking token', /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/],
+  ['Supabase secret key', /sb_secret_[A-Za-z0-9_-]+/],
   ['Bearer token', /Bearer\s+[A-Za-z0-9._-]{20,}/],
   ['Private key block', /-----BEGIN [A-Z ]*PRIVATE KEY-----/],
   ['GitHub token', /gh[pousr]_[A-Za-z0-9]{30,}/],
@@ -35,6 +35,15 @@ try {
 const findings = []
 for (const file of all) {
   const text = await readFile(file, 'utf8')
+  // Legacy Supabase anon JWTs are public by design. Every other JWT remains forbidden.
+  for (const match of text.matchAll(/eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g)) {
+    let publicAnon = false
+    try {
+      const payload = JSON.parse(Buffer.from(match[0].split('.')[1], 'base64url').toString('utf8'))
+      publicAnon = payload.role === 'anon' && payload.iss === 'supabase'
+    } catch { /* unreadable tokens are not public anon keys */ }
+    if (!publicAnon) findings.push(`${file}: non-public JWT token`)
+  }
   for (const [label, pattern] of patterns) {
     if (pattern.test(text)) findings.push(`${file}: ${label}`)
   }

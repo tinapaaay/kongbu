@@ -2,7 +2,7 @@
  * Saved data carries a schemaVersion. When the format changes in a later phase,
  * add a step here that upgrades version N to N + 1, so old saved progress keeps working.
  */
-export const CURRENT_SCHEMA_VERSION = 2
+export const CURRENT_SCHEMA_VERSION = 3
 
 type Migration = (data: Record<string, unknown>) => Record<string, unknown>
 
@@ -38,6 +38,15 @@ function splitHouseholdChores(data: Record<string, unknown>): Record<string, unk
 /** Upgrades keyed by the version they upgrade FROM. */
 const migrations: Record<number, Migration> = {
   1: splitHouseholdChores,
+  2: (data) => ({
+    ...data,
+    // Stable IDs mean importing the same old backup twice cannot duplicate visits.
+    visitRecords: Object.entries((data.chapterVisits ?? {}) as Record<string, { firstAt: string; lastAt: string }>).map(
+      ([chapterId, visit]) => (visit && typeof visit === 'object'
+        ? { id: `legacy-visit:${chapterId}:${visit.firstAt}:${visit.lastAt}`, chapterId, ...visit }
+        : visit),
+    ),
+  }),
 }
 
 export type MigrationResult =

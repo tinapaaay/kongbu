@@ -74,9 +74,14 @@ export function LearnerDataProvider({ repository, now = systemNow, children }: L
         const updated = await run(() => repository.markBackedUp(at))
         return { fileName: backupFileName(at), text: createBackup(updated, at) }
       },
-      replaceAll: async (next: LearnerData) => {
-        await run(() => repository.replaceAll(next))
-        setLoadProblem(null)
+      mergeRecords: async (next: LearnerData) => {
+        let saved = true
+        await run(async () => {
+          try { return await repository.mergeRecords(next) }
+          catch (error) { saved = false; throw error }
+        })
+        if (saved) setLoadProblem(null)
+        return saved
       },
     }),
     [repository, now, run],

@@ -1,8 +1,9 @@
 # ADR-002: Phase 2 saves progress locally first and syncs to Supabase
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-11-20
 **Deciders:** Product owner
+**Accepted:** 2026-11-21 (product owner approved in the implementation chat)
 **Builds on:** [ADR-001](PHASE-0-PLAN.md#2-key-decision-record) (store learner history as a local attempt log, behind a repository)
 
 ## Context
@@ -67,7 +68,7 @@ Option B costs a little more than Option A but keeps a hard PRD requirement (off
 
 - **Easier:** progress across devices. Backups become a safety net instead of the only way to move between browsers. Offline quizzes keep working.
 - **Harder:**
-  - Sign-in is needed. The PRD deferred it until the MVP was verified, which is now done.
+  - Sign-in is needed. The PRD deferred it until the MVP was verified, which is now done. Sign-in uses a code typed into the app rather than an emailed link: on iPhone, a link opens Safari, whose storage is separate from the Home Screen app's, so the wrong app would be signed in.
   - Every table needs row-level security, so each learner can read and write only their own rows. Only the public anon key is ever used in the browser; the service role key never is (`npm run check:secrets` already fails a build that contains it).
   - Sync status needs a visible place on screen.
 - **Changes the data model** (saved data version 3, with a migration):
@@ -80,9 +81,9 @@ Option B costs a little more than Option A but keeps a hard PRD requirement (off
 
 **Before Phase 2 (small, can be done now):**
 
-1. [ ] Pass the concept list into `chapterProgress` instead of importing content inside a rule (`domain/progress/chapterProgress.ts`).
-2. [ ] Move shared quiz pieces (`useStartPractice`, `PracticeConceptButton`, `quizKindLabel`) out of the quiz screen's folder into a shared place.
-3. [ ] Load each chapter's content only when it is opened, before adding the second chapter. Chapter 11 adds about 6.5 KB compressed to the main JavaScript file, so 60 chapters would add about 390 KB.
+1. [x] Pass the concept list into `chapterProgress` instead of importing content inside a rule (`domain/progress/chapterProgress.ts`).
+2. [x] Move shared quiz pieces (`useStartPractice`, `PracticeConceptButton`, `quizKindLabel`) out of the quiz screen's folder into a shared place.
+3. [x] Load each chapter's content only when it is opened, before adding the second chapter. Chapter 11 adds about 6.5 KB compressed to the main JavaScript file, so 60 chapters would add about 390 KB.
 
 **Phase 2:**
 
@@ -99,3 +100,28 @@ Option B costs a little more than Option A but keeps a hard PRD requirement (off
 - **Append-only log:** records that are only ever added, never edited. This is what makes syncing simple here.
 - **Clock skew:** two devices disagreeing about the current time.
 - **Row-level security:** database rules that decide, row by row, who may read or change data.
+
+## Implementation notes (2026-11-21)
+
+The browser keeps its single `activeSession` slot, which is now explicitly **device-local**.
+Only submitted quizzes, attempts, and visit records are uploaded. A second device therefore
+cannot replace the first device's unfinished quiz; no distributed map of mutable quizzes is needed.
+An explicit backup import can recover an unfinished quiz only if this device has none.
+
+Version 3 adds immutable visit records and optional server receipts. Unacknowledged records
+are the persistent sync queue. Receipts are attached after a complete exchange, so retrying a
+partially successful exchange is safe. Restore unions records by ID and preserves current payloads.
+Server receipt order is used for mistake evidence when both answers have synced; pending local
+answers keep using local timestamps until receipts arrive.
+
+Cloud sync binds a browser profile to its first signed-in learner. Signing out retains local data;
+a different account must use a separate browser profile. This deliberately prevents accidentally
+uploading one learner's cached history into another account.
+
+Review follow-ups (2026-11-21, PR #12):
+
+- **Visit records and full downloads.** Visits are one record per chapter per day, and each sync
+  downloads only rows received since this device's newest receipt (with a 10-minute overlap), so
+  cost no longer grows with every sync.
+- **Forget this device.** After sign-out, Settings can delete the browser's progress and its
+  account link, so a shared computer can be handed to the next learner.

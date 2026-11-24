@@ -30,7 +30,7 @@ Milestone 11 acted on an outside review: progress is safe with several tabs open
 | 12. Design critique fixes | Done |
 | Polish: smaller critique items | Done |
 
-The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md). The proposed approach for Phase 2 (save locally first, then sync to Supabase) is in [docs/ADR-002-local-first-sync.md](docs/ADR-002-local-first-sync.md).
+The full plan, decisions, and acceptance checks are in [docs/PHASE-0-PLAN.md](docs/PHASE-0-PLAN.md). The accepted approach for Phase 2 (save locally first, then sync to Supabase) is in [docs/ADR-002-local-first-sync.md](docs/ADR-002-local-first-sync.md).
 
 ## Local setup
 
@@ -118,7 +118,7 @@ All eight steps pass in the browser tests: open the dashboard, select Chapter 11
 
 - The 22 Chapter 11 questions are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 150–159, authorized by the product owner. The quiz shows “Reviewed by AI · not teacher-checked”; `approved` is reserved for a subsequent human review. See the [per-question review](docs/content/chapter-11-review.md) for changes, answer rationales, and limits.
 - If the same quiz is open in two tabs, the tab that saves last keeps its answers for that quiz. Submitted quizzes are never lost.
-- Progress is stored per browser. Use Settings → Backup to move it between Chrome and Safari until Phase 2 adds a database.
+- Progress is stored per browser. Use optional Supabase sign-in to sync completed progress, or Settings → Backup to transfer it manually. Hosted sync requires project setup.
 - The 26 Chapter 12 questions (Public Transportation) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 160–169. Ten were rewritten or edited, mostly so they no longer mirror the book's own test items. See the [Chapter 12 review](docs/content/chapter-12-review.md).
 - The 24 Chapter 1 questions (Self Introduction) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 50–59. They use only the grammar Chapter 1 teaches (입니다/입니까?, 은/는). See the [Chapter 1 review](docs/content/chapter-01-review.md).
 - The 26 Chapter 13 questions (Weekend Activities) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 170–179. See the [Chapter 13 review](docs/content/chapter-13-review.md).
@@ -211,21 +211,21 @@ Progress is saved in the browser's localStorage under one key, `hangul-lab:learn
 
 - **Reload safe:** chapter visits, unfinished quizzes, submitted quizzes, and answers survive refreshes.
 - **Several tabs:** every change starts from the latest saved copy, not the tab's own older copy, so a forgotten tab can't erase work from another tab. Tabs also update when another tab saves.
-- **Format versions:** saved data has a `schemaVersion` (now 2). Older saved data and backups are upgraded when loaded. Version 1 → 2 moved old household-word answers to the new laundry, cleaning, and cooking concepts.
+- **Format versions:** saved data has a `schemaVersion` (now 3). Older saved data and backups are upgraded when loaded. Version 1 → 2 moved old household-word answers to the new laundry, cleaning, and cooking concepts.
 - **Damaged data:** if saved data can't be read, a copy is kept under `hangul-lab:damaged-copy:<time>` and every page shows a warning. Nothing is silently deleted.
 - **Newer data:** data saved by a newer app version is never overwritten.
 - **Blocked or full storage:** the app keeps working for the current visit and shows a warning.
-- **Backups:** Settings downloads a `kongbu-backup-YYYY-MM-DD.json` file and restores one (backups made under the app's earlier names, `hangul-lab-backup-…` and `gongbu-backup-…`, still restore). A restore file is fully checked and summarized, and nothing is replaced until you confirm.
+- **Backups:** Settings downloads a `kongbu-backup-YYYY-MM-DD.json` file and restores one (backups made under the app's earlier names, `hangul-lab-backup-…` and `gongbu-backup-…`, still restore). A restore file is fully checked and summarized, and missing records are added after you confirm; existing progress is kept.
 
 ## Installable and offline
 
 Kongbu is a **Progressive Web App**: on Android and desktop Chrome, use **Install app**; on iPhone, Safari's **Share → Add to Home Screen**. It then opens full screen with its own icon.
 
-A **service worker** (`vite-plugin-pwa`) saves every built file the first time the app opens, including each chapter, so after one visit every page opens offline. The update notice appears when a new version has been downloaded. The new version loads only when you tap Reload, so a deploy never interrupts a quiz. Browser tests turn the service worker off (`serviceWorkers: 'block'` in `playwright.config.ts`) except in `installable-offline.spec.ts`, because it would answer requests that tests block on purpose.
+A **service worker** (`vite-plugin-pwa`) saves every built file the first time the app opens, including each chapter, so after one visit every page opens offline. It never stores Supabase requests: those always go to the network, and sync retries when the connection returns. The update notice appears when a new version has been downloaded. The new version loads only when you tap Reload, so a deploy never interrupts a quiz. Browser tests turn the service worker off (`serviceWorkers: 'block'` in `playwright.config.ts`) except in `installable-offline.spec.ts`, because it would answer requests that tests block on purpose.
 
 The icons in `public/` are drawn by `swift scripts/make-icons.swift` (macOS, with the system Korean font). Run it again only if the icon design changes.
 
-Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, so Phase 2 can switch to a database by adding a new `LearnerRepository`.
+Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, with an optional sync repository around the local repository.
 
 ## Taking a quiz
 
@@ -248,3 +248,11 @@ Screens use progress only through `useLearnerData()`. Storage details stay in `s
 | `/quiz/:sessionId` | Quiz (no main navigation) |
 | `/quiz/:sessionId/results` | Results |
 | `/settings` | Settings |
+
+
+## Optional Supabase sync (Phase 2)
+
+See [the setup and verification guide](docs/SUPABASE-SETUP.md). Core quizzes work without
+configuration or sign-in. Configured builds offer email-link sign-in in Settings and show sync
+status. Only completed quizzes, attempts, and chapter visit records sync; unfinished quizzes
+remain on their own device. Version 1/2 saves and backups migrate to version 3 automatically.

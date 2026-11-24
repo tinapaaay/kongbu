@@ -7,6 +7,7 @@ import { downloadTextFile } from '../../data/download'
 import { useLearnerData } from '../../data/learnerDataContext'
 import { isAppleMobileBrowserTab, isStoragePersisted } from '../../data/storageSafety'
 import type { LearnerData } from '../../domain/learnerData'
+import { SyncSettings } from '../../sync/SyncSettings'
 import styles from './SettingsPage.module.css'
 
 type RestoreState =
@@ -27,7 +28,7 @@ interface SettingsPageProps {
 const systemNow = () => new Date()
 
 export function SettingsPage({ download = downloadTextFile, now = systemNow }: SettingsPageProps) {
-  const { data, exportBackup, replaceAll } = useLearnerData()
+  const { data, exportBackup, mergeRecords } = useLearnerData()
   const [appleBrowserTab] = useState(() => isAppleMobileBrowserTab())
   const [persisted, setPersisted] = useState(false)
   useEffect(() => {
@@ -45,6 +46,8 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
   // Read the clock once when the page opens, not on every render.
   const [openedAt] = useState(now)
 
+  const records = [...data.sessions, ...data.attempts, ...data.visitRecords]
+  const deviceProgress = { records: records.length, unsynced: records.filter((record) => !record.serverReceivedAt).length }
   const hasProgress = data.attempts.length > 0 || Object.keys(data.chapterVisits).length > 0
   const daysSinceBackup = data.lastBackupAt === null ? null : daysBetween(data.lastBackupAt, openedAt)
   // Say exactly what is true: "never" and "8 days ago" are different situations.
@@ -83,8 +86,16 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
 
   async function confirmRestore() {
     if (restore.step !== 'confirm') return
-    await replaceAll(restore.data)
-    setRestore({ step: 'done', summary: restore.summary })
+    // Receipts belong to the account they came from. Imported records must be acknowledged
+    // by this account's server too; existing local receipts are preserved by the merge.
+    const withoutReceipt = <T extends { serverReceivedAt?: string },>({ serverReceivedAt: _receipt, ...record }: T) => record
+    const saved = await mergeRecords({ ...restore.data,
+      sessions: restore.data.sessions.map(withoutReceipt),
+      attempts: restore.data.attempts.map(withoutReceipt),
+      visitRecords: restore.data.visitRecords.map(withoutReceipt),
+    })
+    setRestore(saved ? { step: 'done', summary: restore.summary }
+      : { step: 'error', message: 'The imported progress could not be saved. Check the storage warning and download a backup before leaving.' })
   }
 
   return (
@@ -92,10 +103,10 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
       <PageHeader title="Settings" />
 
       <div className={styles.explainer}>
-        <p className={styles.strong}>Your progress is saved in this browser only.</p>
+        <p className={styles.strong}>Your progress is saved on this device first.</p>
         <p>
-          Chrome and Safari keep separate copies, and Safari may delete a site's data after about 7 days without a
-          visit. Download a backup to keep your progress safe or to move it to another browser.
+          Sign in below to sync between devices when cloud sync is available. Quizzes keep working offline.
+          Download backups as another way to keep your progress safe.
         </p>
         {appleBrowserTab ? (
           <p>
@@ -109,6 +120,7 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
       </div>
 
       <div className={styles.grid}>
+        <SyncSettings progress={deviceProgress} />
         <section className={styles.panel} aria-labelledby="backup-heading">
           <h2 id="backup-heading" className={styles.panelTitle}>
             Download backup
@@ -136,11 +148,11 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
           <h2 id="restore-heading" className={styles.panelTitle}>
             Restore from backup
           </h2>
-          <p className={styles.meta}>Replaces the progress in this browser. It does not merge the two.</p>
+          <p className={styles.meta}>Adds missing quizzes, answers, and chapter visits. Your current progress is kept.</p>
 
           {restore.step === 'confirm' ? (
             <div className={styles.confirm}>
-              <p className={styles.strong}>Replace progress in this browser?</p>
+              <p className={styles.strong}>Add progress from this backup?</p>
               <p className={styles.meta}>
                 {restore.fileName} was made {restore.summary.exportedAt ? formatDate(restore.summary.exportedAt) : 'on an unknown date'}{' '}
                 and contains {count(restore.summary.quizzes, 'quiz', 'quizzes')},{' '}
@@ -148,14 +160,14 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
                 {count(restore.summary.chaptersVisited, 'visited chapter', 'visited chapters')}.
               </p>
               <p className={styles.meta}>
-                This browser's current {count(data.attempts.length, 'answer', 'answers')} will be replaced.
+                This browser's current {count(data.attempts.length, 'answer', 'answers')} will be kept. Duplicate records are added only once.
               </p>
               <div className={styles.row}>
                 <button type="button" className={buttons.secondary} onClick={() => setRestore({ step: 'idle' })}>
                   Cancel
                 </button>
                 <button type="button" className={buttons.primary} onClick={confirmRestore}>
-                  Replace progress
+                  Add progress
                 </button>
               </div>
             </div>
