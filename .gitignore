@@ -41,3 +41,6 @@ kongbu-backup*.json
 # Playwright output
 test-results/
 playwright-report/
+
+# Teacher review sheets made by `npm run export:review` (copies of src/content; share, never commit)
+exports/

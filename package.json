@@ -17,7 +17,8 @@
     "check:secrets": "node scripts/check-no-secrets.mjs",
     "verify": "npm run lint && npm run typecheck && npm test && npm run design:lint && npm run design:check-type && npm run build && npm run check:content-split && npm run check:secrets && npm run test:e2e",
     "design:check-type": "node scripts/check-type-scale.mjs",
-    "check:content-split": "node scripts/check-content-split.mjs"
+    "check:content-split": "node scripts/check-content-split.mjs",
+    "export:review": "node scripts/export-review.mjs"
   },
   "dependencies": {
     "@fontsource/titillium-web": "5.3.0",
