@@ -189,6 +189,8 @@ All study material lives in `src/content/`, and screens read it only through `sr
 
 `npm test` fails if any content breaks a rule. Questions are original EPS-TOPIK-style practice, default to `draft`; AI review sets `ai-reviewed`, while human approval sets `approved`, and must never mention ①–④ in explanations, because choices can be shuffled.
 
+**Teacher review:** `npm run export:review -- 11` (or `-- --all`) writes a printable HTML sheet and a CSV of a chapter's questions to `exports/` (gitignored) for a Korean teacher to check. See [Teacher review](docs/content/teacher-review.md) for what they check and how to record approvals.
+
 ## Study rules
 
 The rules in `src/domain/` are plain TypeScript functions with no screens or storage, so each one is tested on its own.
