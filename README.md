@@ -123,7 +123,8 @@ All eight steps pass in the browser tests: open the dashboard, select Chapter 11
 - The 24 Chapter 1 questions (Self Introduction) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 50–59. They use only the grammar Chapter 1 teaches (입니다/입니까?, 은/는). See the [Chapter 1 review](docs/content/chapter-01-review.md).
 - The 26 Chapter 13 questions (Weekend Activities) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 170–179. See the [Chapter 13 review](docs/content/chapter-13-review.md).
 - The 26 Chapter 14 questions (Getting Directions) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 180–189. See the [Chapter 14 review](docs/content/chapter-14-review.md).
-- Chapters 1 and 11–14 have content. Other chapters show their real titles with "Content coming later." Chapters are being added in order from Chapter 15; Chapters 2–10 come later.
+- The 27 Chapter 15 questions (Clothing) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 190–199. See the [Chapter 15 review](docs/content/chapter-15-review.md).
+- Chapters 1 and 11–15 have content. Other chapters show their real titles with "Content coming later." Chapters are being added in order from Chapter 16; Chapters 2–10 come later.
 
 **Pending by phase:**
 

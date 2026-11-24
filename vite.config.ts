@@ -42,6 +42,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     // Browser tests in tests/e2e run with Playwright (`npm run test:e2e`), not Vitest.
-    exclude: [...configDefaults.exclude, 'tests/e2e/**'],
+    // .claude/worktrees holds other working copies of this repo (parallel Claude sessions); never test those here.
+    exclude: [...configDefaults.exclude, 'tests/e2e/**', '.claude/**'],
   },
 })
