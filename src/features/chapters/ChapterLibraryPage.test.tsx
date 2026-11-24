@@ -32,8 +32,9 @@ describe('Chapter Library', () => {
     await renderAt('/learn')
     expect(screen.getByRole('link', { name: '집안일' })).toHaveAttribute('href', '/learn/11')
     expect(screen.getByRole('link', { name: '대중교통' })).toHaveAttribute('href', '/learn/12')
-    expect(screen.queryByRole('link', { name: '주말 활동' })).not.toBeInTheDocument()
-    expect(screen.getByText('주말 활동')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '주말 활동' })).toHaveAttribute('href', '/learn/13')
+    expect(screen.queryByRole('link', { name: '생활용품' })).not.toBeInTheDocument()
+    expect(screen.getByText('생활용품')).toBeInTheDocument()
   })
 
   it('lists the chapters you can study first, on both book tabs', async () => {

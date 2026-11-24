@@ -121,7 +121,8 @@ All eight steps pass in the browser tests: open the dashboard, select Chapter 11
 - Progress is stored per browser. Use Settings → Backup to move it between Chrome and Safari until Phase 2 adds a database.
 - The 26 Chapter 12 questions (Public Transportation) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 160–169. Ten were rewritten or edited, mostly so they no longer mirror the book's own test items. See the [Chapter 12 review](docs/content/chapter-12-review.md).
 - The 24 Chapter 1 questions (Self Introduction) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 50–59. They use only the grammar Chapter 1 teaches (입니다/입니까?, 은/는). See the [Chapter 1 review](docs/content/chapter-01-review.md).
-- Chapters 1, 11, and 12 have content. Other chapters show their real titles with "Content coming later." Chapters are being added in order from Chapter 2.
+- The 26 Chapter 13 questions (Weekend Activities) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 170–179. See the [Chapter 13 review](docs/content/chapter-13-review.md).
+- Chapters 1, 11, 12, and 13 have content. Other chapters show their real titles with "Content coming later." Chapters are being added in order from Chapter 14; Chapters 2–10 come later.
 
 **Pending by phase:**
 

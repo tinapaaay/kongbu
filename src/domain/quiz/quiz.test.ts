@@ -51,7 +51,7 @@ describe('buildChapterSession', () => {
   })
 
   it('refuses when a chapter has too few questions', () => {
-    const result = buildChapterSession({ chapterId: 'ch13', questions, attempts: [], now: NOW })
+    const result = buildChapterSession({ chapterId: 'ch60', questions, attempts: [], now: NOW })
     expect(result).toEqual({ ok: false, reason: 'not-enough-questions', available: 0, needed: 10 })
   })
 
