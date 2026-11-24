@@ -2,7 +2,8 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: 'tests/sync', fullyParallel: false,
-  use: { baseURL: 'http://localhost:4175', trace: 'retain-on-failure' },
+  // Same as playwright.config.ts: the service worker is off so it can't answer requests these tests mock.
+  use: { baseURL: 'http://localhost:4175', trace: 'retain-on-failure', serviceWorkers: 'block' },
   webServer: {
     command: 'npm run build && npx vite preview --port 4175 --strictPort',
     url: 'http://localhost:4175', timeout: 120_000,

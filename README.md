@@ -81,6 +81,7 @@ There are two kinds of tests.
 |---|---|
 | `definition-of-done.spec.ts` | The PRD's Definition of Done end to end, including a refresh mid-quiz and returning later. Also proves chapter filtering and double-submit safety |
 | `offline-and-privacy.spec.ts` | Quizzes work with the network switched off, and the app never contacts another website |
+| `installable-offline.spec.ts` | The manifest and icons make the app installable; after one visit, every page and chapter opens with no internet, even after a reload (Chrome only: Playwright's service worker support is reliable only there) |
 | `backup.spec.ts` | A backup made in one browser profile restores in a completely separate one, and wrong files are rejected |
 | `accessibility.spec.ts` | Every screen passes automated WCAG 2.1 AA checks (axe), a quiz can be taken by keyboard alone, and focus is visible |
 
@@ -118,7 +119,11 @@ All eight steps pass in the browser tests: open the dashboard, select Chapter 11
 - The 22 Chapter 11 questions are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 150–159, authorized by the product owner. The quiz shows “Reviewed by AI · not teacher-checked”; `approved` is reserved for a subsequent human review. See the [per-question review](docs/content/chapter-11-review.md) for changes, answer rationales, and limits.
 - If the same quiz is open in two tabs, the tab that saves last keeps its answers for that quiz. Submitted quizzes are never lost.
 - Progress is stored per browser. Use optional Supabase sign-in to sync completed progress, or Settings → Backup to transfer it manually. Hosted sync requires project setup.
-- Only Chapter 11 has content. Other chapters show their real titles with "Content coming later."
+- The 26 Chapter 12 questions (Public Transportation) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 160–169. Ten were rewritten or edited, mostly so they no longer mirror the book's own test items. See the [Chapter 12 review](docs/content/chapter-12-review.md).
+- The 24 Chapter 1 questions (Self Introduction) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 50–59. They use only the grammar Chapter 1 teaches (입니다/입니까?, 은/는). See the [Chapter 1 review](docs/content/chapter-01-review.md).
+- The 26 Chapter 13 questions (Weekend Activities) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 170–179. See the [Chapter 13 review](docs/content/chapter-13-review.md).
+- The 26 Chapter 14 questions (Getting Directions) are marked `ai-reviewed` after an AI-assisted review against Book 1, pages 180–189. See the [Chapter 14 review](docs/content/chapter-14-review.md).
+- Chapters 1 and 11–14 have content. Other chapters show their real titles with "Content coming later." Chapters are being added in order from Chapter 15; Chapters 2–10 come later.
 
 **Pending by phase:**
 
@@ -173,9 +178,12 @@ docs/             Plan, decision records (ADR-002), and design references
 All study material lives in `src/content/`, and screens read it only through `src/content/index.ts`.
 
 - `chapters.ts`: all 60 chapters from both books' contents pages.
+- `chapter-01/`: the lesson, 6 concepts, and 24 original practice questions that use only Chapter 1 grammar.
 - `chapter-11/`: the lesson (vocabulary, grammar, culture), 8 concepts, and 22 original practice questions. Household words are split into laundry, cleaning, and cooking, so one right answer about brooms can't fix a laundry mistake.
+- `chapter-12/`: the lesson, 8 concepts, and 26 original practice questions, at least two per concept, so a mistake can be fixed by a different question. `(으)로` and `~에서 ~까지` are separate concepts, even though the book teaches them on one page.
 - `schemas.ts`: the rules every chapter, concept, question, and lesson must follow.
-- **What loads when:** chapter titles and concept names load with the app. Each chapter's lesson and questions (`chapter-11/index.ts`) are a separate file, downloaded the first time a screen needs them through `loadChapterContent()` or `useChapterContent()`. The app also downloads your current chapter in the background, so it keeps working if the connection drops after the app opens. To add a chapter, add one line to the `loaders` list in `index.ts`.
+- **What loads when:** chapter titles and concept names load with the app. Each chapter's lesson and questions (`chapter-11/index.ts`) are a separate file, downloaded the first time a screen needs them through `loadChapterContent()` or `useChapterContent()`. The app also downloads your current chapter in the background, so it keeps working if the connection drops after the app opens. `index.ts` finds chapters by their `chapter-NN/` folders, so adding a folder is all it takes: see [Adding a chapter](docs/content/adding-a-chapter.md), which also has the concept ID naming rule.
+- `questionBuilder.ts`: the shared `questionMaker()` and standard instructions that every chapter's `questions.ts` uses.
 - `allContent.ts`: every chapter at once, for tests and validation only.
 - `validate.ts`: cross-checks, such as every question pointing to a real concept and every answer key matching a choice.
 
@@ -208,6 +216,14 @@ Progress is saved in the browser's localStorage under one key, `hangul-lab:learn
 - **Newer data:** data saved by a newer app version is never overwritten.
 - **Blocked or full storage:** the app keeps working for the current visit and shows a warning.
 - **Backups:** Settings downloads a `kongbu-backup-YYYY-MM-DD.json` file and restores one (backups made under the app's earlier names, `hangul-lab-backup-…` and `gongbu-backup-…`, still restore). A restore file is fully checked and summarized, and missing records are added after you confirm; existing progress is kept.
+
+## Installable and offline
+
+Kongbu is a **Progressive Web App**: on Android and desktop Chrome, use **Install app**; on iPhone, Safari's **Share → Add to Home Screen**. It then opens full screen with its own icon.
+
+A **service worker** (`vite-plugin-pwa`) saves every built file the first time the app opens, including each chapter, so after one visit every page opens offline. It never stores Supabase requests: those always go to the network, and sync retries when the connection returns. The update notice appears when a new version has been downloaded. The new version loads only when you tap Reload, so a deploy never interrupts a quiz. Browser tests turn the service worker off (`serviceWorkers: 'block'` in `playwright.config.ts`) except in `installable-offline.spec.ts`, because it would answer requests that tests block on purpose.
+
+The icons in `public/` are drawn by `swift scripts/make-icons.swift` (macOS, with the system Korean font). Run it again only if the icon design changes.
 
 Screens use progress only through `useLearnerData()`. Storage details stay in `src/data/`, with an optional sync repository around the local repository.
 

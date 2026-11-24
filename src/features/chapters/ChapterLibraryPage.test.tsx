@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { chapters } from '../../content'
 import { renderApp } from '../../test/renderApp'
 
 /** Renders the library and waits for saved progress to load. */
@@ -30,23 +31,29 @@ describe('Chapter Library', () => {
   it('links only chapters that have content', async () => {
     await renderAt('/learn')
     expect(screen.getByRole('link', { name: '집안일' })).toHaveAttribute('href', '/learn/11')
-    expect(screen.queryByRole('link', { name: '대중교통' })).not.toBeInTheDocument()
-    expect(screen.getByText('대중교통')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '대중교통' })).toHaveAttribute('href', '/learn/12')
+    expect(screen.getByRole('link', { name: '주말 활동' })).toHaveAttribute('href', '/learn/13')
+    expect(screen.queryByRole('link', { name: '생활용품' })).not.toBeInTheDocument()
+    expect(screen.getByText('생활용품')).toBeInTheDocument()
   })
 
   it('lists the chapters you can study first, on both book tabs', async () => {
     for (const path of ['/learn', '/learn?book=2']) {
       await renderAt(path)
       const ready = screen.getByRole('region', { name: 'Available now' })
+      expect(within(ready).getByRole('link', { name: /1 자기소개 Self Introduction · Book 1/ })).toHaveAttribute('href', '/learn/1')
       expect(within(ready).getByRole('link', { name: /11 집안일 Household Chores · Book 1/ })).toHaveAttribute('href', '/learn/11')
+      expect(within(ready).getByRole('link', { name: /12 대중교통 Public Transportation · Book 1/ })).toHaveAttribute('href', '/learn/12')
       document.body.innerHTML = ''
     }
   })
 
   it('shows every chapter as not started for a new learner', async () => {
     await renderAt('/learn')
-    expect(screen.getAllByText('Not started')).toHaveLength(1)
-    expect(screen.getAllByText('Coming later')).toHaveLength(29)
+    const book1 = chapters.filter((c) => c.textbookRef.volume === 1)
+    const ready = book1.filter((c) => c.contentStatus === 'available').length
+    expect(screen.getAllByText('Not started')).toHaveLength(ready)
+    expect(screen.getAllByText('Coming later')).toHaveLength(book1.length - ready)
     expect(screen.queryByText(/Practiced|Mastered|Visited/)).not.toBeInTheDocument()
   })
 })

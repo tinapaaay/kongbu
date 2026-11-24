@@ -144,3 +144,34 @@ describe('chapter visits', () => {
     expect((await repository.load()).data.chapterVisits.ch11).toBeDefined()
   })
 })
+
+describe('Settings: keeping progress safe', () => {
+  const IPHONE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'
+
+  it('tells iPhone Safari users to use the Home Screen app, and to move their backup there', async () => {
+    const agent = vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(IPHONE)
+    try {
+      await renderSettings()
+      expect(screen.getByText(/use Kongbu from your Home Screen/)).toBeInTheDocument()
+      expect(screen.getByText(/download a backup here first and restore it there/)).toBeInTheDocument()
+    } finally {
+      agent.mockRestore()
+    }
+  })
+
+  it('says nothing extra on other browsers that have not promised to keep the data', async () => {
+    await renderSettings()
+    expect(screen.queryByText(/Home Screen/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/agreed to keep your progress/)).not.toBeInTheDocument()
+  })
+
+  it('says so when the browser has agreed to keep the data', async () => {
+    Object.defineProperty(navigator, 'storage', { value: { persisted: async () => true }, configurable: true })
+    try {
+      await renderSettings()
+      expect(await screen.findByText(/agreed to keep your progress/)).toBeInTheDocument()
+    } finally {
+      Reflect.deleteProperty(navigator, 'storage')
+    }
+  })
+})

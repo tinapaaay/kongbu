@@ -4,12 +4,17 @@ import {
   concepts,
   getChapterByNumber,
   getConcept,
+  getLesson,
+  hasContent,
   getQuestionsForChapter,
   lessons,
   questions,
   type Question,
 } from './allContent'
 import { validateContent, type ContentBundle } from './validate'
+
+/** A chapter with no content yet, for "nothing here" checks. Found, not hard-coded, so adding chapters never breaks these tests. */
+const EMPTY = chapters.find((c) => c.contentStatus === 'planned')!
 
 const real: ContentBundle = { chapters, concepts, questions, lessons }
 
@@ -34,20 +39,25 @@ describe('real content', () => {
     expect(getChapterByNumber(60)?.titleEn).toBe('Employment Insurance')
   })
 
-  it('makes only Chapter 11 available for now', () => {
-    expect(chapters.filter((c) => c.contentStatus === 'available').map((c) => c.number)).toEqual([11])
+  it('makes a chapter available exactly when it has a content folder', () => {
+    const available = chapters.filter((c) => c.contentStatus === 'available')
+    expect(available.map((c) => c.number)).toEqual(expect.arrayContaining([1, 11, 12]))
+    for (const chapter of chapters) expect(hasContent(chapter.id), chapter.id).toBe(chapter.contentStatus === 'available')
+    for (const chapter of available) expect(getLesson(chapter.id), `${chapter.id} lesson`).toBeDefined()
   })
 
-  it('has at least 20 Chapter 11 questions, so a 10-question quiz can vary', () => {
-    expect(getQuestionsForChapter('ch11').length).toBeGreaterThanOrEqual(20)
-  })
+  for (const chapterId of chapters.filter((c) => c.contentStatus === 'available').map((c) => c.id)) {
+    it(`has at least 20 ${chapterId} questions, so a 10-question quiz can vary`, () => {
+      expect(getQuestionsForChapter(chapterId).length).toBeGreaterThanOrEqual(20)
+    })
 
-  it('tests every Chapter 11 concept at least once', () => {
-    const tested = new Set(getQuestionsForChapter('ch11').map((q) => q.conceptId))
-    for (const concept of concepts.filter((c) => c.chapterId === 'ch11')) {
-      expect(tested, `${concept.id} has no questions`).toContain(concept.id)
-    }
-  })
+    it(`tests every ${chapterId} concept at least twice, so a mistake can be fixed by a different question`, () => {
+      const questionsFor = getQuestionsForChapter(chapterId)
+      for (const concept of concepts.filter((c) => c.chapterId === chapterId)) {
+        expect(questionsFor.filter((q) => q.conceptId === concept.id).length, `${concept.id} needs two questions`).toBeGreaterThanOrEqual(2)
+      }
+    })
+  }
 
   it('spreads correct answers across all four positions', () => {
     const counts = { a: 0, b: 0, c: 0, d: 0 }
@@ -63,7 +73,7 @@ describe('real content', () => {
   })
 
   it('filters questions by chapter without mixing in others', () => {
-    expect(getQuestionsForChapter('ch12')).toEqual([])
+    expect(getQuestionsForChapter(EMPTY.id)).toEqual([])
     expect(getQuestionsForChapter('ch11').every((q) => q.chapterId === 'ch11')).toBe(true)
   })
 
@@ -121,9 +131,9 @@ describe('validation catches broken content', () => {
   it('rejects questions for chapters that are not available', () => {
     const bundle = copy()
     const question = firstQuestion(bundle)
-    question.chapterId = 'ch12'
-    question.id = 'ch12-q001'
-    expect(validateContent(bundle).join('\n')).toMatch(/chapter 12, which is not available/)
+    question.chapterId = EMPTY.id
+    question.id = `${EMPTY.id}-q001`
+    expect(validateContent(bundle).join('\n')).toMatch(new RegExp(`chapter ${EMPTY.number}, which is not available`))
   })
 
   it('rejects an available chapter with too few questions', () => {
@@ -158,7 +168,7 @@ describe('on-demand chapter content', () => {
 
   it('gives chapters without content an empty result, with nothing to download', async () => {
     const { loadChapterContent, hasContent } = await import('./index')
-    expect(hasContent('ch12')).toBe(false)
-    expect(await loadChapterContent('ch12')).toEqual({ questions: [] })
+    expect(hasContent(EMPTY.id)).toBe(false)
+    expect(await loadChapterContent(EMPTY.id)).toEqual({ questions: [] })
   })
 })

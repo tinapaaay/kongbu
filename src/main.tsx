@@ -14,6 +14,7 @@ import '@fontsource/titillium-web/900.css'
 import './styles/tokens.css'
 import './styles/global.css'
 import { AppRoutes } from './app/AppRoutes'
+import { ServiceWorkerUpdates } from './app/ServiceWorkerUpdates'
 import { LearnerDataProvider } from './data/LearnerDataProvider'
 import { createLocalStorageRepository } from './data/localStorageRepository'
 import { getBrowserStorage } from './data/storage'
@@ -25,7 +26,12 @@ const key = import.meta.env.VITE_SUPABASE_ANON_KEY
 const client = url && key ? createClient(url, key) : null
 const controller = client ? createSyncRepository(local, createSupabaseTransport(client), storage) : null
 const repository = controller?.repository ?? local
-const app = <LearnerDataProvider repository={repository}><AppRoutes /></LearnerDataProvider>
+const app = (
+  <LearnerDataProvider repository={repository}>
+    <ServiceWorkerUpdates />
+    <AppRoutes />
+  </LearnerDataProvider>
+)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

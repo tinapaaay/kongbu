@@ -1,10 +1,11 @@
-import { useId, useState, type ChangeEvent } from 'react'
+import { useEffect, useId, useState, type ChangeEvent } from 'react'
 import buttons from '../../components/buttons.module.css'
 import { PageHeader } from '../../components/PageHeader'
 import { daysBetween, formatDate } from '../../components/formatDate'
 import { MAX_BACKUP_BYTES, parseBackup, type BackupSummary } from '../../data/backup'
 import { downloadTextFile } from '../../data/download'
 import { useLearnerData } from '../../data/learnerDataContext'
+import { isAppleMobileBrowserTab, isStoragePersisted } from '../../data/storageSafety'
 import type { LearnerData } from '../../domain/learnerData'
 import { SyncSettings } from '../../sync/SyncSettings'
 import styles from './SettingsPage.module.css'
@@ -28,6 +29,15 @@ const systemNow = () => new Date()
 
 export function SettingsPage({ download = downloadTextFile, now = systemNow }: SettingsPageProps) {
   const { data, exportBackup, mergeRecords } = useLearnerData()
+  const [appleBrowserTab] = useState(() => isAppleMobileBrowserTab())
+  const [persisted, setPersisted] = useState(false)
+  useEffect(() => {
+    let cancelled = false
+    void isStoragePersisted().then((kept) => !cancelled && setPersisted(kept))
+    return () => {
+      cancelled = true
+    }
+  }, [])
   const [restore, setRestore] = useState<RestoreState>({ step: 'idle' })
   const [downloaded, setDownloaded] = useState(false)
   const fileInputId = useId()
@@ -98,6 +108,15 @@ export function SettingsPage({ download = downloadTextFile, now = systemNow }: S
           Sign in below to sync between devices when cloud sync is available. Quizzes keep working offline.
           Download backups as another way to keep your progress safe.
         </p>
+        {appleBrowserTab ? (
+          <p>
+            <strong>On iPhone or iPad, use Kongbu from your Home Screen</strong> (Share → Add to Home Screen). Safari
+            doesn't clear the Home Screen app's progress. The app keeps its own copy, so download a backup here first and
+            restore it there.
+          </p>
+        ) : (
+          persisted && <p>This browser has agreed to keep your progress and won't clear it to free up space.</p>
+        )}
       </div>
 
       <div className={styles.grid}>

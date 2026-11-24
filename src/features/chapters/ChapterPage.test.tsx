@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { getQuestionsForChapter, studyAnchorId } from '../../content/allContent'
+import { chapters, getQuestionsForChapter, studyAnchorId } from '../../content/allContent'
 import { MemoryStorage } from '../../data/storage'
 import { makeSession } from '../../domain/testFixtures'
 import { renderApp } from '../../test/renderApp'
@@ -118,8 +118,9 @@ describe('Starting the practice exam', () => {
 
 describe('Chapters without content', () => {
   it('shows the real title and says content is coming later', async () => {
-    await renderChapter('/learn/12')
-    expect(screen.getByRole('heading', { level: 1, name: '대중교통' })).toBeInTheDocument()
+    const empty = chapters.find((c) => c.contentStatus === 'planned')!
+    await renderChapter(`/learn/${empty.number}`)
+    expect(screen.getByRole('heading', { level: 1, name: empty.titleKo })).toBeInTheDocument()
     expect(screen.getByText(/coming later/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /practice exam/ })).not.toBeInTheDocument()
   })
