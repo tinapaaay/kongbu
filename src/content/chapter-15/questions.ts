@@ -310,7 +310,7 @@ export const chapter15Questions: Question[] = [
     format: 'dialogue-completion',
     difficulty: 2,
     prompt: BLANK,
-    context: { kind: 'dialogue', text: '가: 어떤 가방을 사고 싶어요?\n나: (          ) 가방을 사고 싶어요. 책을 많이 넣어야 돼요.' },
+    context: { kind: 'dialogue', text: '가: 어떤 가방을 살 거예요?\n나: (          ) 가방을 살 거예요. 책을 많이 넣어야 돼요.' },
     choices: ['작은', '큰', '크는', '컨'],
     correctChoiceId: 'b',
     explanation: 'To carry many books you need a big bag: 크다 → 큰. 작은 (small) doesn’t fit the reason, 크는 uses the verb ending, and 컨 is not a word.',

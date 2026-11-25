@@ -9,7 +9,7 @@
 
 Read the whole chapter: vocabulary (pp.191, 194), grammar (pp.192, 195), conversations (pp.193, 196), culture (p.197), and the reading and listening checks with their scripts (pp.198–199). Checked every prompt, context, choice, key, and explanation for correct Korean, a single defensible answer, and Korean a learner who has finished Chapters 1–14 can read.
 
-**Level limit.** Contexts use this chapter's words and grammar plus what earlier chapters teach (-아서/어서, -아/어야 되다, -(으)세요, -(으)ㄹ게요, -고 싶다). During review, four contexts were simplified: an unknown word (얼룩), 동료, -아/어도 되다, and 말고 were taken out. 저고리 and 명절 appear only in the culture note, so the hanbok questions are rated harder.
+**Level limit.** Contexts use this chapter's words and grammar plus what earlier chapters teach (-아서/어서, -아/어야 되다, -(으)세요, -(으)ㄹ게요, -(으)ㄹ 거예요). During review, four contexts were simplified: an unknown word (얼룩), 동료, -아/어도 되다, and 말고 were taken out. On 25 November, q024 was changed from -고 싶어요 to -(으)ㄹ 거예요, because -고 싶다 is taught in Chapter 16. 저고리 and 명절 appear only in the culture note, so the hanbok questions are rated harder.
 
 **Originality.** Compared each question with the book's exercises and test items, then avoided their compositions:
 - No correct-sentence item mixing 맛있은 / 예쁜 / 덥은 / 짧는 (p.198). The -(으)ㄴ questions are single blanks with other words (따뜻한, 어두운, 재미있는, 긴, 큰).
